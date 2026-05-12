@@ -3292,9 +3292,19 @@
   function pinAva() {
     const pinBtn = document.getElementById('ava-pin-btn');
     _removeResizeHandles();
+    const header = document.querySelector('.ava-header');
+    header.removeEventListener('mousedown', _onDragStart);
+    _dragState = null;
+    _resizeState = null;
+    document.removeEventListener('mousemove', _onDragMove);
+    document.removeEventListener('mouseup',   _onDragEnd);
+    document.removeEventListener('mousemove', _onResizeMove);
+    document.removeEventListener('mouseup',   _onResizeEnd);
     panelWrap.classList.remove('floating');
     panelWrap.style.right  = '';
     panelWrap.style.bottom = '';
+    panelWrap.style.removeProperty('--pip-w');
+    panelWrap.style.removeProperty('--pip-h');
     if (avaPipSize && avaPipSize.width === 640) {
       panelWrap.classList.add('expanded');
       document.documentElement.style.setProperty('--ava-bubble-max-w', '600px');
@@ -3323,6 +3333,7 @@
 
   function _initDrag() {
     const header = document.querySelector('.ava-header');
+    header.removeEventListener('mousedown', _onDragStart);
     header.addEventListener('mousedown', _onDragStart);
   }
 
@@ -3336,6 +3347,8 @@
       startMouseY: e.clientY,
       startRight:  window.innerWidth  - rect.right,
       startBottom: window.innerHeight - rect.bottom,
+      panelWidth:  rect.width,
+      panelHeight: rect.height,
     };
     document.addEventListener('mousemove', _onDragMove);
     document.addEventListener('mouseup',   _onDragEnd);
@@ -3345,8 +3358,8 @@
     if (!_dragState) return;
     const dx = e.clientX - _dragState.startMouseX;
     const dy = e.clientY - _dragState.startMouseY;
-    const newRight  = Math.max(8, Math.min(window.innerWidth  - 320, _dragState.startRight  - dx));
-    const newBottom = Math.max(8, Math.min(window.innerHeight - 400, _dragState.startBottom - dy));
+    const newRight  = Math.max(8, Math.min(window.innerWidth  - _dragState.panelWidth,  _dragState.startRight  - dx));
+    const newBottom = Math.max(8, Math.min(window.innerHeight - _dragState.panelHeight, _dragState.startBottom - dy));
     panelWrap.style.right  = newRight  + 'px';
     panelWrap.style.bottom = newBottom + 'px';
   }
@@ -3416,8 +3429,8 @@
   function _onResizeEnd() {
     if (!_resizeState) return;
     avaPipSize = {
-      width:  parseFloat(getComputedStyle(panelWrap).getPropertyValue('--pip-w')),
-      height: parseFloat(getComputedStyle(panelWrap).getPropertyValue('--pip-h')),
+      width:  parseFloat(panelWrap.style.getPropertyValue('--pip-w')),
+      height: parseFloat(panelWrap.style.getPropertyValue('--pip-h')),
     };
     _resizeState = null;
     document.removeEventListener('mousemove', _onResizeMove);
