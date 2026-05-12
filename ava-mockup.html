@@ -111,6 +111,7 @@
 
       /* ── AVA expand mode                                                  */
       --ava-bubble-max-w: 312px;
+      --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.20);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -942,6 +943,7 @@
     .ava-panel-wrap.floating {
       position: fixed;
       z-index: 9000;
+      transition: none;
       border-radius: 12px;
       box-shadow: var(--shadow-overlay);
       width: var(--pip-w, 384px);
