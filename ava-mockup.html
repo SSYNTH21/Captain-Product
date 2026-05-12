@@ -3273,6 +3273,157 @@
 
   const PIN_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.1812 3.52746C13.4932 3.21546 14.001 3.21546 14.313 3.52746L15.6597 4.87414L19.1411 8.35656L20.4888 9.70324C20.8006 10.0152 20.8006 10.5222 20.4888 10.8341C20.1769 11.146 19.67 11.1459 19.3579 10.8341L18.5757 10.0519L14.4663 14.1612C15.2883 15.3912 15.1578 17.0743 14.0728 18.1583L13.6441 18.5861C13.3321 18.8978 12.8251 18.898 12.5132 18.5861L9.53665 15.6095L6.16848 18.9767C5.85648 19.2887 5.34962 19.2887 5.03762 18.9767C4.7258 18.6647 4.72568 18.1578 5.03762 17.8458L8.40579 14.4777L5.42825 11.5011C5.11647 11.1891 5.1165 10.6822 5.42825 10.3702L5.85598 9.9425C6.94087 8.85764 8.6231 8.72627 9.85305 9.54796L13.9634 5.44054L13.1812 4.65832C12.8694 4.34643 12.8696 3.83946 13.1812 3.52746ZM9.20169 11.0734C8.63869 10.5104 7.7483 10.4674 7.1343 10.9454L13.0698 16.88C13.5477 16.267 13.5049 15.3756 12.9409 14.8116L9.20169 11.0734ZM10.8423 10.8214L13.1939 13.172L17.4448 8.92101L15.0933 6.57043L10.8423 10.8214Z" fill="currentColor"/></svg>`;
 
+  function unpinAva() {
+    const pinBtn = document.getElementById('ava-pin-btn');
+    const currentWidth  = avaIsExpanded() ? 640 : 384;
+    const currentHeight = 600;
+    avaPipSize = { width: currentWidth, height: currentHeight };
+    panelWrap.style.setProperty('--pip-w', currentWidth + 'px');
+    panelWrap.style.setProperty('--pip-h', currentHeight + 'px');
+    panelWrap.style.right  = '24px';
+    panelWrap.style.bottom = '24px';
+    panelWrap.classList.add('floating');
+    _injectResizeHandles();
+    _initDrag();
+    pinBtn.setAttribute('data-tooltip', 'Pin');
+    pinBtn.innerHTML = PIN_ICON_SVG;
+  }
+
+  function pinAva() {
+    const pinBtn = document.getElementById('ava-pin-btn');
+    _removeResizeHandles();
+    panelWrap.classList.remove('floating');
+    panelWrap.style.right  = '';
+    panelWrap.style.bottom = '';
+    if (avaPipSize && avaPipSize.width === 640) {
+      panelWrap.classList.add('expanded');
+      document.documentElement.style.setProperty('--ava-bubble-max-w', '600px');
+      const expandBtn = document.getElementById('ava-expand-btn');
+      expandBtn.setAttribute('data-tooltip', 'Minimize');
+      expandBtn.innerHTML = REDUCE_ICON_SVG;
+    } else {
+      panelWrap.classList.remove('expanded');
+      document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+      const expandBtn = document.getElementById('ava-expand-btn');
+      expandBtn.setAttribute('data-tooltip', 'Expand');
+      expandBtn.innerHTML = EXPAND_ICON_SVG;
+    }
+    avaPipPos  = null;
+    avaPipSize = null;
+    pinBtn.setAttribute('data-tooltip', 'Unpin');
+    pinBtn.innerHTML = UNPIN_ICON_SVG;
+  }
+
+  function togglePinAva() {
+    if (!avaIsOpen()) return;
+    if (avaIsFloating()) { pinAva(); } else { unpinAva(); }
+  }
+
+  let _dragState = null;
+
+  function _initDrag() {
+    const header = document.querySelector('.ava-header');
+    header.addEventListener('mousedown', _onDragStart);
+  }
+
+  function _onDragStart(e) {
+    if (!avaIsFloating()) return;
+    if (e.target.closest('button')) return;
+    e.preventDefault();
+    const rect = panelWrap.getBoundingClientRect();
+    _dragState = {
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startRight:  window.innerWidth  - rect.right,
+      startBottom: window.innerHeight - rect.bottom,
+    };
+    document.addEventListener('mousemove', _onDragMove);
+    document.addEventListener('mouseup',   _onDragEnd);
+  }
+
+  function _onDragMove(e) {
+    if (!_dragState) return;
+    const dx = e.clientX - _dragState.startMouseX;
+    const dy = e.clientY - _dragState.startMouseY;
+    const newRight  = Math.max(8, Math.min(window.innerWidth  - 320, _dragState.startRight  - dx));
+    const newBottom = Math.max(8, Math.min(window.innerHeight - 400, _dragState.startBottom - dy));
+    panelWrap.style.right  = newRight  + 'px';
+    panelWrap.style.bottom = newBottom + 'px';
+  }
+
+  function _onDragEnd() {
+    if (!_dragState) return;
+    avaPipPos = {
+      right:  parseFloat(panelWrap.style.right),
+      bottom: parseFloat(panelWrap.style.bottom),
+    };
+    _dragState = null;
+    document.removeEventListener('mousemove', _onDragMove);
+    document.removeEventListener('mouseup',   _onDragEnd);
+  }
+
+  function _injectResizeHandles() {
+    ['top', 'left', 'top-left'].forEach(dir => {
+      const h = document.createElement('div');
+      h.className = 'pip-resize-handle ' + dir;
+      h.addEventListener('mousedown', e => _onResizeStart(e, dir));
+      panelWrap.appendChild(h);
+    });
+  }
+
+  function _removeResizeHandles() {
+    panelWrap.querySelectorAll('.pip-resize-handle').forEach(h => h.remove());
+  }
+
+  let _resizeState = null;
+
+  function _onResizeStart(e, dir) {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = panelWrap.getBoundingClientRect();
+    _resizeState = {
+      dir,
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startWidth:  rect.width,
+      startHeight: rect.height,
+      startRight:  window.innerWidth  - rect.right,
+      startBottom: window.innerHeight - rect.bottom,
+    };
+    document.addEventListener('mousemove', _onResizeMove);
+    document.addEventListener('mouseup',   _onResizeEnd);
+  }
+
+  function _onResizeMove(e) {
+    if (!_resizeState) return;
+    const { dir, startMouseX, startMouseY, startWidth, startHeight, startRight, startBottom } = _resizeState;
+    const MIN_W = 320, MAX_W = 800, MIN_H = 400, MAX_H = 900;
+    const dx = e.clientX - startMouseX;
+    const dy = e.clientY - startMouseY;
+
+    if (dir === 'left' || dir === 'top-left') {
+      const newW = Math.max(MIN_W, Math.min(MAX_W, startWidth - dx));
+      panelWrap.style.setProperty('--pip-w', newW + 'px');
+      panelWrap.style.right = Math.max(8, startRight + (startWidth - newW)) + 'px';
+    }
+    if (dir === 'top' || dir === 'top-left') {
+      const newH = Math.max(MIN_H, Math.min(MAX_H, startHeight - dy));
+      panelWrap.style.setProperty('--pip-h', newH + 'px');
+      panelWrap.style.bottom = Math.max(8, startBottom + (startHeight - newH)) + 'px';
+    }
+  }
+
+  function _onResizeEnd() {
+    if (!_resizeState) return;
+    avaPipSize = {
+      width:  parseFloat(getComputedStyle(panelWrap).getPropertyValue('--pip-w')),
+      height: parseFloat(getComputedStyle(panelWrap).getPropertyValue('--pip-h')),
+    };
+    _resizeState = null;
+    document.removeEventListener('mousemove', _onResizeMove);
+    document.removeEventListener('mouseup',   _onResizeEnd);
+  }
+
   function minimizeAva() {
     const expandBtn = document.getElementById('ava-expand-btn');
     panelWrap.classList.remove('expanded');
