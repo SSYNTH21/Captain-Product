@@ -721,6 +721,36 @@
       transition: width var(--semantic-duration-static-medium, 200ms) ease;
     }
 
+    /* ── NAV GROUPS (expandable) ────────────────────── */
+    .nav-group-header .nav-label { font-weight: 700; }
+    .nav-group-chevron { transition: transform var(--semantic-duration-static-medium, 200ms) ease; }
+    .nav-group.open .nav-group-chevron { transform: rotate(90deg); }
+    .nav-sub-items {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 200ms ease;
+    }
+    .nav-group.open .nav-sub-items { max-height: 800px; }
+    .nav-sub-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 8px 8px 68px;
+      cursor: pointer;
+      transition: background var(--semantic-duration-static-fast);
+    }
+    .nav-sub-item:hover { background: var(--core-color-gray-200); }
+    .nav-sub-item.active { background: #007ab3; }
+    .nav-sub-label {
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--ui-06);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .nav-sub-item.active .nav-sub-label { font-weight: 700; color: #fff; }
+    .side-nav.collapsed .nav-sub-items { display: none; }
+
     /* ── MAIN CONTENT ─────────────────────────────────── */
     .main-content {
       flex: 1;
@@ -2899,11 +2929,20 @@
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-grid"/></svg></div></div>
         <span class="nav-label">Submission dashboard</span>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-location"/></svg></div></div>
-        <span class="nav-label">Locations</span>
+
+      <!-- Locations (expandable) -->
+      <div class="nav-group" id="navgroup-locations">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-locations')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-location"/></svg></div></div>
+          <span class="nav-label">Locations</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Dashboard</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Upload locations</span></div>
+        </div>
       </div>
+
       <div class="nav-item">
         <div class="nav-expand-spacer"></div>
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-location"/></svg></div></div>
@@ -2914,21 +2953,48 @@
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-bi-cbi"/></svg></div></div>
         <span class="nav-label">BI-CBI Risk assessment</span>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-bi-cbi"/></svg></div></div>
-        <span class="nav-label">ARC</span>
+
+      <!-- ARC (expandable) -->
+      <div class="nav-group" id="navgroup-arc">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-arc')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-bi-cbi"/></svg></div></div>
+          <span class="nav-label">ARC</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Risk assessment triage</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">ARC request</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Recommendations</span></div>
+        </div>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
-        <span class="nav-label">Claims experience</span>
+
+      <!-- Claims experience (expandable) -->
+      <div class="nav-group" id="navgroup-claims">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-claims')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
+          <span class="nav-label">Claims experience</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Upload claims experience</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Loss threshold</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Claims dashboard</span></div>
+        </div>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-prog-advisory"/></svg></div></div>
-        <span class="nav-label">Program advisory</span>
+
+      <!-- Program advisory (expandable) -->
+      <div class="nav-group" id="navgroup-prog-advisory">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-prog-advisory')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-prog-advisory"/></svg></div></div>
+          <span class="nav-label">Program advisory</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Licensing</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Pre-inception actions</span></div>
+        </div>
       </div>
+
       <div class="nav-item">
         <div class="nav-expand-spacer"></div>
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-alt-list"/></svg></div></div>
@@ -2963,21 +3029,53 @@
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-grid"/></svg></div></div>
         <span class="nav-label">Underwriting policy PML</span>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
-        <span class="nav-label">CAT</span>
+
+      <!-- CAT (expandable) -->
+      <div class="nav-group" id="navgroup-cat">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-cat')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
+          <span class="nav-label">CAT</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">CAT general information</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">CAT modelling results</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Capacity events results</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">CAT configuration</span></div>
+        </div>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
-        <span class="nav-label">Pricing</span>
+
+      <!-- Pricing (expandable) -->
+      <div class="nav-group" id="navgroup-pricing">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-pricing')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
+          <span class="nav-label">Pricing</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Pricing model</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Achieved premium</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Pricing result</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Pricing configuration</span></div>
+        </div>
       </div>
-      <div class="nav-item">
-        <div class="nav-expand-frame"><svg width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
-        <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-uw-account"/></svg></div></div>
-        <span class="nav-label">UW Account summary</span>
+
+      <!-- UW Account summary (expandable) -->
+      <div class="nav-group" id="navgroup-uw-account">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-uw-account')">
+          <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
+          <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-uw-account"/></svg></div></div>
+          <span class="nav-label">UW Account summary</span>
+        </div>
+        <div class="nav-sub-items">
+          <div class="nav-sub-item"><span class="nav-sub-label">Client summary</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Locations summary</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Coverage summary</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">CAT summary</span></div>
+          <div class="nav-sub-item"><span class="nav-sub-label">Pricing &amp; Portfolio summary</span></div>
+        </div>
       </div>
+
       <div class="nav-item">
         <div class="nav-expand-spacer"></div>
         <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-grid"/></svg></div></div>
@@ -4202,6 +4300,12 @@
   }
 
   /* ── Manual nav toggle — user takes control ── */
+  function toggleNavGroup(groupId) {
+    var group = document.getElementById(groupId);
+    if (!group) return;
+    group.classList.toggle('open');
+  }
+
   function manualToggleNav() {
     // Medium: nav cannot be expanded — ignore toggle
     if (isMedium()) return;
