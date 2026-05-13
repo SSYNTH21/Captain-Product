@@ -2993,7 +2993,7 @@
 
       <!-- Locations (expandable) -->
       <div class="nav-group" id="navgroup-locations">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-locations')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-location"/></svg></div></div>
           <span class="nav-label">Locations</span>
@@ -3025,7 +3025,7 @@
 
       <!-- ARC (expandable) -->
       <div class="nav-group" id="navgroup-arc">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-arc')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-bi-cbi"/></svg></div></div>
           <span class="nav-label">ARC</span>
@@ -3048,7 +3048,7 @@
 
       <!-- Claims experience (expandable) -->
       <div class="nav-group" id="navgroup-claims">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-claims')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">Claims experience</span>
@@ -3071,7 +3071,7 @@
 
       <!-- Program advisory (expandable) -->
       <div class="nav-group" id="navgroup-prog-advisory">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-prog-advisory')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-prog-advisory"/></svg></div></div>
           <span class="nav-label">Program advisory</span>
@@ -3127,7 +3127,7 @@
 
       <!-- CAT (expandable) -->
       <div class="nav-group" id="navgroup-cat">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-cat')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">CAT</span>
@@ -3152,7 +3152,7 @@
 
       <!-- Pricing (expandable) -->
       <div class="nav-group" id="navgroup-pricing">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-pricing')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">Pricing</span>
@@ -3177,7 +3177,7 @@
 
       <!-- UW Account summary (expandable) -->
       <div class="nav-group" id="navgroup-uw-account">
-        <div class="nav-item nav-group-header" onclick="toggleNavGroup('navgroup-uw-account')">
+        <div class="nav-item nav-group-header" onclick="toggleNavGroup(this.closest('.nav-group').id, event)">
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-uw-account"/></svg></div></div>
           <span class="nav-label">UW Account summary</span>
@@ -4408,6 +4408,7 @@
       unpinAva();
       panelWrap.style.right  = '24px';
       panelWrap.style.bottom = '24px';
+      if (isMedium() || isSmall()) avaAutoUnpinned = true;
     }
     syncNav();
     syncExpandBtn();
@@ -4440,7 +4441,8 @@
   }
 
   /* ── Manual nav toggle — user takes control ── */
-  function toggleNavGroup(groupId) {
+  function toggleNavGroup(groupId, event) {
+    if (event) event.stopPropagation();
     var group = document.getElementById(groupId);
     if (!group) return;
     var isCollapsed = sideNav.classList.contains('collapsed') || isMedium() || isSmall();
