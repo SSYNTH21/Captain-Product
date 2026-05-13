@@ -751,6 +751,69 @@
     .nav-sub-item.active .nav-sub-label { font-weight: 700; color: #fff; }
     .side-nav.collapsed .nav-sub-items { display: none; }
 
+    /* ── COLLAPSED GROUP: child indicator dot ─────────── */
+    .nav-group-indicator {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      display: none;
+    }
+    /* triangle pointing right — pure CSS, no image needed */
+    .nav-group-indicator::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #414141;
+    }
+    .side-nav.collapsed .nav-group .nav-group-header {
+      position: relative;
+    }
+    .side-nav.collapsed .nav-group-indicator { display: block; }
+
+    /* ── COLLAPSED GROUP: flyout popup ─────────────────── */
+    .nav-group-flyout {
+      display: none;
+      position: absolute;
+      left: 64px; /* width of collapsed nav (56px) + 8px gap */
+      top: 0;
+      z-index: 200;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px 0 rgba(65,65,65,0.5);
+      min-width: 180px;
+      overflow: hidden;
+    }
+    .nav-group-flyout-header {
+      background: var(--core-color-gray-200);
+      padding: 8px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+      color: var(--ui-06);
+      white-space: nowrap;
+    }
+    .nav-group-flyout-items {
+      padding: 8px 0;
+    }
+    .nav-group-flyout-item {
+      padding: 8px 32px;
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--ui-06);
+      white-space: nowrap;
+      cursor: pointer;
+      background: #fff;
+      transition: background var(--semantic-duration-static-fast);
+    }
+    .nav-group-flyout-item:hover { background: var(--core-color-gray-200); }
+    /* Show flyout on group-header hover in collapsed mode */
+    .side-nav.collapsed .nav-group:hover .nav-group-flyout { display: block; }
+
     /* ── MAIN CONTENT ─────────────────────────────────── */
     .main-content {
       flex: 1;
@@ -2936,6 +2999,14 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-location"/></svg></div></div>
           <span class="nav-label">Locations</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">Locations</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Dashboard</div>
+              <div class="nav-group-flyout-item">Upload locations</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Dashboard</span></div>
@@ -2960,6 +3031,15 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-bi-cbi"/></svg></div></div>
           <span class="nav-label">ARC</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">ARC</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Risk assessment triage</div>
+              <div class="nav-group-flyout-item">ARC request</div>
+              <div class="nav-group-flyout-item">Recommendations</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Risk assessment triage</span></div>
@@ -2974,6 +3054,15 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">Claims experience</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">Claims experience</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Upload claims experience</div>
+              <div class="nav-group-flyout-item">Loss threshold</div>
+              <div class="nav-group-flyout-item">Claims dashboard</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Upload claims experience</span></div>
@@ -2988,6 +3077,14 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-prog-advisory"/></svg></div></div>
           <span class="nav-label">Program advisory</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">Program advisory</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Licensing</div>
+              <div class="nav-group-flyout-item">Pre-inception actions</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Licensing</span></div>
@@ -3036,6 +3133,16 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">CAT</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">CAT</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">CAT general information</div>
+              <div class="nav-group-flyout-item">CAT modelling results</div>
+              <div class="nav-group-flyout-item">Capacity events results</div>
+              <div class="nav-group-flyout-item">CAT configuration</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">CAT general information</span></div>
@@ -3051,6 +3158,16 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-claims"/></svg></div></div>
           <span class="nav-label">Pricing</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">Pricing</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Pricing model</div>
+              <div class="nav-group-flyout-item">Achieved premium</div>
+              <div class="nav-group-flyout-item">Pricing result</div>
+              <div class="nav-group-flyout-item">Pricing configuration</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Pricing model</span></div>
@@ -3066,6 +3183,17 @@
           <div class="nav-expand-frame"><svg class="nav-group-chevron" width="16" height="16"><use href="#ico-chevron-right"/></svg></div>
           <div class="nav-icon-frame"><div class="nav-icon"><svg width="20" height="20"><use href="#ico-uw-account"/></svg></div></div>
           <span class="nav-label">UW Account summary</span>
+          <div class="nav-group-indicator"></div>
+          <div class="nav-group-flyout">
+            <div class="nav-group-flyout-header">UW Account summary</div>
+            <div class="nav-group-flyout-items">
+              <div class="nav-group-flyout-item">Client summary</div>
+              <div class="nav-group-flyout-item">Locations summary</div>
+              <div class="nav-group-flyout-item">Coverage summary</div>
+              <div class="nav-group-flyout-item">CAT summary</div>
+              <div class="nav-group-flyout-item">Pricing &amp; Portfolio summary</div>
+            </div>
+          </div>
         </div>
         <div class="nav-sub-items">
           <div class="nav-sub-item"><span class="nav-sub-label">Client summary</span></div>
