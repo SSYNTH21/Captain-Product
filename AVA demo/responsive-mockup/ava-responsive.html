@@ -2349,26 +2349,23 @@
       position: relative;
       height: 64px;
       background: var(--semantic-color-surface-default-resting);
-      /* Fix 1: divider between row 1 and row 2 */
       border-top: 1px solid var(--core-color-gray-300, #d9d9d9);
       border-bottom: 1px solid var(--core-color-gray-300, #d9d9d9);
     }
     .header-nav-scrollable {
       flex: 1;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 32px;
       overflow-x: scroll;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      /* Fix 2: 32px left padding matching Figma px-[32px], 11px bottom matching pb-[11px] */
       padding: 0 32px 11px 32px;
     }
     .header-nav-scrollable::-webkit-scrollbar { display: none; }
     /* When scroll button visible, indent content to clear the button */
     .header-nav-row2.is-scrollable:not(.at-start) .header-nav-scrollable { padding-left: 40px; }
     .header-nav-row2.is-scrollable:not(.at-end) .header-nav-scrollable { padding-right: 40px; }
-    /* Fix 3 & 4: nav item height 28px, aligned bottom, correct active state */
     .header-nav-item2 {
       font-size: 16px;
       line-height: 24px;
@@ -2376,27 +2373,24 @@
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
-      height: 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-      overflow: hidden;
+      position: relative;
+      padding-bottom: 4px;
       transition: color var(--semantic-duration-static-fast);
     }
     .header-nav-item2:hover { color: var(--env-action-primary); }
-    /* Active: blue text + 4px bottom bar (Figma: h-[4px] bg-[#006192]) */
+    /* Active: blue text + 4px bottom bar pinned to bottom of the scrollable area */
     .header-nav-item2.active {
       color: var(--env-action-primary);
       font-weight: 600;
     }
     .header-nav-item2.active::after {
       content: '';
-      display: block;
-      height: 4px;
+      position: absolute;
+      bottom: -15px; /* reaches bottom edge of scrollable (pb-11px + 4px bar) */
+      left: 0;
       width: 100%;
+      height: 4px;
       background: var(--env-action-primary);
-      flex-shrink: 0;
     }
     /* Scroll buttons: absolutely positioned at left/right edges, NDBX style */
     .header-nav-scroll-btn {
