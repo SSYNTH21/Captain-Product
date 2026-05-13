@@ -2348,8 +2348,8 @@
       align-items: flex-end;
       position: relative;
       height: 64px;
-      padding: 0 8px;
       background: var(--semantic-color-surface-default-resting);
+      overflow: hidden;
     }
     .header-nav-scrollable {
       flex: 1;
@@ -2360,8 +2360,13 @@
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 12px;
+      padding-left: 40px;
+      padding-right: 40px;
     }
     .header-nav-scrollable::-webkit-scrollbar { display: none; }
+    /* hide left padding when at scroll start, right padding when at end */
+    .header-nav-row2.at-start .header-nav-scrollable { padding-left: 16px; }
+    .header-nav-row2.at-end .header-nav-scrollable { padding-right: 16px; }
     .header-nav-item2 {
       font-size: 16px;
       line-height: 24px;
@@ -2378,23 +2383,50 @@
       border-bottom: 2px solid var(--env-action-primary);
       padding-bottom: 2px;
     }
+    /* Scroll buttons: absolutely positioned at left/right edges */
     .header-nav-scroll-btn {
-      background: none;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      background: #ffffff;
       border: none;
       cursor: pointer;
-      width: 32px;
-      height: 32px;
+      width: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--ui-06);
-      flex-shrink: 0;
-      margin-bottom: 8px;
-      border-radius: var(--core-border-radius-50, 4px);
+      z-index: 1;
+      padding: 0;
       transition: color var(--semantic-duration-static-fast);
     }
     .header-nav-scroll-btn:hover { color: var(--env-action-primary); }
-    .header-nav-scroll-btn.hidden { visibility: hidden; }
+    .header-nav-scroll-btn--left { left: 0; }
+    .header-nav-scroll-btn--right { right: 0; }
+    /* Fade gradient behind each button */
+    .header-nav-scroll-btn--left::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 32px;
+      height: 100%;
+      background: linear-gradient(to right, #ffffff, transparent);
+      pointer-events: none;
+    }
+    .header-nav-scroll-btn--right::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 100%;
+      width: 32px;
+      height: 100%;
+      background: linear-gradient(to left, #ffffff, transparent);
+      pointer-events: none;
+    }
+    /* Hide buttons at scroll boundaries */
+    .header-nav-row2.at-start .header-nav-scroll-btn--left { display: none; }
+    .header-nav-row2.at-end .header-nav-scroll-btn--right { display: none; }
     .header-line--row2 { display: none; }
 
     @media (max-width: 1279px) {
@@ -2531,12 +2563,10 @@
       </div>
     </div>
     <!-- Nav row 2 — shown at ≤1279px -->
-    <div class="header-nav-row2">
-      <button class="header-nav-scroll-btn header-nav-scroll-btn--left" onclick="scrollNavRow2(this, -200)" aria-label="Scroll left">
-        <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g transform="scale(1,-1) translate(0,-1000)">
-            <path d="M629.167 128.833L337 421L629.167 713.167C650.083 734.083 650.083 767.833 629.167 788.75C608.25 809.667 574.5 809.667 553.583 788.75L224.667 459.833C203.75 438.917 203.75 405.167 224.667 384.25L553.583 55.3333C574.417 34.5 608.167 34.5 629.083 55.4167C650 76.3333 650.083 110 629.167 128.833Z"/>
-          </g>
+    <div class="header-nav-row2" id="header-nav-row2">
+      <button class="header-nav-scroll-btn header-nav-scroll-btn--left" onclick="scrollNavRow2(-200)" aria-label="Scroll left">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="transform: rotate(180deg)">
+          <path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/>
         </svg>
       </button>
       <div class="header-nav-scrollable" id="header-nav-scrollable">
@@ -2548,11 +2578,9 @@
         <span class="header-nav-item2">hxReview</span>
         <span class="header-nav-item2">Tools</span>
       </div>
-      <button class="header-nav-scroll-btn header-nav-scroll-btn--right" onclick="scrollNavRow2(this, 200)" aria-label="Scroll right">
-        <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g transform="scale(1,-1) translate(0,-1000)">
-            <path d="M370.833 871.167L663 579L370.833 286.833C349.917 265.917 349.917 232.167 370.833 211.25C391.75 190.333 425.5 190.333 446.417 211.25L775.333 540.167C796.25 561.083 796.25 594.833 775.333 615.75L446.417 944.667C425.583 965.5 391.833 965.5 370.917 944.583C350 923.667 349.917 890 370.833 871.167Z"/>
-          </g>
+      <button class="header-nav-scroll-btn header-nav-scroll-btn--right" onclick="scrollNavRow2(200)" aria-label="Scroll right">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/>
         </svg>
       </button>
     </div>
@@ -4617,18 +4645,19 @@
   saveConversation('Location rule in Tokyo', 'Today · 09:41', 'tokyo', 'Can I set the deductible to 75,000 EUR for a Tokyo location with a TSI of 15,000,000 EUR?');
   loadConversation(0);
 
-  function scrollNavRow2(btn, delta) {
-    var row = btn.parentElement.querySelector('.header-nav-scrollable');
-    row.scrollBy({ left: delta, behavior: 'smooth' });
+  function scrollNavRow2(delta) {
+    var scrollable = document.getElementById('header-nav-scrollable');
+    if (scrollable) scrollable.scrollBy({ left: delta, behavior: 'smooth' });
   }
   function updateScrollBtnsRow2() {
     var scrollable = document.getElementById('header-nav-scrollable');
     if (!scrollable) return;
-    var wrap = scrollable.parentElement;
-    var leftBtn = wrap.querySelector('.header-nav-scroll-btn--left');
-    var rightBtn = wrap.querySelector('.header-nav-scroll-btn--right');
-    if (leftBtn) leftBtn.classList.toggle('hidden', scrollable.scrollLeft <= 0);
-    if (rightBtn) rightBtn.classList.toggle('hidden', scrollable.scrollLeft + scrollable.clientWidth >= scrollable.scrollWidth - 1);
+    var row = document.getElementById('header-nav-row2');
+    if (!row) return;
+    var atStart = scrollable.scrollLeft <= 0;
+    var atEnd = scrollable.scrollLeft + scrollable.clientWidth >= scrollable.scrollWidth - 1;
+    row.classList.toggle('at-start', atStart);
+    row.classList.toggle('at-end', atEnd);
   }
 
   window.addEventListener('load', function() {
