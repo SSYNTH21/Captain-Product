@@ -4416,7 +4416,7 @@
 
   function closeAva() {
     avaAutoUnpinned = false;
-    avaLastWasFloating = avaIsFloating();
+    avaLastWasFloating = avaIsFloating() && !isMedium() && !isSmall();
     // At medium/small AVA is always floating — pin it back silently so layout state is clean
     if (avaIsFloating()) pinAva();
     if (avaIsExpanded()) minimizeAva(); // must settle nav state before syncNav() runs
@@ -4445,7 +4445,7 @@
     if (!group) return;
     var isCollapsed = sideNav.classList.contains('collapsed') || isMedium() || isSmall();
     if (isCollapsed) {
-      var isOpen = group.classList.contains('flyout-open');
+      var isOpen = group.classList.contains('flyout-open') && !!document.querySelector('[data-flyout-for="' + groupId + '"]');
       closeAllNavFlyouts();
       if (!isOpen) {
         group.classList.add('flyout-open');
