@@ -2349,6 +2349,8 @@
       position: relative;
       height: 64px;
       background: var(--semantic-color-surface-default-resting);
+      /* Fix 1: divider between row 1 and row 2 */
+      border-top: 1px solid var(--core-color-gray-300, #d9d9d9);
       border-bottom: 1px solid var(--core-color-gray-300, #d9d9d9);
     }
     .header-nav-scrollable {
@@ -2359,15 +2361,14 @@
       overflow-x: scroll;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      padding-bottom: 12px;
-      padding-left: 16px;
-      padding-right: 40px;
+      /* Fix 2: 32px left padding matching Figma px-[32px], 11px bottom matching pb-[11px] */
+      padding: 0 32px 11px 32px;
     }
     .header-nav-scrollable::-webkit-scrollbar { display: none; }
-    /* At scroll start: no left button, so no left padding needed */
-    .header-nav-row2.at-start .header-nav-scrollable { padding-left: 0; }
-    /* At scroll end: no right button, so no right padding needed */
-    .header-nav-row2.at-end .header-nav-scrollable { padding-right: 0; }
+    /* When scroll button visible, indent content to clear the button */
+    .header-nav-row2.is-scrollable:not(.at-start) .header-nav-scrollable { padding-left: 40px; }
+    .header-nav-row2.is-scrollable:not(.at-end) .header-nav-scrollable { padding-right: 40px; }
+    /* Fix 3 & 4: nav item height 28px, aligned bottom, correct active state */
     .header-nav-item2 {
       font-size: 16px;
       line-height: 24px;
@@ -2375,14 +2376,27 @@
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
-      padding-bottom: 4px;
+      height: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      overflow: hidden;
       transition: color var(--semantic-duration-static-fast);
     }
     .header-nav-item2:hover { color: var(--env-action-primary); }
+    /* Active: blue text + 4px bottom bar (Figma: h-[4px] bg-[#006192]) */
     .header-nav-item2.active {
+      color: var(--env-action-primary);
       font-weight: 600;
-      border-bottom: 2px solid var(--env-action-primary);
-      padding-bottom: 2px;
+    }
+    .header-nav-item2.active::after {
+      content: '';
+      display: block;
+      height: 4px;
+      width: 100%;
+      background: var(--env-action-primary);
+      flex-shrink: 0;
     }
     /* Scroll buttons: absolutely positioned at left/right edges, NDBX style */
     .header-nav-scroll-btn {
