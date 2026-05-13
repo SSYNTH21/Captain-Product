@@ -2706,6 +2706,11 @@
       .side-nav .nav-footer { justify-content: center; padding: 40px 0 8px; }
       /* Hide the expand button — user cannot expand nav at this breakpoint */
       .side-nav .nav-footer-btn { display: none; }
+      /* Show child indicator triangles */
+      .side-nav .nav-group .nav-group-header { position: relative; }
+      .side-nav .nav-group-indicator { display: block; }
+      /* Highlight parent row when flyout open */
+      .side-nav .nav-group.flyout-open .nav-group-header { background: var(--core-color-gray-200); }
     }
 
     /* Medium (704–991px): side panel floats over content */
@@ -4275,12 +4280,41 @@
   }
 
   function handleResize() {
+    var nowCollapsed = isMedium() || isSmall() || sideNav.classList.contains('collapsed');
     if (isMedium() || isSmall()) {
       // Enforce collapsed nav (remove nav-open floating state too)
       sideNav.classList.remove('nav-open');
       backdrop.classList.remove('active');
-      // CSS handles the width; clear navAutoCollapsed so it doesn't interfere
       navAutoCollapsed = false;
+      // Convert any .open groups to .flyout-open
+      document.querySelectorAll('.nav-group.open').forEach(function(group) {
+        group.classList.remove('open');
+        group.classList.add('flyout-open');
+        var header = group.querySelector('.nav-group-header');
+        var flyoutTemplate = group.querySelector('.nav-group-flyout');
+        if (header && flyoutTemplate) {
+          var rect = header.getBoundingClientRect();
+          var existing = document.querySelector('[data-flyout-for="' + group.id + '"]');
+          if (!existing) {
+            var popup = document.createElement('div');
+            popup.className = 'nav-group-flyout-popup';
+            popup.setAttribute('data-flyout-for', group.id);
+            popup.innerHTML = flyoutTemplate.innerHTML;
+            popup.style.left = (rect.right + 8) + 'px';
+            popup.style.top = rect.top + 'px';
+            document.body.appendChild(popup);
+          }
+        }
+      });
+    } else {
+      // Scaling back up to expanded nav — convert any .flyout-open groups to .open
+      document.querySelectorAll('.nav-group.flyout-open').forEach(function(group) {
+        group.classList.remove('flyout-open');
+        if (!sideNav.classList.contains('collapsed')) {
+          group.classList.add('open');
+        }
+      });
+      closeAllNavFlyouts();
     }
     syncExpandBtn();
     syncPinBtn();
