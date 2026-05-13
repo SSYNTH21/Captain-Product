@@ -4663,6 +4663,8 @@
     if (!scrollable) return;
     var row = document.getElementById('header-nav-row2');
     if (!row) return;
+    // If row is not rendered (display:none), scrollWidth === 0 — skip to avoid false at-end
+    if (scrollable.scrollWidth === 0) return;
     var atStart = scrollable.scrollLeft <= 0;
     var atEnd = scrollable.scrollLeft + scrollable.clientWidth >= scrollable.scrollWidth - 1;
     row.classList.toggle('at-start', atStart);
@@ -4675,6 +4677,8 @@
       updateScrollBtnsRow2();
       navScrollable.addEventListener('scroll', updateScrollBtnsRow2);
     }
+    // Re-evaluate on resize — row2 becomes visible at ≤1279px, arrows at ≤800px
+    window.addEventListener('resize', updateScrollBtnsRow2);
   });
 </script>
 </body>
