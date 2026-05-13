@@ -68,6 +68,145 @@ body {
 .frame--medium { width: 704px; }
 .frame--small  { width: 320px; }
     /* HEADER STYLES */
+    /* ── HEADER NAV ─────────────────────────────────── */
+    .header {
+      background: var(--semantic-color-surface-default-resting);
+      flex-shrink: 0;
+    }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 32px 11px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .allianz-logo {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 40px;
+      padding-right: 80px;
+      flex-shrink: 0;
+    }
+    .app-title-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--core-color-gray-300);
+    }
+    .app-title-text {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--ui-06);
+      white-space: nowrap;
+    }
+    .header-nav-items {
+      display: flex;
+      gap: 32px;
+      align-items: flex-end;
+      height: 32px;
+      overflow: hidden;
+    }
+    .header-nav-item {
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--ui-06);
+      white-space: nowrap;
+      cursor: pointer;
+      height: 28px;
+      overflow: hidden;
+      transition: color var(--semantic-duration-static-fast);
+    }
+    .header-nav-item:hover { color: var(--env-action-primary); }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+    }
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--core-border-radius-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+      color: var(--env-action-primary);
+      transition: background var(--semantic-duration-static-fast), color var(--semantic-duration-static-fast);
+    }
+    .icon-btn:hover { background: var(--semantic-color-surface-default-disabled); color: var(--env-action-hover); }
+    .icon-btn svg { display: block; flex-shrink: 0; }
+
+    /* AVA Button — 3 states from Figma */
+    .ava-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 100px;
+      background: var(--ava-surface-static-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      padding: 4px;
+      transition: background var(--semantic-duration-static-medium) ease;
+      flex-shrink: 0;
+    }
+    .ava-btn:hover { background: var(--ava-surface-action-hover); }
+    .ava-btn.active {
+      background: linear-gradient(133.34deg, rgb(2,47,111) 8.28%, rgb(95,60,136) 47.67%, rgb(95,60,136) 53.78%, rgb(13,112,165) 90.65%);
+    }
+    .ava-btn.active:hover { background: linear-gradient(133.34deg, rgb(2,47,111) 8.28%, rgb(95,60,136) 47.67%, rgb(95,60,136) 53.78%, rgb(13,112,165) 90.65%); }
+    .ava-btn-inner {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ava-btn .ava-icon-active { display: none; }
+    .ava-btn.active .ava-icon-default { display: none; }
+    .ava-btn.active .ava-icon-active { display: flex; align-items: center; justify-content: center; }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ava-surface-action-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 24px;
+      flex-shrink: 0;
+    }
+    .user-avatar span {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--ava-text-on-strong);
+      letter-spacing: 0.2px;
+    }
+    .header-line {
+      height: 1px;
+      background: var(--core-color-gray-300);
+    }
     /* TOOLBAR STYLES */
     /* RESPONSIVE RULES */
   </style>
@@ -78,21 +217,297 @@ body {
   <div class="frame-wrap">
     <div class="frame-label">Large — 992px</div>
     <div class="frame frame--large">
-      <!-- header + toolbar content here -->
+      <header class="header">
+        <div class="header-nav">
+          <!-- Left: Logo + App name + Nav -->
+          <div class="header-left">
+            <svg class="allianz-logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Allianz">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M32.0017 16.0021C32.0017 6.85263 25.1566 0 16.0021 0C6.84336 0 0 6.85263 0 16.0021C0 25.1634 6.84336 32 16.0021 32C25.1566 32 32.0017 25.1634 32.0017 16.0021ZM29.2834 16.0021C29.2834 23.7836 23.6892 29.441 16.0021 29.441C8.31503 29.441 2.71914 23.7836 2.71914 16.0021C2.71914 8.21894 8.31503 2.56236 16.0021 2.56236C23.6892 2.56236 29.2834 8.25434 29.2834 16.0021ZM11.6579 24.978V9.34671H8.93876C7.59352 9.34671 7.06503 9.84401 7.06503 11.2247V24.978H11.6579ZM20.3497 24.978H24.9409V11.2247C24.9409 9.84401 24.4082 9.34671 23.0621 9.34671H20.3497V24.978ZM18.3116 24.978V7.31874C18.3116 5.91197 17.8118 5.43827 16.4446 5.43827H12.312V7.40977H12.5589C13.503 7.40977 13.685 7.62218 13.685 8.75838V24.978H18.3116Z" fill="#003781"/>
+            </svg>
+            <div class="app-title">
+              <div class="app-title-divider"></div>
+              <span class="app-title-text">Large Corp UW</span>
+            </div>
+            <nav class="header-nav-items">
+              <span class="header-nav-item">Dashboard</span>
+              <span class="header-nav-item">Parties</span>
+              <span class="header-nav-item">Submissions</span>
+              <span class="header-nav-item">Task Manager</span>
+              <span class="header-nav-item">Submissions search</span>
+              <span class="header-nav-item">hxReview</span>
+              <span class="header-nav-item">Tools</span>
+            </nav>
+          </div>
+
+          <!-- Right: Actions + Avatar -->
+          <div class="header-right">
+            <div class="header-actions">
+              <!-- AVA Toggle Button -->
+              <button class="ava-btn" id="ava-toggle" title="Open AVA">
+                <div class="ava-btn-inner">
+                  <!-- Default state: gradient sparkle -->
+                  <div class="ava-icon-default">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g filter="url(#filter0_d_537_395179)">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="url(#paint0_linear_537_395179)"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="url(#paint1_linear_537_395179)"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="url(#paint2_linear_537_395179)"/>
+                      </g>
+                      <defs>
+                      <filter id="filter0_d_537_395179" x="-2" y="-2" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="1"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_537_395179"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_537_395179" result="shape"/>
+                      </filter>
+                      <linearGradient id="paint0_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint1_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint2_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                  <!-- Active state: solid purple sparkle on gradient bg -->
+                  <div class="ava-icon-active">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="white"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="white"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="white"/>
+                    </svg>
+                  </div>
+                </div>
+              </button>
+              <!-- Report Issue -->
+              <button class="icon-btn" title="Report issue">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.2002 7.00488C24.74 7.00495 25.9998 8.25489 26 9.80469V20.1748C26 21.7148 24.7401 23.0048 23.2002 23.0049H11.1289L7.37012 26.7441C7.13616 26.9691 6.79118 27.0359 6.49023 26.915C6.19223 26.791 5.998 26.4978 6 26.1748V9.80469C6.00018 8.25892 7.25305 7.00601 8.79883 7.00488H23.2002ZM8.79883 8.60547C8.13904 8.60559 7.59881 9.13492 7.59863 9.80469V24.2441L10.2305 21.6055C10.3824 21.4565 10.5859 21.3741 10.7988 21.375H23.2002C23.8601 21.3749 24.4004 20.8348 24.4004 20.1748V9.80469C24.4002 9.13489 23.86 8.60554 23.2002 8.60547H8.79883ZM16.001 17.9805C16.4429 17.9806 16.8008 18.3403 16.8008 18.7812V19.0664C16.8008 19.5084 16.4429 19.8661 16.001 19.8662C15.559 19.8662 15.2012 19.5074 15.2012 19.0664V18.7812C15.2012 18.3392 15.559 17.9805 16.001 17.9805ZM16.001 10.1807C16.4428 10.1807 16.8006 10.5397 16.8008 10.9805V15.9805C16.8008 16.4224 16.4429 16.7812 16.001 16.7812C15.559 16.7812 15.2012 16.4215 15.2012 15.9805V10.9805C15.2014 10.5386 15.5591 10.1807 16.001 10.1807Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- History -->
+              <button class="icon-btn" title="History">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 5C22.075 5 27 9.925 27 16C27 22.075 22.075 27 16 27C9.92418 26.9998 5 22.0749 5 16C5 9.92513 9.92418 5.00022 16 5ZM16 6.59961C10.8162 6.59983 6.59961 10.8161 6.59961 16C6.59961 21.1839 10.8162 25.4002 16 25.4004C21.183 25.4004 25.4004 21.184 25.4004 16C25.4004 10.816 21.183 6.59961 16 6.59961ZM15.5332 10.1016C15.9742 10.1016 16.333 10.4604 16.333 10.9014V16.2383L19.6016 17.4307C20.0165 17.5827 20.2301 18.042 20.0791 18.457C19.9601 18.781 19.6531 18.9824 19.3271 18.9824C19.2363 18.9824 19.1436 18.9665 19.0527 18.9346L15.2588 17.5498C14.9438 17.4348 14.7334 17.1339 14.7334 16.7979V10.9014C14.7334 10.4604 15.0913 10.1017 15.5332 10.1016Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Notifications -->
+              <button class="icon-btn" title="Notifications">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 23C18 24.104 17.104 25 16 25C14.896 25 14 24.104 14 23H18ZM16 5.5C16.828 5.5 17.5 6.172 17.5 7C17.5 7.065 17.4885 7.12841 17.4805 7.19141C20.0572 7.84859 21.9691 10.1656 21.9971 12.9395L22 18L24 20.4404V22H8V20.4404L10 18L10.0029 12.9395C10.0309 10.1656 11.9418 7.84859 14.5195 7.19141C14.5115 7.12841 14.5 7.065 14.5 7C14.5 6.172 15.172 5.5 16 5.5ZM16 8.59961C13.6 8.59961 11.6265 10.5541 11.6025 12.9551L11.5996 18.001C11.5996 18.3708 11.4721 18.7287 11.2373 19.0146L10.1016 20.4004H21.8984L20.7627 19.0146C20.5279 18.7287 20.4004 18.3708 20.4004 18.001L20.3965 12.9404C20.3735 10.5544 18.4 8.59961 16 8.59961Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Apps -->
+              <button class="icon-btn" title="Apps">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 20C11.105 20 12 20.895 12 22C12 23.105 11.105 24 10 24C8.895 24 8 23.105 8 22C8 20.895 8.895 20 10 20ZM16 20C17.105 20 18 20.895 18 22C18 23.105 17.105 24 16 24C14.895 24 14 23.105 14 22C14 20.895 14.895 20 16 20ZM22 20C23.105 20 24 20.895 24 22C24 23.105 23.105 24 22 24C20.895 24 20 23.105 20 22C20 20.895 20.895 20 22 20ZM10 14C11.105 14 12 14.895 12 16C12 17.105 11.105 18 10 18C8.895 18 8 17.105 8 16C8 14.895 8.895 14 10 14ZM16 14C17.105 14 18 14.895 18 16C18 17.105 17.105 18 16 18C14.895 18 14 17.105 14 16C14 14.895 14.895 14 16 14ZM22 14C23.105 14 24 14.895 24 16C24 17.105 23.105 18 22 18C20.895 18 20 17.105 20 16C20 14.895 20.895 14 22 14ZM10 8C11.105 8 12 8.895 12 10C12 11.105 11.105 12 10 12C8.895 12 8 11.105 8 10C8 8.895 8.895 8 10 8ZM16 8C17.105 8 18 8.895 18 10C18 11.105 17.105 12 16 12C14.895 12 14 11.105 14 10C14 8.895 14.895 8 16 8ZM22 8C23.105 8 24 8.895 24 10C24 11.105 23.105 12 22 12C20.895 12 20 11.105 20 10C20 8.895 20.895 8 22 8Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="user-avatar"><span>MD</span></div>
+          </div>
+        </div>
+        <div class="header-line"></div>
+      </header>
+      <!-- toolbar content here -->
     </div>
   </div>
 
   <div class="frame-wrap">
     <div class="frame-label">Medium — 704px</div>
     <div class="frame frame--medium">
-      <!-- header + toolbar content here -->
+      <header class="header">
+        <div class="header-nav">
+          <!-- Left: Logo + App name + Nav -->
+          <div class="header-left">
+            <svg class="allianz-logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Allianz">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M32.0017 16.0021C32.0017 6.85263 25.1566 0 16.0021 0C6.84336 0 0 6.85263 0 16.0021C0 25.1634 6.84336 32 16.0021 32C25.1566 32 32.0017 25.1634 32.0017 16.0021ZM29.2834 16.0021C29.2834 23.7836 23.6892 29.441 16.0021 29.441C8.31503 29.441 2.71914 23.7836 2.71914 16.0021C2.71914 8.21894 8.31503 2.56236 16.0021 2.56236C23.6892 2.56236 29.2834 8.25434 29.2834 16.0021ZM11.6579 24.978V9.34671H8.93876C7.59352 9.34671 7.06503 9.84401 7.06503 11.2247V24.978H11.6579ZM20.3497 24.978H24.9409V11.2247C24.9409 9.84401 24.4082 9.34671 23.0621 9.34671H20.3497V24.978ZM18.3116 24.978V7.31874C18.3116 5.91197 17.8118 5.43827 16.4446 5.43827H12.312V7.40977H12.5589C13.503 7.40977 13.685 7.62218 13.685 8.75838V24.978H18.3116Z" fill="#003781"/>
+            </svg>
+            <div class="app-title">
+              <div class="app-title-divider"></div>
+              <span class="app-title-text">Large Corp UW</span>
+            </div>
+            <nav class="header-nav-items">
+              <span class="header-nav-item">Dashboard</span>
+              <span class="header-nav-item">Parties</span>
+              <span class="header-nav-item">Submissions</span>
+              <span class="header-nav-item">Task Manager</span>
+              <span class="header-nav-item">Submissions search</span>
+              <span class="header-nav-item">hxReview</span>
+              <span class="header-nav-item">Tools</span>
+            </nav>
+          </div>
+
+          <!-- Right: Actions + Avatar -->
+          <div class="header-right">
+            <div class="header-actions">
+              <!-- AVA Toggle Button -->
+              <button class="ava-btn" id="ava-toggle" title="Open AVA">
+                <div class="ava-btn-inner">
+                  <!-- Default state: gradient sparkle -->
+                  <div class="ava-icon-default">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g filter="url(#filter0_d_537_395179)">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="url(#paint0_linear_537_395179)"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="url(#paint1_linear_537_395179)"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="url(#paint2_linear_537_395179)"/>
+                      </g>
+                      <defs>
+                      <filter id="filter0_d_537_395179" x="-2" y="-2" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="1"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_537_395179"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_537_395179" result="shape"/>
+                      </filter>
+                      <linearGradient id="paint0_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint1_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint2_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                  <!-- Active state: solid purple sparkle on gradient bg -->
+                  <div class="ava-icon-active">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="white"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="white"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="white"/>
+                    </svg>
+                  </div>
+                </div>
+              </button>
+              <!-- Report Issue -->
+              <button class="icon-btn" title="Report issue">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.2002 7.00488C24.74 7.00495 25.9998 8.25489 26 9.80469V20.1748C26 21.7148 24.7401 23.0048 23.2002 23.0049H11.1289L7.37012 26.7441C7.13616 26.9691 6.79118 27.0359 6.49023 26.915C6.19223 26.791 5.998 26.4978 6 26.1748V9.80469C6.00018 8.25892 7.25305 7.00601 8.79883 7.00488H23.2002ZM8.79883 8.60547C8.13904 8.60559 7.59881 9.13492 7.59863 9.80469V24.2441L10.2305 21.6055C10.3824 21.4565 10.5859 21.3741 10.7988 21.375H23.2002C23.8601 21.3749 24.4004 20.8348 24.4004 20.1748V9.80469C24.4002 9.13489 23.86 8.60554 23.2002 8.60547H8.79883ZM16.001 17.9805C16.4429 17.9806 16.8008 18.3403 16.8008 18.7812V19.0664C16.8008 19.5084 16.4429 19.8661 16.001 19.8662C15.559 19.8662 15.2012 19.5074 15.2012 19.0664V18.7812C15.2012 18.3392 15.559 17.9805 16.001 17.9805ZM16.001 10.1807C16.4428 10.1807 16.8006 10.5397 16.8008 10.9805V15.9805C16.8008 16.4224 16.4429 16.7812 16.001 16.7812C15.559 16.7812 15.2012 16.4215 15.2012 15.9805V10.9805C15.2014 10.5386 15.5591 10.1807 16.001 10.1807Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- History -->
+              <button class="icon-btn" title="History">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 5C22.075 5 27 9.925 27 16C27 22.075 22.075 27 16 27C9.92418 26.9998 5 22.0749 5 16C5 9.92513 9.92418 5.00022 16 5ZM16 6.59961C10.8162 6.59983 6.59961 10.8161 6.59961 16C6.59961 21.1839 10.8162 25.4002 16 25.4004C21.183 25.4004 25.4004 21.184 25.4004 16C25.4004 10.816 21.183 6.59961 16 6.59961ZM15.5332 10.1016C15.9742 10.1016 16.333 10.4604 16.333 10.9014V16.2383L19.6016 17.4307C20.0165 17.5827 20.2301 18.042 20.0791 18.457C19.9601 18.781 19.6531 18.9824 19.3271 18.9824C19.2363 18.9824 19.1436 18.9665 19.0527 18.9346L15.2588 17.5498C14.9438 17.4348 14.7334 17.1339 14.7334 16.7979V10.9014C14.7334 10.4604 15.0913 10.1017 15.5332 10.1016Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Notifications -->
+              <button class="icon-btn" title="Notifications">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 23C18 24.104 17.104 25 16 25C14.896 25 14 24.104 14 23H18ZM16 5.5C16.828 5.5 17.5 6.172 17.5 7C17.5 7.065 17.4885 7.12841 17.4805 7.19141C20.0572 7.84859 21.9691 10.1656 21.9971 12.9395L22 18L24 20.4404V22H8V20.4404L10 18L10.0029 12.9395C10.0309 10.1656 11.9418 7.84859 14.5195 7.19141C14.5115 7.12841 14.5 7.065 14.5 7C14.5 6.172 15.172 5.5 16 5.5ZM16 8.59961C13.6 8.59961 11.6265 10.5541 11.6025 12.9551L11.5996 18.001C11.5996 18.3708 11.4721 18.7287 11.2373 19.0146L10.1016 20.4004H21.8984L20.7627 19.0146C20.5279 18.7287 20.4004 18.3708 20.4004 18.001L20.3965 12.9404C20.3735 10.5544 18.4 8.59961 16 8.59961Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Apps -->
+              <button class="icon-btn" title="Apps">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 20C11.105 20 12 20.895 12 22C12 23.105 11.105 24 10 24C8.895 24 8 23.105 8 22C8 20.895 8.895 20 10 20ZM16 20C17.105 20 18 20.895 18 22C18 23.105 17.105 24 16 24C14.895 24 14 23.105 14 22C14 20.895 14.895 20 16 20ZM22 20C23.105 20 24 20.895 24 22C24 23.105 23.105 24 22 24C20.895 24 20 23.105 20 22C20 20.895 20.895 20 22 20ZM10 14C11.105 14 12 14.895 12 16C12 17.105 11.105 18 10 18C8.895 18 8 17.105 8 16C8 14.895 8.895 14 10 14ZM16 14C17.105 14 18 14.895 18 16C18 17.105 17.105 18 16 18C14.895 18 14 17.105 14 16C14 14.895 14.895 14 16 14ZM22 14C23.105 14 24 14.895 24 16C24 17.105 23.105 18 22 18C20.895 18 20 17.105 20 16C20 14.895 20.895 14 22 14ZM10 8C11.105 8 12 8.895 12 10C12 11.105 11.105 12 10 12C8.895 12 8 11.105 8 10C8 8.895 8.895 8 10 8ZM16 8C17.105 8 18 8.895 18 10C18 11.105 17.105 12 16 12C14.895 12 14 11.105 14 10C14 8.895 14.895 8 16 8ZM22 8C23.105 8 24 8.895 24 10C24 11.105 23.105 12 22 12C20.895 12 20 11.105 20 10C20 8.895 20.895 8 22 8Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="user-avatar"><span>MD</span></div>
+          </div>
+        </div>
+        <div class="header-line"></div>
+      </header>
+      <!-- toolbar content here -->
     </div>
   </div>
 
   <div class="frame-wrap">
     <div class="frame-label">Small — 320px</div>
     <div class="frame frame--small">
-      <!-- header + toolbar content here -->
+      <header class="header">
+        <div class="header-nav">
+          <!-- Left: Logo + App name + Nav -->
+          <div class="header-left">
+            <svg class="allianz-logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Allianz">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M32.0017 16.0021C32.0017 6.85263 25.1566 0 16.0021 0C6.84336 0 0 6.85263 0 16.0021C0 25.1634 6.84336 32 16.0021 32C25.1566 32 32.0017 25.1634 32.0017 16.0021ZM29.2834 16.0021C29.2834 23.7836 23.6892 29.441 16.0021 29.441C8.31503 29.441 2.71914 23.7836 2.71914 16.0021C2.71914 8.21894 8.31503 2.56236 16.0021 2.56236C23.6892 2.56236 29.2834 8.25434 29.2834 16.0021ZM11.6579 24.978V9.34671H8.93876C7.59352 9.34671 7.06503 9.84401 7.06503 11.2247V24.978H11.6579ZM20.3497 24.978H24.9409V11.2247C24.9409 9.84401 24.4082 9.34671 23.0621 9.34671H20.3497V24.978ZM18.3116 24.978V7.31874C18.3116 5.91197 17.8118 5.43827 16.4446 5.43827H12.312V7.40977H12.5589C13.503 7.40977 13.685 7.62218 13.685 8.75838V24.978H18.3116Z" fill="#003781"/>
+            </svg>
+            <div class="app-title">
+              <div class="app-title-divider"></div>
+              <span class="app-title-text">Large Corp UW</span>
+            </div>
+            <nav class="header-nav-items">
+              <span class="header-nav-item">Dashboard</span>
+              <span class="header-nav-item">Parties</span>
+              <span class="header-nav-item">Submissions</span>
+              <span class="header-nav-item">Task Manager</span>
+              <span class="header-nav-item">Submissions search</span>
+              <span class="header-nav-item">hxReview</span>
+              <span class="header-nav-item">Tools</span>
+            </nav>
+          </div>
+
+          <!-- Right: Actions + Avatar -->
+          <div class="header-right">
+            <div class="header-actions">
+              <!-- AVA Toggle Button -->
+              <button class="ava-btn" id="ava-toggle" title="Open AVA">
+                <div class="ava-btn-inner">
+                  <!-- Default state: gradient sparkle -->
+                  <div class="ava-icon-default">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g filter="url(#filter0_d_537_395179)">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="url(#paint0_linear_537_395179)"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="url(#paint1_linear_537_395179)"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="url(#paint2_linear_537_395179)"/>
+                      </g>
+                      <defs>
+                      <filter id="filter0_d_537_395179" x="-2" y="-2" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="1"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_537_395179"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_537_395179" result="shape"/>
+                      </filter>
+                      <linearGradient id="paint0_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint1_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      <linearGradient id="paint2_linear_537_395179" x1="2.20833" y1="2.27778" x2="23.1806" y2="22.0694" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.0692778" stop-color="#022F6F"/><stop offset="0.455458" stop-color="#5F3C88"/><stop offset="0.51538" stop-color="#5F3C88"/><stop offset="0.876908" stop-color="#0D70A5"/>
+                      </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                  <!-- Active state: solid purple sparkle on gradient bg -->
+                  <div class="ava-icon-active">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.7759 7.95983C13.3514 6.82211 12.8271 5.36755 12.5996 4.53859C12.1872 3.03585 12 2 12 2C12 2 11.8122 3.03593 11.3996 4.53859C11.168 5.38212 10.6293 6.87357 10.2013 8.01969C9.82314 9.03238 9.03966 9.83932 8.03519 10.2388C6.97221 10.6616 5.61506 11.1776 4.79289 11.3999C3.28688 11.807 2 12 2 12C2 12 3.28686 12.1928 4.79289 12.5999C5.63103 12.8265 7.0251 13.3584 8.09676 13.7856C9.06437 14.1713 9.82903 14.9355 10.2152 15.9029C10.6421 16.9722 11.1732 18.3624 11.3996 19.1999C11.8068 20.706 12 22 12 22C12 22 12.1926 20.706 12.5996 19.1999C12.82 18.3842 13.3298 17.0441 13.7508 15.9869C14.1561 14.9694 14.9792 14.1801 16.0087 13.8061C17.1516 13.391 18.6265 12.8703 19.4614 12.6349C20.9606 12.2123 22 12 22 12C22 12 20.9641 11.8124 19.4614 11.3999C18.6325 11.1724 17.178 10.6482 16.0403 10.2238C14.9919 9.83284 14.1671 9.00813 13.7759 7.95983Z" fill="white"/>
+                      <path d="M5.5 3L5.88841 3.98484C6.0917 4.50028 6.49972 4.9083 7.01516 5.11158L8 5.5L7.01516 5.88841C6.49972 6.0917 6.0917 6.49972 5.88841 7.01516L5.5 8L5.11159 7.01516C4.9083 6.49972 4.50028 6.0917 3.98484 5.88841L3 5.5L3.98484 5.11158C4.50028 4.9083 4.9083 4.50028 5.11159 3.98484L5.5 3Z" fill="white"/>
+                      <path d="M19.5298 17.3434L19 16L18.4702 17.3434C18.2669 17.8589 17.8589 18.2669 17.3434 18.4702L16 19L17.3434 19.5298C17.8589 19.7331 18.2669 20.1411 18.4702 20.6566L19 22L19.5298 20.6566C19.7331 20.1411 20.1411 19.7331 20.6566 19.5298L22 19L20.6566 18.4702C20.1411 18.2669 19.7331 17.8589 19.5298 17.3434Z" fill="white"/>
+                    </svg>
+                  </div>
+                </div>
+              </button>
+              <!-- Report Issue -->
+              <button class="icon-btn" title="Report issue">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.2002 7.00488C24.74 7.00495 25.9998 8.25489 26 9.80469V20.1748C26 21.7148 24.7401 23.0048 23.2002 23.0049H11.1289L7.37012 26.7441C7.13616 26.9691 6.79118 27.0359 6.49023 26.915C6.19223 26.791 5.998 26.4978 6 26.1748V9.80469C6.00018 8.25892 7.25305 7.00601 8.79883 7.00488H23.2002ZM8.79883 8.60547C8.13904 8.60559 7.59881 9.13492 7.59863 9.80469V24.2441L10.2305 21.6055C10.3824 21.4565 10.5859 21.3741 10.7988 21.375H23.2002C23.8601 21.3749 24.4004 20.8348 24.4004 20.1748V9.80469C24.4002 9.13489 23.86 8.60554 23.2002 8.60547H8.79883ZM16.001 17.9805C16.4429 17.9806 16.8008 18.3403 16.8008 18.7812V19.0664C16.8008 19.5084 16.4429 19.8661 16.001 19.8662C15.559 19.8662 15.2012 19.5074 15.2012 19.0664V18.7812C15.2012 18.3392 15.559 17.9805 16.001 17.9805ZM16.001 10.1807C16.4428 10.1807 16.8006 10.5397 16.8008 10.9805V15.9805C16.8008 16.4224 16.4429 16.7812 16.001 16.7812C15.559 16.7812 15.2012 16.4215 15.2012 15.9805V10.9805C15.2014 10.5386 15.5591 10.1807 16.001 10.1807Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- History -->
+              <button class="icon-btn" title="History">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 5C22.075 5 27 9.925 27 16C27 22.075 22.075 27 16 27C9.92418 26.9998 5 22.0749 5 16C5 9.92513 9.92418 5.00022 16 5ZM16 6.59961C10.8162 6.59983 6.59961 10.8161 6.59961 16C6.59961 21.1839 10.8162 25.4002 16 25.4004C21.183 25.4004 25.4004 21.184 25.4004 16C25.4004 10.816 21.183 6.59961 16 6.59961ZM15.5332 10.1016C15.9742 10.1016 16.333 10.4604 16.333 10.9014V16.2383L19.6016 17.4307C20.0165 17.5827 20.2301 18.042 20.0791 18.457C19.9601 18.781 19.6531 18.9824 19.3271 18.9824C19.2363 18.9824 19.1436 18.9665 19.0527 18.9346L15.2588 17.5498C14.9438 17.4348 14.7334 17.1339 14.7334 16.7979V10.9014C14.7334 10.4604 15.0913 10.1017 15.5332 10.1016Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Notifications -->
+              <button class="icon-btn" title="Notifications">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 23C18 24.104 17.104 25 16 25C14.896 25 14 24.104 14 23H18ZM16 5.5C16.828 5.5 17.5 6.172 17.5 7C17.5 7.065 17.4885 7.12841 17.4805 7.19141C20.0572 7.84859 21.9691 10.1656 21.9971 12.9395L22 18L24 20.4404V22H8V20.4404L10 18L10.0029 12.9395C10.0309 10.1656 11.9418 7.84859 14.5195 7.19141C14.5115 7.12841 14.5 7.065 14.5 7C14.5 6.172 15.172 5.5 16 5.5ZM16 8.59961C13.6 8.59961 11.6265 10.5541 11.6025 12.9551L11.5996 18.001C11.5996 18.3708 11.4721 18.7287 11.2373 19.0146L10.1016 20.4004H21.8984L20.7627 19.0146C20.5279 18.7287 20.4004 18.3708 20.4004 18.001L20.3965 12.9404C20.3735 10.5544 18.4 8.59961 16 8.59961Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <!-- Apps -->
+              <button class="icon-btn" title="Apps">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 20C11.105 20 12 20.895 12 22C12 23.105 11.105 24 10 24C8.895 24 8 23.105 8 22C8 20.895 8.895 20 10 20ZM16 20C17.105 20 18 20.895 18 22C18 23.105 17.105 24 16 24C14.895 24 14 23.105 14 22C14 20.895 14.895 20 16 20ZM22 20C23.105 20 24 20.895 24 22C24 23.105 23.105 24 22 24C20.895 24 20 23.105 20 22C20 20.895 20.895 20 22 20ZM10 14C11.105 14 12 14.895 12 16C12 17.105 11.105 18 10 18C8.895 18 8 17.105 8 16C8 14.895 8.895 14 10 14ZM16 14C17.105 14 18 14.895 18 16C18 17.105 17.105 18 16 18C14.895 18 14 17.105 14 16C14 14.895 14.895 14 16 14ZM22 14C23.105 14 24 14.895 24 16C24 17.105 23.105 18 22 18C20.895 18 20 17.105 20 16C20 14.895 20.895 14 22 14ZM10 8C11.105 8 12 8.895 12 10C12 11.105 11.105 12 10 12C8.895 12 8 11.105 8 10C8 8.895 8.895 8 10 8ZM16 8C17.105 8 18 8.895 18 10C18 11.105 17.105 12 16 12C14.895 12 14 11.105 14 10C14 8.895 14.895 8 16 8ZM22 8C23.105 8 24 8.895 24 10C24 11.105 23.105 12 22 12C20.895 12 20 11.105 20 10C20 8.895 20.895 8 22 8Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="user-avatar"><span>MD</span></div>
+          </div>
+        </div>
+        <div class="header-line"></div>
+      </header>
+      <!-- toolbar content here -->
     </div>
   </div>
 
