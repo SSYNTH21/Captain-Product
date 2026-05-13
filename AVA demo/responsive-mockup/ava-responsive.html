@@ -2425,24 +2425,18 @@
       background: linear-gradient(to left, #ffffff, transparent);
       pointer-events: none;
     }
-    /* Hide buttons at scroll boundaries */
-    .header-nav-row2.at-start .header-nav-scroll-btn--left { display: none; }
-    .header-nav-row2.at-end .header-nav-scroll-btn--right { display: none; }
     .header-line--row2 { display: none; } /* border handled by .header-nav-row2 directly */
 
     @media (max-width: 1279px) {
       .header-nav-items--inline { display: none; }
       .header-nav-row2 { display: flex; }
-      /* all items fit at 801–1279px — hide scroll arrows */
+      /* arrows hidden by default — JS adds .is-scrollable when content overflows */
       .header-nav-scroll-btn { display: none; }
     }
-    @media (max-width: 800px) {
-      /* items start overflowing — show scroll arrows */
-      .header-nav-scroll-btn { display: flex; }
-      /* but still hide at scroll boundaries */
-      .header-nav-row2.at-start .header-nav-scroll-btn--left { display: none; }
-      .header-nav-row2.at-end .header-nav-scroll-btn--right { display: none; }
-    }
+    /* JS toggles .is-scrollable on the row when content overflows */
+    .header-nav-row2.is-scrollable .header-nav-scroll-btn { display: flex; }
+    .header-nav-row2.is-scrollable.at-start .header-nav-scroll-btn--left { display: none; }
+    .header-nav-row2.is-scrollable.at-end .header-nav-scroll-btn--right { display: none; }
 
     /* ── Toolbar responsive: breadcrumb collapse at ≤703px ── */
     .breadcrumb-level1 {
@@ -4663,10 +4657,12 @@
     if (!scrollable) return;
     var row = document.getElementById('header-nav-row2');
     if (!row) return;
-    // If row is not rendered (display:none), scrollWidth === 0 — skip to avoid false at-end
+    // If row is not rendered (display:none), scrollWidth === 0 — skip
     if (scrollable.scrollWidth === 0) return;
+    var isScrollable = scrollable.scrollWidth > scrollable.clientWidth;
     var atStart = scrollable.scrollLeft <= 0;
     var atEnd = scrollable.scrollLeft + scrollable.clientWidth >= scrollable.scrollWidth - 1;
+    row.classList.toggle('is-scrollable', isScrollable);
     row.classList.toggle('at-start', atStart);
     row.classList.toggle('at-end', atEnd);
   }
