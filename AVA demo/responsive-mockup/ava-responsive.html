@@ -2345,17 +2345,15 @@
 
     .header-nav-row2 {
       display: none;
-      align-items: stretch;
       position: relative;
-      height: 64px;
       background: var(--semantic-color-surface-default-resting);
       border-top: 1px solid var(--core-color-gray-300, #d9d9d9);
+      border-bottom: 1px solid var(--core-color-gray-300, #d9d9d9);
     }
     .header-nav-scrollable {
       flex: 1;
-      align-self: stretch;
       display: flex;
-      align-items: stretch;
+      align-items: center;
       gap: 32px;
       overflow-x: scroll;
       scrollbar-width: none;
@@ -2366,7 +2364,6 @@
     /* When scroll button visible, indent content to clear the button */
     .header-nav-row2.is-scrollable:not(.at-start) .header-nav-scrollable { padding-left: 40px; }
     .header-nav-row2.is-scrollable:not(.at-end) .header-nav-scrollable { padding-right: 40px; }
-    /* Items stretch full height of row, text centered vertically via flex */
     .header-nav-item2 {
       font-size: 16px;
       line-height: 24px;
@@ -2374,9 +2371,7 @@
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
-      position: relative;
-      display: flex;
-      align-items: center;
+      padding: 16px 0;
       transition: color var(--semantic-duration-static-fast);
     }
     .header-nav-item2:hover { color: var(--env-action-primary); }
@@ -2433,6 +2428,8 @@
       .header-nav-row2 { display: flex; }
       /* arrows hidden by default — JS adds .is-scrollable when content overflows */
       .header-nav-scroll-btn { display: none; }
+      /* row2 has its own border-bottom, hide the separate header-line div */
+      .header-line:last-of-type { display: none; }
     }
     /* JS toggles .is-scrollable on the row when content overflows */
     .header-nav-row2.is-scrollable .header-nav-scroll-btn { display: flex; }
