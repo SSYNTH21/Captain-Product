@@ -751,24 +751,18 @@
     .nav-sub-item.active .nav-sub-label { font-weight: 700; color: #fff; }
     .side-nav.collapsed .nav-sub-items { display: none; }
 
-    /* ── COLLAPSED GROUP: child indicator dot ─────────── */
+    /* ── COLLAPSED GROUP: child indicator triangle ─────── */
     .nav-group-indicator {
       position: absolute;
       bottom: 4px;
       right: 4px;
-      width: 8px;
-      height: 8px;
-      display: none;
-    }
-    /* triangle pointing right — pure CSS, no image needed */
-    .nav-group-indicator::after {
-      content: '';
-      display: block;
       width: 0;
       height: 0;
-      border-top: 4px solid transparent;
-      border-bottom: 4px solid transparent;
-      border-left: 6px solid #414141;
+      border-top: 5px solid transparent;
+      border-bottom: 0px solid transparent;
+      border-left: 5px solid #414141;
+      display: none;
+      transform: rotate(-45deg);
     }
     .side-nav.collapsed .nav-group .nav-group-header {
       position: relative;
@@ -778,10 +772,8 @@
     /* ── COLLAPSED GROUP: flyout popup ─────────────────── */
     .nav-group-flyout {
       display: none;
-      position: absolute;
-      left: 64px; /* width of collapsed nav (56px) + 8px gap */
-      top: 0;
-      z-index: 200;
+      position: fixed;
+      z-index: 300;
       background: #fff;
       border-radius: 4px;
       box-shadow: 0 2px 4px 0 rgba(65,65,65,0.5);
@@ -811,8 +803,10 @@
       transition: background var(--semantic-duration-static-fast);
     }
     .nav-group-flyout-item:hover { background: var(--core-color-gray-200); }
-    /* Show flyout on group-header hover in collapsed mode */
-    .side-nav.collapsed .nav-group:hover .nav-group-flyout { display: block; }
+    /* Show flyout when .flyout-open in collapsed mode */
+    .side-nav.collapsed .nav-group.flyout-open .nav-group-flyout { display: block; }
+    /* Highlight parent row when flyout is open */
+    .side-nav.collapsed .nav-group.flyout-open .nav-group-header { background: var(--core-color-gray-200); }
 
     /* ── MAIN CONTENT ─────────────────────────────────── */
     .main-content {
@@ -4431,8 +4425,36 @@
   function toggleNavGroup(groupId) {
     var group = document.getElementById(groupId);
     if (!group) return;
-    group.classList.toggle('open');
+    var isCollapsed = sideNav.classList.contains('collapsed');
+    if (isCollapsed) {
+      var isOpen = group.classList.contains('flyout-open');
+      closeAllNavFlyouts();
+      if (!isOpen) {
+        group.classList.add('flyout-open');
+        var header = group.querySelector('.nav-group-header');
+        var flyout = group.querySelector('.nav-group-flyout');
+        if (header && flyout) {
+          var rect = header.getBoundingClientRect();
+          flyout.style.left = (rect.right + 8) + 'px';
+          flyout.style.top = rect.top + 'px';
+        }
+      }
+    } else {
+      group.classList.toggle('open');
+    }
   }
+
+  function closeAllNavFlyouts() {
+    document.querySelectorAll('.nav-group.flyout-open').forEach(function(g) {
+      g.classList.remove('flyout-open');
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-group')) {
+      closeAllNavFlyouts();
+    }
+  });
 
   function manualToggleNav() {
     // Medium: nav cannot be expanded — ignore toggle
