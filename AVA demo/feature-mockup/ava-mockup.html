@@ -4286,25 +4286,10 @@
       sideNav.classList.remove('nav-open');
       backdrop.classList.remove('active');
       navAutoCollapsed = false;
-      // Convert any .open groups to .flyout-open
+      // Convert any .open groups to .flyout-open (highlight only — popup opens on click)
       document.querySelectorAll('.nav-group.open').forEach(function(group) {
         group.classList.remove('open');
         group.classList.add('flyout-open');
-        var header = group.querySelector('.nav-group-header');
-        var flyoutTemplate = group.querySelector('.nav-group-flyout');
-        if (header && flyoutTemplate) {
-          var rect = header.getBoundingClientRect();
-          var existing = document.querySelector('[data-flyout-for="' + group.id + '"]');
-          if (!existing) {
-            var popup = document.createElement('div');
-            popup.className = 'nav-group-flyout-popup';
-            popup.setAttribute('data-flyout-for', group.id);
-            popup.innerHTML = flyoutTemplate.innerHTML;
-            popup.style.left = (rect.right + 8) + 'px';
-            popup.style.top = rect.top + 'px';
-            document.body.appendChild(popup);
-          }
-        }
       });
     } else {
       // Scaling back up to expanded nav — convert any .flyout-open groups to .open
