@@ -2402,6 +2402,32 @@
       .header-nav-row2 { display: flex; }
       .header-line--row2 { display: block; }
     }
+
+    /* ── Toolbar responsive: breadcrumb collapse at ≤703px ── */
+    .breadcrumb-level1 {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .breadcrumb-ellipsis {
+      flex-shrink: 0;
+    }
+    .breadcrumb-current {
+      /* inherits .breadcrumb-item.bold */
+    }
+
+    @media (max-width: 703px) {
+      .breadcrumb-level1 { display: none; }
+      .toolbar-actions-start { flex: 1 0 0; min-width: 0; }
+      .breadcrumb-current {
+        flex: 1 0 0;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2530,12 +2556,18 @@
 
   <!-- ═══ TOOLBAR ══════════════════════════════════════ -->
   <div class="toolbar">
-    <div class="breadcrumb">
-      <span class="breadcrumb-item">AON Insurance Germany</span>
+    <div class="breadcrumb toolbar-actions-start">
+      <span class="breadcrumb-level1">
+        <span class="breadcrumb-item">AON Insurance Germany</span>
+        <svg class="breadcrumb-sep" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="breadcrumb-ellipsis breadcrumb-item" style="color: var(--breadcrumb-link-color, #006192); cursor: pointer;">…</span>
       <svg class="breadcrumb-sep" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z" fill="currentColor"/>
       </svg>
-      <span class="breadcrumb-item bold">NLP0000005.6.1</span>
+      <span class="breadcrumb-item bold breadcrumb-current">NLP0000005.6.1</span>
     </div>
     <div class="toolbar-right">
       <div class="toolbar-divider"></div>
