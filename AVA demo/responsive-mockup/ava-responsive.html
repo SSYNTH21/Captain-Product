@@ -2349,7 +2349,7 @@
       position: relative;
       height: 64px;
       background: var(--semantic-color-surface-default-resting);
-      overflow: hidden;
+      border-bottom: 1px solid var(--core-color-gray-300, #d9d9d9);
     }
     .header-nav-scrollable {
       flex: 1;
@@ -2360,13 +2360,14 @@
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 12px;
-      padding-left: 40px;
+      padding-left: 16px;
       padding-right: 40px;
     }
     .header-nav-scrollable::-webkit-scrollbar { display: none; }
-    /* hide left padding when at scroll start, right padding when at end */
-    .header-nav-row2.at-start .header-nav-scrollable { padding-left: 16px; }
-    .header-nav-row2.at-end .header-nav-scrollable { padding-right: 16px; }
+    /* At scroll start: no left button, so no left padding needed */
+    .header-nav-row2.at-start .header-nav-scrollable { padding-left: 0; }
+    /* At scroll end: no right button, so no right padding needed */
+    .header-nav-row2.at-end .header-nav-scrollable { padding-right: 0; }
     .header-nav-item2 {
       font-size: 16px;
       line-height: 24px;
@@ -2383,7 +2384,7 @@
       border-bottom: 2px solid var(--env-action-primary);
       padding-bottom: 2px;
     }
-    /* Scroll buttons: absolutely positioned at left/right edges */
+    /* Scroll buttons: absolutely positioned at left/right edges, NDBX style */
     .header-nav-scroll-btn {
       position: absolute;
       top: 0;
@@ -2391,26 +2392,26 @@
       background: #ffffff;
       border: none;
       cursor: pointer;
-      width: 40px;
+      width: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--ui-06);
+      color: var(--env-action-primary);
       z-index: 1;
       padding: 0;
       transition: color var(--semantic-duration-static-fast);
     }
-    .header-nav-scroll-btn:hover { color: var(--env-action-primary); }
+    .header-nav-scroll-btn:hover { color: var(--env-action-primary-hover); }
     .header-nav-scroll-btn--left { left: 0; }
     .header-nav-scroll-btn--right { right: 0; }
-    /* Fade gradient behind each button */
-    .header-nav-scroll-btn--left::after {
+    /* Fade gradient — stops 1px above container border */
+    .header-nav-scroll-btn--left::before {
       content: '';
       position: absolute;
       top: 0;
       left: 100%;
-      width: 32px;
-      height: 100%;
+      width: 24px;
+      height: calc(100% - 1px);
       background: linear-gradient(to right, #ffffff, transparent);
       pointer-events: none;
     }
@@ -2419,20 +2420,19 @@
       position: absolute;
       top: 0;
       right: 100%;
-      width: 32px;
-      height: 100%;
+      width: 24px;
+      height: calc(100% - 1px);
       background: linear-gradient(to left, #ffffff, transparent);
       pointer-events: none;
     }
     /* Hide buttons at scroll boundaries */
     .header-nav-row2.at-start .header-nav-scroll-btn--left { display: none; }
     .header-nav-row2.at-end .header-nav-scroll-btn--right { display: none; }
-    .header-line--row2 { display: none; }
+    .header-line--row2 { display: none; } /* border handled by .header-nav-row2 directly */
 
     @media (max-width: 1279px) {
       .header-nav-items--inline { display: none; }
       .header-nav-row2 { display: flex; }
-      .header-line--row2 { display: block; }
     }
 
     /* ── Toolbar responsive: breadcrumb collapse at ≤703px ── */
