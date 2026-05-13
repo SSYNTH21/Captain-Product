@@ -1290,7 +1290,7 @@
     .ava-header-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 4px;
       flex-shrink: 0;
     }
     /* nxPlainButton — Unpin, Expand, Close, Suggestions collapse */
@@ -1329,8 +1329,9 @@
       box-sizing: border-box;
     }
     .ava-tertiary-btn svg { width: 24px; height: 24px; flex-shrink: 0; }
-    .ava-tertiary-btn:hover { background: var(--hover-secondary); }
-    .ava-tertiary-btn:active { background: var(--ui-04); }
+    .ava-tertiary-btn:not(:disabled):hover { background: var(--hover-secondary); }
+    .ava-tertiary-btn:not(:disabled):active { background: var(--ui-04); }
+    .ava-tertiary-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* Auto button — text + icon-end, natural width */
     .ava-auto-btn {
@@ -3511,21 +3512,21 @@
             <!-- Right: Unpin · Expand · Close — nxPlainButton, gap 16px -->
             <div class="ava-header-actions">
               <!-- Unpin — nxPlainButton, custom SVG from Icons/Unpin.svg -->
-              <button class="ava-plain-btn" id="ava-pin-btn" data-tooltip="Unpin" data-tooltip-pos="below" onclick="togglePinAva()">
+              <button class="ava-tertiary-btn" id="ava-pin-btn" data-tooltip="Unpin" data-tooltip-pos="below" onclick="togglePinAva()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M5.03033 3.59088C4.73744 3.29798 4.73744 2.82311 5.03033 2.53022C5.32322 2.23732 5.7981 2.23732 6.09099 2.53022L22.0009 18.4401C22.2938 18.733 22.2938 19.2079 22.0009 19.5008C21.708 19.7937 21.2331 19.7937 20.9402 19.5008L5.03033 3.59088Z" fill="currentColor"/>
                   <path d="M5.85607 9.94198C6.77705 9.021 8.12825 8.78961 9.26818 9.24277L10.8444 10.8189L10.8434 10.8209L13.194 13.1715L13.1949 13.1695L14.7721 14.7467C15.2254 15.8866 14.9947 17.2376 14.0738 18.1578L13.6451 18.5855C13.3331 18.8975 12.8263 18.8975 12.5143 18.5855L9.53771 15.609L6.16955 18.9771C5.85765 19.2889 5.35068 19.2888 5.03869 18.9771C4.72669 18.6651 4.72669 18.1573 5.03869 17.8453L8.40685 14.4781L5.42931 11.5006C5.11744 11.1886 5.11737 10.6817 5.42931 10.3697L5.85607 9.94198ZM9.20275 11.0728C8.63975 10.5098 7.74937 10.4669 7.13537 10.9449L13.0699 16.8795C13.5479 16.2665 13.505 15.3761 12.941 14.8121L9.20275 11.0728ZM16.0944 12.5338L15.0338 13.5943L13.902 12.4625L14.9625 11.4019L16.0944 12.5338ZM13.1822 3.52695C13.4942 3.21496 14.0011 3.21499 14.3131 3.52695L15.6608 4.87363L19.1422 8.35605L20.4899 9.70273C20.8015 10.0146 20.8015 10.5216 20.4899 10.8336C20.1779 11.1456 19.67 11.1456 19.358 10.8336L18.5768 10.0514L16.8014 11.8268L15.6695 10.6949L17.4449 8.9205L15.0944 6.56991L13.319 8.34433L12.1881 7.21347L13.9645 5.44003L13.1822 4.6578C12.8703 4.34585 12.8704 3.83894 13.1822 3.52695ZM12.6119 9.05136L11.5514 10.1119L10.4205 8.98105L11.4811 7.9205L12.6119 9.05136Z" fill="currentColor"/>
                 </svg>
               </button>
               <!-- Expand — nxPlainButton, custom SVG from Icons/Expand.svg -->
-              <button class="ava-plain-btn" id="ava-expand-btn" data-tooltip="Expand" data-tooltip-pos="below" onclick="toggleExpandAva()">
+              <button class="ava-tertiary-btn" id="ava-expand-btn" data-tooltip="Expand" data-tooltip-pos="below" onclick="toggleExpandAva()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M4 2.99291H10C10.553 2.99291 11 3.43991 11 3.99291C11 4.54591 10.553 4.99291 10 4.99291H6.414L10.707 9.28591C10.902 9.48091 11 9.73691 11 9.99291C11 10.2489 10.902 10.5049 10.707 10.6999C10.316 11.0909 9.683 11.0909 9.293 10.6999L5 6.40691V9.99291C5 10.5459 4.553 10.9929 4 10.9929C3.447 10.9929 3 10.5459 3 9.99291L3 3.99291C3 3.86291 3.026 3.73291 3.077 3.61091C3.179 3.36591 3.373 3.17091 3.618 3.06991C3.74 3.01891 3.87 2.99291 4 2.99291Z" fill="currentColor"/>
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M20 20.9924L14 20.9924C13.447 20.9924 13 20.5454 13 19.9924C13 19.4394 13.447 18.9924 14 18.9924L17.586 18.9924L13.293 14.6994C13.098 14.5044 13 14.2484 13 13.9924C13 13.7364 13.098 13.4804 13.293 13.2854C13.684 12.8944 14.317 12.8944 14.707 13.2854L19 17.5784L19 13.9924C19 13.4394 19.447 12.9924 20 12.9924C20.553 12.9924 21 13.4394 21 13.9924L21 19.9924C21 20.1224 20.974 20.2524 20.923 20.3744C20.821 20.6194 20.627 20.8144 20.382 20.9154C20.26 20.9664 20.13 20.9924 20 20.9924Z" fill="currentColor"/>
                 </svg>
               </button>
               <!-- Close — nxPlainButton, c-icon--close -->
-              <button class="ava-plain-btn" id="ava-close" data-tooltip="Close" data-tooltip-pos="below">
+              <button class="ava-tertiary-btn" id="ava-close" data-tooltip="Close" data-tooltip-pos="below">
                 <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
                   <g transform="scale(1,-1) translate(0,-1000)">
                     <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
@@ -3560,16 +3561,6 @@
             </span>
             <!-- Level 3: filename, shown only in preview-mode -->
             <span class="crumb-filename" id="ava-crumb-filename">Lob-presentation_240116.pdf</span>
-          </div>
-          <!-- File list mode actions: attach file -->
-          <div class="ava-file-actions">
-            <button class="ava-plain-btn" data-tooltip="Attach file" data-tooltip-pos="below" onclick="document.getElementById('ava-attach-input').click()">
-              <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
-                <g transform="scale(1,-1) translate(0,-1000)">
-                  <path d="M750 541.6666666666667L541.6666666666666 541.6666666666667L541.6666666666666 750C541.6666666666666 772.875 522.875 791.6666666666667 500 791.6666666666667C477.125 791.6666666666667 458.3333333333333 772.875 458.3333333333333 750L458.3333333333333 541.6666666666667L250 541.6666666666667C227.125 541.6666666666667 208.3333333333333 522.875 208.3333333333333 500C208.3333333333333 477.125 227.125 458.3333333333334 250 458.3333333333334L458.3333333333333 458.3333333333334L458.3333333333333 250C458.3333333333333 227.1250000000001 477.125 208.3333333333334 500 208.3333333333334C522.875 208.3333333333334 541.6666666666666 227.1250000000001 541.6666666666666 250L541.6666666666666 458.3333333333334L750 458.3333333333334C772.8749999999999 458.3333333333334 791.6666666666666 477.125 791.6666666666666 500C791.6666666666666 522.875 772.8749999999999 541.6666666666667 750 541.6666666666667z"/>
-                </g>
-              </svg>
-            </button>
           </div>
           <!-- Preview mode actions: open in new tab + download -->
           <div class="ava-preview-actions">
@@ -3900,6 +3891,7 @@
   // Stores the panel name that was auto-closed because AVA was expanded (null = none)
   let avaAutoClosedSidePanel = null;
   // Panel auto-closed by 544px guard so it can be restored when the other closes
+  let navFlyoutJustOpened = false;  // guard against outside-click closing a just-opened flyout
   let autoClosedAva       = false;  // AVA was auto-closed when side panel opened
   let autoClosedSidePanel = null;   // side panel name auto-closed when AVA opened
   let avaPipSize      = null;
@@ -4442,7 +4434,6 @@
 
   /* ── Manual nav toggle — user takes control ── */
   function toggleNavGroup(groupId, event) {
-    if (event) event.stopPropagation();
     var group = document.getElementById(groupId);
     if (!group) return;
     var isCollapsed = sideNav.classList.contains('collapsed') || isMedium() || isSmall();
@@ -4462,6 +4453,7 @@
           popup.style.left = (rect.right + 8) + 'px';
           popup.style.top = rect.top + 'px';
           document.body.appendChild(popup);
+          navFlyoutJustOpened = true;
         }
       }
     } else {
@@ -4479,6 +4471,7 @@
   }
 
   document.addEventListener('click', function(e) {
+    if (navFlyoutJustOpened) { navFlyoutJustOpened = false; return; }
     if (!e.target.closest('.nav-group') && !e.target.closest('.nav-group-flyout-popup')) {
       closeAllNavFlyouts();
     }
