@@ -754,24 +754,22 @@
     /* ── COLLAPSED GROUP: child indicator triangle ─────── */
     .nav-group-indicator {
       position: absolute;
-      bottom: 4px;
-      right: 4px;
+      bottom: 0;
+      right: 0;
       width: 0;
       height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 0px solid transparent;
-      border-left: 5px solid #414141;
+      border-style: solid;
+      border-width: 0 0 7px 7px;
+      border-color: transparent transparent #5b5b5b transparent;
       display: none;
-      transform: rotate(-45deg);
     }
     .side-nav.collapsed .nav-group .nav-group-header {
       position: relative;
     }
     .side-nav.collapsed .nav-group-indicator { display: block; }
 
-    /* ── COLLAPSED GROUP: flyout popup ─────────────────── */
-    .nav-group-flyout {
-      display: none;
+    /* ── COLLAPSED GROUP: flyout popup (appended to body by JS) ── */
+    .nav-group-flyout-popup {
       position: fixed;
       z-index: 300;
       background: #fff;
@@ -803,8 +801,6 @@
       transition: background var(--semantic-duration-static-fast);
     }
     .nav-group-flyout-item:hover { background: var(--core-color-gray-200); }
-    /* Show flyout when .flyout-open in collapsed mode */
-    .side-nav.collapsed .nav-group.flyout-open .nav-group-flyout { display: block; }
     /* Highlight parent row when flyout is open */
     .side-nav.collapsed .nav-group.flyout-open .nav-group-header { background: var(--core-color-gray-200); }
 
@@ -4432,11 +4428,16 @@
       if (!isOpen) {
         group.classList.add('flyout-open');
         var header = group.querySelector('.nav-group-header');
-        var flyout = group.querySelector('.nav-group-flyout');
-        if (header && flyout) {
+        var flyoutTemplate = group.querySelector('.nav-group-flyout');
+        if (header && flyoutTemplate) {
           var rect = header.getBoundingClientRect();
-          flyout.style.left = (rect.right + 8) + 'px';
-          flyout.style.top = rect.top + 'px';
+          var popup = document.createElement('div');
+          popup.className = 'nav-group-flyout-popup';
+          popup.setAttribute('data-flyout-for', groupId);
+          popup.innerHTML = flyoutTemplate.innerHTML;
+          popup.style.left = (rect.right + 8) + 'px';
+          popup.style.top = rect.top + 'px';
+          document.body.appendChild(popup);
         }
       }
     } else {
@@ -4448,10 +4449,13 @@
     document.querySelectorAll('.nav-group.flyout-open').forEach(function(g) {
       g.classList.remove('flyout-open');
     });
+    document.querySelectorAll('.nav-group-flyout-popup').forEach(function(p) {
+      p.remove();
+    });
   }
 
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.nav-group')) {
+    if (!e.target.closest('.nav-group') && !e.target.closest('.nav-group-flyout-popup')) {
       closeAllNavFlyouts();
     }
   });
