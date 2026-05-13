@@ -2359,7 +2359,6 @@
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
       padding: 0 32px;
-      height: 100%;
     }
     .header-nav-scrollable::-webkit-scrollbar { display: none; }
     /* When scroll button visible, indent content to clear the button */
@@ -2372,9 +2371,7 @@
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      align-self: stretch;
+      padding: 16px 0;
       transition: color var(--semantic-duration-static-fast);
     }
     .header-nav-item2:hover { color: var(--env-action-primary); }
@@ -2382,7 +2379,6 @@
       color: var(--env-action-primary);
       font-weight: 600;
       border-bottom: 4px solid var(--env-action-primary);
-      padding-bottom: 0;
     }
     /* Scroll buttons: absolutely positioned at left/right edges, NDBX style */
     .header-nav-scroll-btn {
