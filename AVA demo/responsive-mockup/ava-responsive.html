@@ -39,12 +39,63 @@ body {
   background: #e8e8e8;
 }
     /* FRAME LAYOUT */
+.frames-page {
+  padding: 40px 32px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+.frame-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.frame-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #767676;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.frame {
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.frame--large  { width: 992px; }
+.frame--medium { width: 704px; }
+.frame--small  { width: 320px; }
     /* HEADER STYLES */
     /* TOOLBAR STYLES */
     /* RESPONSIVE RULES */
   </style>
 </head>
 <body>
-  <!-- Frames will go here -->
+<div class="frames-page">
+
+  <div class="frame-wrap">
+    <div class="frame-label">Large — 992px</div>
+    <div class="frame frame--large">
+      <!-- header + toolbar content here -->
+    </div>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="frame-label">Medium — 704px</div>
+    <div class="frame frame--medium">
+      <!-- header + toolbar content here -->
+    </div>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="frame-label">Small — 320px</div>
+    <div class="frame frame--small">
+      <!-- header + toolbar content here -->
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
