@@ -4424,7 +4424,7 @@
   function toggleNavGroup(groupId) {
     var group = document.getElementById(groupId);
     if (!group) return;
-    var isCollapsed = sideNav.classList.contains('collapsed');
+    var isCollapsed = sideNav.classList.contains('collapsed') || isMedium() || isSmall();
     if (isCollapsed) {
       var isOpen = group.classList.contains('flyout-open');
       closeAllNavFlyouts();
