@@ -2412,6 +2412,10 @@
     }
     .breadcrumb-ellipsis {
       flex-shrink: 0;
+      display: none; /* hidden at ≥704px — only shown when level1 is collapsed */
+    }
+    .breadcrumb-ellipsis + .breadcrumb-sep {
+      display: none; /* chevron after … also hidden at ≥704px */
     }
     .breadcrumb-current {
       /* inherits .breadcrumb-item.bold */
@@ -2419,6 +2423,8 @@
 
     @media (max-width: 703px) {
       .breadcrumb-level1 { display: none; }
+      .breadcrumb-ellipsis { display: inline; }
+      .breadcrumb-ellipsis + .breadcrumb-sep { display: inline; }
       .toolbar-actions-start { flex: 1 0 0; min-width: 0; }
       .breadcrumb-current {
         flex: 1 0 0;
