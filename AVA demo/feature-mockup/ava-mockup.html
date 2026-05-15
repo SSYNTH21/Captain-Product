@@ -258,36 +258,15 @@
       animation: ava-response-pulse 800ms ease-out 1 forwards;
       pointer-events: none;
     }
-    /* Shimmer: one sweep of the gradient across the default sparkle icon */
-    @keyframes ava-icon-shimmer {
-      0%,  57% { background-position: 100% 0; }
-      100%     { background-position:   0% 0; }
-    }
-    .ava-btn.has-response .ava-icon-default svg path {
-      fill: url(#ava-shimmer-grad) !important;
-    }
-    .ava-btn.has-response .ava-icon-default::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 100px;
-      background: linear-gradient(90deg,
-        #5A3982  0%,
-        #003781 17%,
-        #00275B 33%,
-        #9B6CC7 50%,
-        #5A3982 67%,
-        #003781 83%,
-        #00275B 100%
-      );
-      background-size: 300% 100%;
-      animation: ava-icon-shimmer 3.5s ease-in-out 1 forwards;
-      mix-blend-mode: color;
-      pointer-events: none;
-    }
+    /* Shimmer: CSS filter sweep on the sparkle icon */
     .ava-btn.has-response .ava-icon-default {
-      position: relative;
-      filter: hue-rotate(0deg) saturate(1.4) brightness(0.85);
+      animation: ava-icon-shimmer 3.5s ease-in-out 1 forwards;
+    }
+    @keyframes ava-icon-shimmer {
+      0%    { filter: saturate(1)   brightness(1)   hue-rotate(0deg); }
+      40%   { filter: saturate(1.8) brightness(1.2) hue-rotate(-20deg); }
+      57%   { filter: saturate(2.2) brightness(1.3) hue-rotate(-30deg); }
+      100%  { filter: saturate(1.4) brightness(0.85) hue-rotate(-15deg); }
     }
     .ava-btn-inner {
       width: 24px;
