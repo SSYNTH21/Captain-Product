@@ -258,32 +258,15 @@
       animation: ava-response-pulse 800ms ease-out 1 forwards;
       pointer-events: none;
     }
-    /* Shimmer sweep — same 300%-wide gradient technique as the AVA welcome text */
-    @keyframes ava-btn-shimmer {
-      /* Hold at rest (57%), then sweep left→right over 1.5s — mirrors ava-gradient-flow */
-      0%,  57% { background-position: 100% 0; }
-      100%     { background-position:   0% 0; }
-    }
-    .ava-btn.has-response {
-      /*
-        Left/right thirds = default button bg (rest state looks normal).
-        Middle third = purple sweep peak (#9B6CC7), same palette as AVA text.
-      */
-      background: linear-gradient(90deg,
-        #F9F5FB  0%,
-        #5A3982 17%,
-        #5A3982 33%,
-        #9B6CC7 50%,
-        #F9F5FB 67%,
-        #F9F5FB 83%,
-        #F9F5FB 100%
-      );
-      background-size: 300% 100%;
-      transition: none;
-      animation: ava-btn-shimmer 3.5s ease-in-out 1 forwards;
+    /* Shimmer: CSS filter sweep on the sparkle icon */
+    @keyframes ava-icon-shimmer {
+      0%    { filter: saturate(1)   brightness(1)   hue-rotate(0deg); }
+      40%   { filter: saturate(1.8) brightness(1.2) hue-rotate(-20deg); }
+      57%   { filter: saturate(2.2) brightness(1.3) hue-rotate(-30deg); }
+      100%  { filter: saturate(1.4) brightness(0.85) hue-rotate(-15deg); }
     }
     .ava-btn.has-response .ava-icon-default {
-      filter: saturate(1.8) brightness(0.8) hue-rotate(-10deg);
+      animation: ava-icon-shimmer 3.5s ease-in-out 1 forwards;
     }
     .ava-btn-inner {
       width: 24px;
