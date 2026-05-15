@@ -4827,16 +4827,84 @@
     messages.appendChild(thinking);
 
     // Cycle through 4 thinking steps; hold on last then show response
+    const SLOW_RESPONSE_KEYS = ['tokyo'];
+    const SLOW_STEP_INDEX = 2;          // 0-based: step 3 = "Calculating mandatory deductible"
+    const SLOW_STEP_DURATION_MS = 12000;
+    const SLOW_STEP_THRESHOLD_MS = 8000;
+    const isSlowResponse = SLOW_RESPONSE_KEYS.includes(responseKey);
+
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
     const LAST_STEP = thinkingSteps.length - 1;
     let stepIndex = 0;
+    let slowAnswerNowTimer = null;
+    let slowStepTimer = null;
+
+    function _transitionToStep(idx) {
+      const textEl = document.getElementById('ava-thinking-text');
+      if (!textEl) return;
+      textEl.style.opacity = '0';
+      setTimeout(() => {
+        stepIndex = idx;
+        textEl.textContent = thinkingSteps[idx];
+        textEl.style.opacity = '1';
+      }, 300);
+    }
+
+    function _removeAnswerNowBtn() {
+      const btn = document.getElementById('ava-answer-now-btn');
+      if (btn) btn.remove();
+    }
+
+    // Global so the inline onclick can reach it
+    window._avaAnswerNow = function() {
+      clearTimeout(slowAnswerNowTimer);
+      clearTimeout(slowStepTimer);
+      clearInterval(thinkingInterval);
+      _removeAnswerNowBtn();
+      // Flash "Confirming result..." for 1s then show response
+      _transitionToStep(LAST_STEP);
+      setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 1000);
+    };
 
     const thinkingInterval = setInterval(() => {
       const textEl = document.getElementById('ava-thinking-text');
       if (!textEl) { clearInterval(thinkingInterval); return; }
 
       const nextIndex = stepIndex + 1;
-      if (nextIndex > LAST_STEP) return; // already on Refining, wait for timeout
+      if (nextIndex > LAST_STEP) return;
+
+      // Slow step: use a one-off timer instead of the regular interval tick
+      if (isSlowResponse && nextIndex === SLOW_STEP_INDEX) {
+        clearInterval(thinkingInterval);
+        // Transition to the slow step immediately (step 3)
+        _transitionToStep(SLOW_STEP_INDEX);
+
+        // After threshold: inject "Answer now" button
+        slowAnswerNowTimer = setTimeout(() => {
+          const thinkingRow = document.getElementById('ava-thinking');
+          if (!thinkingRow) return;
+          const answerBtn = document.createElement('button');
+          answerBtn.id = 'ava-answer-now-btn';
+          answerBtn.className = 'ava-answer-now-btn';
+          answerBtn.textContent = 'Answer now';
+          answerBtn.onclick = window._avaAnswerNow;
+          answerBtn.style.opacity = '0';
+          thinkingRow.appendChild(answerBtn);
+          // Fade in
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => { answerBtn.style.opacity = '1'; });
+          });
+        }, SLOW_STEP_THRESHOLD_MS);
+
+        // After full slow duration: proceed naturally
+        slowStepTimer = setTimeout(() => {
+          _removeAnswerNowBtn();
+          _transitionToStep(LAST_STEP);
+          setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
+        }, SLOW_STEP_DURATION_MS);
+
+        return;
+      }
 
       textEl.style.opacity = '0';
       setTimeout(() => {
@@ -4845,7 +4913,6 @@
         textEl.style.opacity = '1';
 
         if (stepIndex === LAST_STEP) {
-          // Hold 2s on "Refining" then transition to response
           clearInterval(thinkingInterval);
           setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
         }
