@@ -4971,12 +4971,11 @@
           // Phase 2: shimmer sweep — add class (triggers CSS animation), reflow to restart
           void btn.offsetWidth;
           btn.classList.add('has-response');
-          // Hold until shimmer finishes (3.5s) + tiny buffer, then pause 2s before next cycle
+          // Hold until shimmer finishes (3.5s) + tiny buffer, then go straight into next cycle
           _avaNotifLoopTimer = setTimeout(() => {
             if (!avaHasPendingNotification) return;
             btn.classList.remove('has-response');
-            // Phase 3: 2s pause before repeating
-            _avaNotifLoopTimer = setTimeout(_runNotifCycle, 2000);
+            _runNotifCycle();
           }, 3600);
         }, { once: true });
       }
