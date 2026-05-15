@@ -258,26 +258,32 @@
       animation: ava-response-pulse 800ms ease-out 1 forwards;
       pointer-events: none;
     }
-    /* Shimmer sweep: wide gradient scrolls across button background */
+    /* Shimmer sweep — same 300%-wide gradient technique as the AVA welcome text */
     @keyframes ava-btn-shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position:   0% 0; }
+      /* Hold at rest (57%), then sweep left→right over 1.5s — mirrors ava-gradient-flow */
+      0%,  57% { background-position: 100% 0; }
+      100%     { background-position:   0% 0; }
     }
     .ava-btn.has-response {
+      /*
+        Left/right thirds = default button bg (rest state looks normal).
+        Middle third = purple sweep peak (#9B6CC7), same palette as AVA text.
+      */
       background: linear-gradient(90deg,
-        #F9F5FB 0%,
-        #F9F5FB 15%,
-        #5F3C88 35%,
-        #022F6F 50%,
-        #0D70A5 65%,
-        #F9F5FB 85%,
+        #F9F5FB  0%,
+        #5A3982 17%,
+        #5A3982 33%,
+        #9B6CC7 50%,
+        #F9F5FB 67%,
+        #F9F5FB 83%,
         #F9F5FB 100%
       );
       background-size: 300% 100%;
-      animation: ava-btn-shimmer 1.1s ease-in-out 1 forwards;
+      transition: none;
+      animation: ava-btn-shimmer 3.5s ease-in-out 1 forwards;
     }
     .ava-btn.has-response .ava-icon-default {
-      filter: saturate(1.6) brightness(0.75);
+      filter: saturate(1.8) brightness(0.8) hue-rotate(-10deg);
     }
     .ava-btn-inner {
       width: 24px;
@@ -4982,13 +4988,13 @@
           // Phase 2: shimmer sweep — add class (triggers CSS animation), reflow to restart
           void btn.offsetWidth;
           btn.classList.add('has-response');
-          // Hold until shimmer finishes (1.1s) + tiny buffer, then pause 2s before next cycle
+          // Hold until shimmer finishes (3.5s) + tiny buffer, then pause 2s before next cycle
           _avaNotifLoopTimer = setTimeout(() => {
             if (!avaHasPendingNotification) return;
             btn.classList.remove('has-response');
             // Phase 3: 2s pause before repeating
             _avaNotifLoopTimer = setTimeout(_runNotifCycle, 2000);
-          }, 1400);
+          }, 3600);
         }, { once: true });
       }
       _runNotifCycle();
