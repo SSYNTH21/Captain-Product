@@ -4423,6 +4423,12 @@
 
   /* ── AVA open / close ── */
   function openAva() {
+    // Clear pending notification if present
+    if (avaHasPendingNotification) {
+      avaHasPendingNotification = false;
+      const btn = document.getElementById('ava-toggle');
+      btn.classList.remove('has-response', 'pulse-ring');
+    }
     // large+ pinned: rule 1 — auto-collapse nav when AVA opens
     if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) {
       collapseNav();
