@@ -3937,6 +3937,7 @@
   let avaPipPos       = null;
   let avaPipMaximized = false;
   let avaLastWasFloating = false;
+  let avaHasPendingNotification = false;
   // True when the system auto-unpinned AVA due to breakpoint — cleared by manual user unpin
   let avaAutoUnpinned = false;
 
@@ -4853,6 +4854,19 @@
   }
 
   function showAvaResponse(thinkingEl, messages, ts, avaContent, chatTitle, responseKey, promptText) {
+    // Notify via header button if AVA was closed when response arrived
+    if (!avaIsOpen()) {
+      avaHasPendingNotification = true;
+      const btn = document.getElementById('ava-toggle');
+      // One-shot pulse ring: add class, remove after animation ends so it can replay
+      btn.classList.add('pulse-ring');
+      btn.addEventListener('animationend', function removePulse() {
+        btn.classList.remove('pulse-ring');
+        btn.removeEventListener('animationend', removePulse);
+        // Shimmer sweep starts after pulse
+        btn.classList.add('has-response');
+      }, { once: true });
+    }
     // Fade out thinking indicator
     thinkingEl.style.transition = 'opacity 300ms ease';
     thinkingEl.style.opacity = '0';
