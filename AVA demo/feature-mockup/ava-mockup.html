@@ -266,7 +266,7 @@
       100%  { filter: saturate(1.6) brightness(0.9)  hue-rotate(-40deg) drop-shadow(0 0 2px #9B6CC7); }
     }
     .ava-btn.has-response .ava-icon-default {
-      animation: ava-icon-shimmer 3.5s ease-in-out 1 forwards;
+      animation: ava-icon-shimmer 2s ease-in-out 1 forwards;
     }
     .ava-btn-inner {
       width: 24px;
@@ -4971,12 +4971,12 @@
           // Phase 2: shimmer sweep — add class (triggers CSS animation), reflow to restart
           void btn.offsetWidth;
           btn.classList.add('has-response');
-          // Hold until shimmer finishes (3.5s) + tiny buffer, then go straight into next cycle
+          // Hold until shimmer finishes (2s) + tiny buffer, then go straight into next cycle
           _avaNotifLoopTimer = setTimeout(() => {
             if (!avaHasPendingNotification) return;
             btn.classList.remove('has-response');
             _runNotifCycle();
-          }, 3600);
+          }, 2100);
         }, { once: true });
       }
       _runNotifCycle();
