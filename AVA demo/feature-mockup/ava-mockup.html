@@ -4019,8 +4019,26 @@
   let avaLastWasFloating = false;
   let avaHasPendingNotification = false;
   let _avaNotifLoopTimer = null;
+  let _avaNotifPopoverTimer = null;
   // True when the system auto-unpinned AVA due to breakpoint — cleared by manual user unpin
   let avaAutoUnpinned = false;
+
+  function _showNotifPopover() {
+    const popover = document.getElementById('ava-notif-popover');
+    if (!popover) return;
+    popover.classList.add('visible');
+    _avaNotifPopoverTimer = setTimeout(() => {
+      popover.classList.remove('visible');
+      _avaNotifPopoverTimer = null;
+    }, 3000);
+  }
+
+  function _hideNotifPopover() {
+    clearTimeout(_avaNotifPopoverTimer);
+    _avaNotifPopoverTimer = null;
+    const popover = document.getElementById('ava-notif-popover');
+    if (popover) popover.classList.remove('visible');
+  }
 
   function navIsOpen() { return !sideNav.classList.contains('collapsed'); }
   function avaIsOpen() { return panelWrap.classList.contains('open'); }
