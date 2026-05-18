@@ -278,20 +278,38 @@
       z-index: 200;
       opacity: 0;
       transition: opacity 300ms ease-in-out;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      filter: drop-shadow(0 2px 4px rgba(65,65,65,0.50));
     }
     .ava-notif-popover.visible { opacity: 1; }
     .ava-notif-popover__content {
+      position: relative;
       background: #ffffff;
       border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      padding: 24px 40px 24px 32px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(65,65,65,0.20);
+      padding: 16px 24px 16px 20px;
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+    /* Arrow: border triangle (sits behind, gives border colour) */
+    .ava-notif-popover__content::before {
+      content: '';
+      position: absolute;
+      top: -9px;
+      right: 12px;
+      border: 8px solid transparent;
+      border-top: none;
+      border-bottom: 9px solid #d9d9d9;
+    }
+    /* Arrow: fill triangle (covers card border, reveals white interior) */
+    .ava-notif-popover__content::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      right: 13px;
+      border: 7px solid transparent;
+      border-top: none;
+      border-bottom: 8px solid #ffffff;
     }
     .ava-notif-popover__icon {
       width: 24px;
@@ -304,14 +322,6 @@
       font-weight: 400;
       color: #414141;
       line-height: 1.5;
-    }
-    .ava-notif-popover__arrow {
-      display: block;
-      width: 16px;
-      height: 8px;
-      flex-shrink: 0;
-      margin-bottom: -1px;
-      margin-right: 8px;
     }
     .ava-btn-inner {
       width: 24px;
@@ -2907,10 +2917,6 @@
             </div>
             <!-- Response-ready notification popover -->
             <div class="ava-notif-popover" id="ava-notif-popover" aria-hidden="true">
-              <svg class="ava-notif-popover__arrow" viewBox="0 0 16 8" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M0,8 L16,8 L8,0 Z" fill="#ffffff"/>
-                <path d="M0,8 L8,0 L16,8" fill="none" stroke="#d9d9d9" stroke-width="1" vector-effect="non-scaling-stroke"/>
-              </svg>
               <div class="ava-notif-popover__content">
                 <svg class="ava-notif-popover__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g filter="url(#filter0_d_537_395179)">
@@ -4030,7 +4036,7 @@
     _avaNotifPopoverTimer = setTimeout(() => {
       popover.classList.remove('visible');
       _avaNotifPopoverTimer = null;
-    }, 5000);
+    }, 4000);
   }
 
   function _hideNotifPopover() {
