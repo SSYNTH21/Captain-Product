@@ -4529,6 +4529,7 @@
       _avaNotifLoopTimer = null;
       const btn = document.getElementById('ava-toggle');
       btn.classList.remove('has-response', 'pulse-ring');
+      _hideNotifPopover();
     }
     // large+ pinned: rule 1 — auto-collapse nav when AVA opens
     if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) {
@@ -5060,6 +5061,7 @@
         }, { once: true });
       }
       _runNotifCycle();
+      _showNotifPopover();
     }
     // Fade out thinking indicator
     thinkingEl.style.transition = 'opacity 300ms ease';
