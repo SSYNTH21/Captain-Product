@@ -272,8 +272,7 @@
     .ava-notif-popover {
       position: absolute;
       bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
+      right: 0;
       white-space: nowrap;
       pointer-events: none;
       z-index: 200;
@@ -281,7 +280,7 @@
       transition: opacity 150ms ease;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-end;
     }
     .ava-notif-popover.visible { opacity: 1; }
     .ava-notif-popover__content {
@@ -312,6 +311,7 @@
       height: 8px;
       flex-shrink: 0;
       margin-top: -1px;
+      margin-right: 8px;
     }
     .ava-btn-inner {
       width: 24px;
