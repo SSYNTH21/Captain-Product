@@ -4301,38 +4301,35 @@
       minimizeAva();
       return;
     }
-    // large pinned: rule 3 — block expand if nav is open (not enough room at this breakpoint)
-    if (isLarge() && !avaIsFloating() && navIsOpen()) return;
-
-    // If side panel is open and nav is collapsed, auto-close the side panel to make room
-    if (currentSidePanel !== null) {
-      if (!navIsOpen()) {
-        avaAutoClosedSidePanel = currentSidePanel;
-        spWrap.classList.remove('open');
-        spWrapOuter.classList.remove('open');
-        currentSidePanel = null;
-        document.getElementById('sp-btn-errorlog').classList.remove('active');
-        document.getElementById('sp-btn-fnd').classList.remove('active');
-        document.getElementById('sp-expand-icon').classList.remove('flipped');
-      } else {
-        return;
-      }
-    }
     const expandBtn = document.getElementById('ava-expand-btn');
-    const NAV_W   = 56; // always collapsed when expanding at xLarge
-    const TAB_W   = 56;
+    const TAB_W       = 56;
     const MIN_CONTENT = 544;
-    const MAX_AVA = 640;
-    const MIN_AVA = 320;
-    // Calculate expanded width: fill remaining space after reserving min content
-    const expandedWidth = Math.min(MAX_AVA, window.innerWidth - NAV_W - TAB_W - MIN_CONTENT);
-    // Block if viewport too narrow to give AVA a usable width
-    if (expandedWidth < MIN_AVA) return;
-    // Large+: auto-collapse nav if it's still open and content would be too tight
-    if (navIsOpen()) {
+    const MAX_AVA     = 640;
+    const MIN_AVA     = 320;
+
+    const navW = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
+    const spW  = () => (currentSidePanel !== null) ? 384 : 0;
+    const calcWidth = () => Math.min(MAX_AVA, window.innerWidth - navW() - TAB_W - spW() - MIN_CONTENT);
+
+    // Step 1: try with everything as-is
+    // Step 2: if not enough room, collapse nav first
+    if (calcWidth() < MIN_AVA && navIsOpen() && !isMedium() && !isSmall()) {
       collapseNav();
       avaAutoCollapsedNav = true;
     }
+    // Step 3: if still not enough room, close side panel
+    if (calcWidth() < MIN_AVA && currentSidePanel !== null) {
+      avaAutoClosedSidePanel = currentSidePanel;
+      spWrap.classList.remove('open');
+      spWrapOuter.classList.remove('open');
+      currentSidePanel = null;
+      document.getElementById('sp-btn-errorlog').classList.remove('active');
+      document.getElementById('sp-btn-fnd').classList.remove('active');
+      document.getElementById('sp-expand-icon').classList.remove('flipped');
+    }
+    // Step 4: block if still not enough room
+    const expandedWidth = calcWidth();
+    if (expandedWidth < MIN_AVA) return;
     panelWrap.classList.add('expanded');
     panelWrap.style.setProperty('--ava-expanded-w', expandedWidth + 'px');
     document.documentElement.style.setProperty('--ava-bubble-max-w', (expandedWidth - 40) + 'px');
