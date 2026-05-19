@@ -4042,8 +4042,8 @@
     }
     const navW = (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
     const spW  = (currentSidePanel !== null && !isMedium() && !isSmall()) ? 384 : 0;
-    const expandedWidth = Math.min(640, window.innerWidth - navW - 56 - spW - 544);
-    expandBtn.disabled = expandedWidth < 320;
+    const canExpand = window.innerWidth - navW - 56 - spW - 544 >= 640;
+    expandBtn.disabled = !canExpand;
     expandBtn.setAttribute('data-tooltip', expandBtn.disabled ? 'Not enough space to expand' : 'Expand');
   }
 
@@ -4309,16 +4309,16 @@
 
     const navW = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
     const spW  = () => (currentSidePanel !== null) ? 384 : 0;
-    const calcWidth = () => Math.min(MAX_AVA, window.innerWidth - navW() - TAB_W - spW() - MIN_CONTENT);
+    const hasRoom = () => window.innerWidth - navW() - TAB_W - spW() - MIN_CONTENT >= MAX_AVA;
 
     // Step 1: try with everything as-is
-    // Step 2: if not enough room, collapse nav first
-    if (calcWidth() < MIN_AVA && navIsOpen() && !isMedium() && !isSmall()) {
+    // Step 2: if not enough room for 640px, collapse nav first
+    if (!hasRoom() && navIsOpen() && !isMedium() && !isSmall()) {
       collapseNav();
       avaAutoCollapsedNav = true;
     }
     // Step 3: if still not enough room, close side panel
-    if (calcWidth() < MIN_AVA && currentSidePanel !== null) {
+    if (!hasRoom() && currentSidePanel !== null) {
       avaAutoClosedSidePanel = currentSidePanel;
       spWrap.classList.remove('open');
       spWrapOuter.classList.remove('open');
@@ -4327,9 +4327,9 @@
       document.getElementById('sp-btn-fnd').classList.remove('active');
       document.getElementById('sp-expand-icon').classList.remove('flipped');
     }
-    // Step 4: block if still not enough room
-    const expandedWidth = calcWidth();
-    if (expandedWidth < MIN_AVA) return;
+    // Step 4: block if still not enough room for 640px
+    if (!hasRoom()) return;
+    const expandedWidth = MAX_AVA;
     panelWrap.classList.add('expanded');
     panelWrap.style.setProperty('--ava-expanded-w', expandedWidth + 'px');
     document.documentElement.style.setProperty('--ava-bubble-max-w', (expandedWidth - 40) + 'px');
