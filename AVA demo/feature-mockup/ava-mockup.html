@@ -4301,8 +4301,8 @@
       minimizeAva();
       return;
     }
-    // large+ pinned: rule 3 — block expand if nav is open
-    if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) return;
+    // large pinned: rule 3 — block expand if nav is open (not enough room at this breakpoint)
+    if (isLarge() && !avaIsFloating() && navIsOpen()) return;
 
     // If side panel is open and nav is collapsed, auto-close the side panel to make room
     if (currentSidePanel !== null) {
