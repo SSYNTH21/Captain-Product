@@ -4508,8 +4508,9 @@
       btn.classList.remove('has-response', 'pulse-ring');
       _hideToast();
     }
-    // large+ pinned: rule 1 — auto-collapse nav when AVA opens
-    if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) {
+    // large+ pinned: rule 1 — auto-collapse nav when AVA opens only if domain would fall below 544px
+    if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen() &&
+        wouldViolateDomain(true, currentSidePanel !== null, true, false)) {
       collapseNav();
       navAutoCollapsed = true;
     }
