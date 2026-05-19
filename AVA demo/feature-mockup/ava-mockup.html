@@ -3994,8 +3994,31 @@
   let avaLastWasFloating = false;
   let avaHasPendingNotification = false;
   let _avaNotifLoopTimer = null;
+  let _avaToastTimer = null;
   // True when the system auto-unpinned AVA due to breakpoint — cleared by manual user unpin
   let avaAutoUnpinned = false;
+
+  function _showToast() {
+    const toast = document.getElementById('ava-toast');
+    if (!toast) return;
+    toast.setAttribute('aria-hidden', 'false');
+    toast.classList.add('visible');
+    _avaToastTimer = setTimeout(() => {
+      toast.classList.remove('visible');
+      toast.setAttribute('aria-hidden', 'true');
+      _avaToastTimer = null;
+    }, 4000);
+  }
+
+  function _hideToast() {
+    clearTimeout(_avaToastTimer);
+    _avaToastTimer = null;
+    const toast = document.getElementById('ava-toast');
+    if (toast) {
+      toast.classList.remove('visible');
+      toast.setAttribute('aria-hidden', 'true');
+    }
+  }
 
   function navIsOpen() { return !sideNav.classList.contains('collapsed'); }
   function avaIsOpen() { return panelWrap.classList.contains('open'); }
@@ -4486,6 +4509,7 @@
       _avaNotifLoopTimer = null;
       const btn = document.getElementById('ava-toggle');
       btn.classList.remove('has-response', 'pulse-ring');
+      _hideToast();
     }
     // large+ pinned: rule 1 — auto-collapse nav when AVA opens
     if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) {
@@ -5008,6 +5032,7 @@
           // Phase 2: shimmer sweep — add class (triggers CSS animation), reflow to restart
           void btn.offsetWidth;
           btn.classList.add('has-response');
+          _showToast();
           // Hold until shimmer finishes (2s) + tiny buffer, then go straight into next cycle
           _avaNotifLoopTimer = setTimeout(() => {
             if (!avaHasPendingNotification) return;
