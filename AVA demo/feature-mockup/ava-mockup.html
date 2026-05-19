@@ -5016,6 +5016,7 @@
     // Notify via header button if AVA was closed when response arrived
     if (!avaIsOpen()) {
       avaHasPendingNotification = true;
+      _showToast();
       // Looping notification: pulse (800ms) → shimmer sweep (1.1s) → 2s pause → repeat
       function _runNotifCycle() {
         if (!avaHasPendingNotification) return;
@@ -5032,7 +5033,6 @@
           // Phase 2: shimmer sweep — add class (triggers CSS animation), reflow to restart
           void btn.offsetWidth;
           btn.classList.add('has-response');
-          _showToast();
           // Hold until shimmer finishes (2s) + tiny buffer, then go straight into next cycle
           _avaNotifLoopTimer = setTimeout(() => {
             if (!avaHasPendingNotification) return;
