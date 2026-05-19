@@ -4365,8 +4365,8 @@
 
     const bothOpen = avaIsOpen() && currentSidePanel !== null;
     if (bothOpen) {
-      // Rule 1: both panels open → nav must be collapsed
-      if (navIsOpen()) {
+      // Rule 1: both panels open → collapse nav only if domain would fall below 544px
+      if (navIsOpen() && wouldViolateDomain(true, true, true, avaIsExpanded())) {
         collapseNav();
         navAutoCollapsed = true;
       }
