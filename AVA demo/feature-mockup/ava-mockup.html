@@ -4371,13 +4371,14 @@
         navAutoCollapsed = true;
       }
     } else if (avaIsOpen() || currentSidePanel !== null) {
-      // Rule 3: if nav was auto-collapsed because both were open, restore it now
+      // Rule 3: restore nav only if syncNav was the one that collapsed it (not a resize)
       if (!navIsOpen() && navAutoCollapsed) {
         expandNav();
+        navAutoCollapsed = false;
       }
-      navAutoCollapsed = false;
     } else {
       // Both closed: nav stays wherever user/auto left it
+      navAutoCollapsed = false;
     }
   }
 
