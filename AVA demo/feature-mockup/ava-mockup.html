@@ -4410,6 +4410,14 @@
       });
       closeAllNavFlyouts();
     }
+    // Auto-minimize expanded AVA if viewport is now too narrow to fit 640px
+    if (avaIsExpanded() && !avaIsFloating()) {
+      const navW = navIsOpen() ? 288 : 56;
+      const spW  = currentSidePanel !== null ? 384 : 0;
+      if (window.innerWidth - navW - 56 - spW - 544 < 640) {
+        minimizeAva();
+      }
+    }
     syncExpandBtn();
     syncPinBtn();
     syncNav();
