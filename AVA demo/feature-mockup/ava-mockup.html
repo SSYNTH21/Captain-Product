@@ -4418,10 +4418,9 @@
         const sW = currentSidePanel !== null ? 384 : 0;
         return window.innerWidth - nW - 56 - sW - 544 >= 640;
       };
-      // Step 1: collapse nav
+      // Step 1: collapse nav — do NOT set avaAutoCollapsedNav so it stays collapsed after minimize
       if (!fits() && navIsOpen() && !isMedium() && !isSmall()) {
         collapseNav();
-        avaAutoCollapsedNav = true;
       }
       // Step 2: minimize AVA
       if (!fits()) {
