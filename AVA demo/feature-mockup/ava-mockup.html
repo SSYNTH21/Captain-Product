@@ -268,6 +268,43 @@
     .ava-btn.has-response .ava-icon-default {
       animation: ava-icon-shimmer 2s ease-in-out 1 forwards;
     }
+    /* ── AVA response-ready toast ── */
+    .ava-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(calc(100% + 24px));
+      opacity: 0;
+      width: 320px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      background: #F9F5FB;
+      border: 1px solid #8A679C;
+      border-radius: 4px;
+      box-shadow: 0px 2px 2px rgba(65, 65, 65, 0.5);
+      pointer-events: none;
+      z-index: 2000;
+      transition: opacity 300ms cubic-bezier(0,0,.2,1),
+                  transform 300ms cubic-bezier(0,0,.2,1);
+    }
+    .ava-toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .ava-toast__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .ava-toast__text {
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      color: #414141;
+    }
     .ava-btn-inner {
       width: 24px;
       height: 24px;
@@ -5538,5 +5575,10 @@
     window.addEventListener('resize', updateScrollBtnsRow2);
   });
 </script>
+  <!-- Response-ready toast -->
+  <div class="ava-toast" id="ava-toast" aria-hidden="true">
+    <img class="ava-toast__icon" src="AVA-Sparkle_NEW.gif" alt="" aria-hidden="true">
+    <span class="ava-toast__text">Response ready</span>
+  </div>
 </body>
 </html>
