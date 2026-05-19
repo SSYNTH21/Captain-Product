@@ -268,61 +268,6 @@
     .ava-btn.has-response .ava-icon-default {
       animation: ava-icon-shimmer 2s ease-in-out 1 forwards;
     }
-    /* ── AVA response-ready popover ── */
-    .ava-notif-popover {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 200;
-      opacity: 0;
-      transition: opacity 300ms ease-in-out;
-    }
-    .ava-notif-popover.visible { opacity: 1; }
-    .ava-notif-popover__content {
-      position: relative;
-      background: #ffffff;
-      border: 1px solid #d9d9d9;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(65,65,65,0.20);
-      padding: 16px 24px 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    /* Arrow: border triangle (sits behind, gives border colour) */
-    .ava-notif-popover__content::before {
-      content: '';
-      position: absolute;
-      top: -9px;
-      right: 8px;
-      border: 8px solid transparent;
-      border-top: none;
-      border-bottom: 9px solid #d9d9d9;
-    }
-    /* Arrow: fill triangle (covers card border, reveals white interior) */
-    .ava-notif-popover__content::after {
-      content: '';
-      position: absolute;
-      top: -7px;
-      right: 9px;
-      border: 7px solid transparent;
-      border-top: none;
-      border-bottom: 8px solid #ffffff;
-    }
-    .ava-notif-popover__icon {
-      width: 24px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    .ava-notif-popover__text {
-      font-family: var(--font-family);
-      font-size: 16px;
-      font-weight: 400;
-      color: #414141;
-      line-height: 1.5;
-    }
     .ava-btn-inner {
       width: 24px;
       height: 24px;
@@ -2915,13 +2860,6 @@
                 </svg>
               </div>
             </div>
-            <!-- Response-ready notification popover -->
-            <div class="ava-notif-popover" id="ava-notif-popover" aria-hidden="true">
-              <div class="ava-notif-popover__content">
-                <img class="ava-notif-popover__icon" src="AVA-Sparkle_NEW.gif" alt="" aria-hidden="true">
-                <span class="ava-notif-popover__text">Response ready</span>
-              </div>
-            </div>
           </button>
           <!-- Report Issue -->
           <button class="icon-btn" title="Report issue">
@@ -4019,26 +3957,8 @@
   let avaLastWasFloating = false;
   let avaHasPendingNotification = false;
   let _avaNotifLoopTimer = null;
-  let _avaNotifPopoverTimer = null;
   // True when the system auto-unpinned AVA due to breakpoint — cleared by manual user unpin
   let avaAutoUnpinned = false;
-
-  function _showNotifPopover() {
-    const popover = document.getElementById('ava-notif-popover');
-    if (!popover) return;
-    popover.classList.add('visible');
-    _avaNotifPopoverTimer = setTimeout(() => {
-      popover.classList.remove('visible');
-      _avaNotifPopoverTimer = null;
-    }, 4000);
-  }
-
-  function _hideNotifPopover() {
-    clearTimeout(_avaNotifPopoverTimer);
-    _avaNotifPopoverTimer = null;
-    const popover = document.getElementById('ava-notif-popover');
-    if (popover) popover.classList.remove('visible');
-  }
 
   function navIsOpen() { return !sideNav.classList.contains('collapsed'); }
   function avaIsOpen() { return panelWrap.classList.contains('open'); }
@@ -4529,7 +4449,6 @@
       _avaNotifLoopTimer = null;
       const btn = document.getElementById('ava-toggle');
       btn.classList.remove('has-response', 'pulse-ring');
-      _hideNotifPopover();
     }
     // large+ pinned: rule 1 — auto-collapse nav when AVA opens
     if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen()) {
@@ -5061,7 +4980,6 @@
         }, { once: true });
       }
       _runNotifCycle();
-      _showNotifPopover();
     }
     // Fade out thinking indicator
     thinkingEl.style.transition = 'opacity 300ms ease';
