@@ -4412,6 +4412,7 @@
     }
     syncExpandBtn();
     syncPinBtn();
+    syncNav();
   }
   window.addEventListener('resize', handleResize);
 
@@ -4425,10 +4426,10 @@
   }
 
   function openSidePanel(panel) {
-    // large+ pinned: rule 5 — shrink expanded AVA; rule 2 — auto-collapse nav
+    // large+ pinned: rule 5 — shrink expanded AVA; rule 2 — auto-collapse nav only if needed
     if (!isMedium() && !isSmall() && !avaIsFloating()) {
       if (avaIsExpanded()) minimizeAva();
-      if (navIsOpen()) {
+      if (navIsOpen() && wouldViolateDomain(true, true, avaIsOpen(), false)) {
         collapseNav();
         navAutoCollapsed = true;
       }
