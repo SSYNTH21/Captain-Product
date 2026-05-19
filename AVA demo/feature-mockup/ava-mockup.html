@@ -4410,10 +4410,20 @@
       });
       closeAllNavFlyouts();
     }
-    // Auto-minimize expanded AVA if viewport is now too narrow to fit 640px
+    // When expanded AVA no longer fits at 640px, recover space in priority order:
+    // 1. collapse nav, 2. minimize AVA
     if (avaIsExpanded() && !avaIsFloating()) {
+      const spW = currentSidePanel !== null ? 384 : 0;
+      // Step 1: try collapsing nav first
+      if (navIsOpen() && !isMedium() && !isSmall()) {
+        const navW = 288;
+        if (window.innerWidth - navW - 56 - spW - 544 < 640) {
+          collapseNav();
+          avaAutoCollapsedNav = true;
+        }
+      }
+      // Step 2: if still not enough room, minimize AVA
       const navW = navIsOpen() ? 288 : 56;
-      const spW  = currentSidePanel !== null ? 384 : 0;
       if (window.innerWidth - navW - 56 - spW - 544 < 640) {
         minimizeAva();
       }
