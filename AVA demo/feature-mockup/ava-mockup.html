@@ -4411,21 +4411,31 @@
       closeAllNavFlyouts();
     }
     // When expanded AVA no longer fits at 640px, recover space in priority order:
-    // 1. collapse nav, 2. minimize AVA
+    // 1. collapse nav, 2. minimize AVA, 3. close side panel
     if (avaIsExpanded() && !avaIsFloating()) {
-      const spW = currentSidePanel !== null ? 384 : 0;
-      // Step 1: try collapsing nav first
-      if (navIsOpen() && !isMedium() && !isSmall()) {
-        const navW = 288;
-        if (window.innerWidth - navW - 56 - spW - 544 < 640) {
-          collapseNav();
-          avaAutoCollapsedNav = true;
-        }
+      const fits = () => {
+        const nW = (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
+        const sW = currentSidePanel !== null ? 384 : 0;
+        return window.innerWidth - nW - 56 - sW - 544 >= 640;
+      };
+      // Step 1: collapse nav
+      if (!fits() && navIsOpen() && !isMedium() && !isSmall()) {
+        collapseNav();
+        avaAutoCollapsedNav = true;
       }
-      // Step 2: if still not enough room, minimize AVA
-      const navW = navIsOpen() ? 288 : 56;
-      if (window.innerWidth - navW - 56 - spW - 544 < 640) {
+      // Step 2: minimize AVA
+      if (!fits()) {
         minimizeAva();
+      }
+      // Step 3: close side panel (minimizeAva restores avaAutoClosedSidePanel — re-close if needed)
+      if (!fits() && currentSidePanel !== null) {
+        avaAutoClosedSidePanel = currentSidePanel;
+        spWrap.classList.remove('open');
+        spWrapOuter.classList.remove('open');
+        currentSidePanel = null;
+        document.getElementById('sp-btn-errorlog').classList.remove('active');
+        document.getElementById('sp-btn-fnd').classList.remove('active');
+        document.getElementById('sp-expand-icon').classList.remove('flipped');
       }
     }
     syncExpandBtn();
