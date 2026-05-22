@@ -5680,6 +5680,30 @@
     if (crumbFilename) crumbFilename.textContent = filename || 'Lob-presentation_240116.pdf';
   }
 
+  let _filesPreState = null;
+
+  function _exitFilesSplit() {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (bodyRow) bodyRow.classList.remove('files-mode');
+
+    if (_filesPreState) {
+      if (_filesPreState.wasExpanded) {
+        panelWrap.style.setProperty('--ava-expanded-w', _filesPreState.width + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', (_filesPreState.width - 40) + 'px');
+      } else {
+        panelWrap.classList.remove('expanded');
+        panelWrap.style.removeProperty('--ava-expanded-w');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+        const expandBtn = document.getElementById('ava-expand-btn');
+        if (expandBtn) {
+          expandBtn.setAttribute('data-tooltip', 'Expand');
+          expandBtn.innerHTML = EXPAND_ICON_SVG;
+        }
+      }
+      _filesPreState = null;
+    }
+  }
+
   function _exitSourcesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (bodyRow) bodyRow.classList.remove('sources-mode');
@@ -5738,6 +5762,37 @@
     // Populate sources panel
     if (_sourcesHtml) {
       document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
+    }
+  }
+
+  let _filesColHtml = '';
+
+  function _enterFilesSplit() {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (!bodyRow || panelWrap.classList.contains('floating')) return;
+
+    // Save pre-state so _exitFilesSplit can restore it
+    _filesPreState = {
+      wasExpanded: panelWrap.classList.contains('expanded'),
+      width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+    };
+
+    // Force 768px split width — bypass hasRoom() guard
+    panelWrap.classList.add('expanded');
+    panelWrap.style.setProperty('--ava-expanded-w', '768px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+
+    // Apply files-mode to the body row (header stays full-width above the row)
+    const avaPanel = document.querySelector('.ava-panel');
+    avaPanel.classList.remove('sources-mode', 'preview-mode');
+    bodyRow.classList.add('files-mode');
+
+    // Show files breadcrumb
+    _showFileBreadcrumb('Files');
+
+    // Populate files panel
+    if (_filesColHtml) {
+      document.getElementById('ava-files-panel').innerHTML = _filesColHtml;
     }
   }
 
