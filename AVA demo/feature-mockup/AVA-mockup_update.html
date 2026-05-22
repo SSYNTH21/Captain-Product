@@ -1957,20 +1957,29 @@
       box-sizing: border-box;
     }
 
-    /* In sources-mode: panel becomes a row, sources column becomes visible */
-    .ava-panel.sources-mode {
+    /* Body row: wraps chat-col + sources-col, sits below the header */
+    .ava-body-row {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* In sources-mode: body-row becomes a side-by-side row, sources column becomes visible */
+    .ava-body-row.sources-mode {
       flex-direction: row;
     }
-    .ava-panel.sources-mode .ava-sources-col { display: flex; }
+    .ava-body-row.sources-mode .ava-sources-col { display: flex; }
     /* Constrain bubbles in the narrower chat column */
-    .ava-panel.sources-mode .ava-msg-wrap,
-    .ava-panel.sources-mode .ava-footer > * { max-width: 344px; }
-    .ava-panel.sources-mode .ava-footer-actions { max-width: none; }
+    .ava-body-row.sources-mode .ava-msg-wrap,
+    .ava-body-row.sources-mode .ava-footer > * { max-width: 344px; }
+    .ava-body-row.sources-mode .ava-footer-actions { max-width: none; }
 
     /* Sources breadcrumb label — hidden unless sources-mode */
     .ava-toolbar-breadcrumb .crumb-sources-label { display: none; font-weight: var(--breadcrumb-last-item-font-weight); color: var(--text-01); flex-shrink: 0; }
-    .ava-panel.sources-mode .ava-toolbar-breadcrumb .crumb-current { display: none; }
-    .ava-panel.sources-mode .ava-toolbar-breadcrumb .crumb-sources-label { display: block; }
+    .ava-body-row.sources-mode .ava-toolbar-breadcrumb .crumb-current { display: none; }
+    .ava-body-row.sources-mode .ava-toolbar-breadcrumb .crumb-sources-label { display: block; }
 
     /* Source list items — typography from ndbx.css paragraph-04 / paragraph-05 */
     .ava-src-item {
