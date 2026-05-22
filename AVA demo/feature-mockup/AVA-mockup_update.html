@@ -4136,6 +4136,15 @@
     }
   }
 
+  // Citation link click delegation
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('.ava-citation-link');
+    if (link) {
+      e.preventDefault();
+      _openCitationPopover(link, link.dataset.citation);
+    }
+  });
+
   /* ── Citation popover ── */
   function _closeCitationPopover() {
     const pop = document.getElementById('ava-citation-popover');
@@ -5005,7 +5014,7 @@
       let el;
       if (line.type === 'p') {
         el = document.createElement('p');
-        el.textContent = line.text;
+        if (line.html) { el.innerHTML = line.text; } else { el.textContent = line.text; }
         currentUl = null;
         container.appendChild(el);
       } else if (line.type === 'h') {
@@ -5735,7 +5744,7 @@
       let el;
       if (line.type === 'p') {
         el = document.createElement('p');
-        el.textContent = line.text;
+        if (line.html) { el.innerHTML = line.text; } else { el.textContent = line.text; }
         currentUl = null;
         container.appendChild(el);
       } else if (line.type === 'h') {
