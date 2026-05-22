@@ -4973,9 +4973,11 @@
       { type: 'li', text: "Feel free to ask me anything related to these areas, and I'll do my best to assist you! What can I help you with today?" }
     ],
     tokyo: [
-      { type: 'p',  text: "No, setting the deductible to 75,000 EUR for a location based in Tokyo with a TSI of 15,000,000 EUR is not possible." },
-      { type: 'p',  text: "The mandatory deductible for earthquake perils in the critical category, which includes California and Japan, is 5% of the exposed TSI with a minimum of 100,000 EUR and no maximum cap." },
-      { type: 'p',  text: "For a TSI of 15,000,000 EUR, the deductible would be 5% of 15,000,000 EUR, which is 750,000 EUR, since this amount is higher than the minimum of 100,000 EUR." }
+      { type: 'p', text: "No, setting the deductible to 75,000 EUR for a location based in Tokyo with a TSI of 15,000,000 EUR is not possible." },
+      { type: 'p', html: true, text: 'The mandatory deductible for earthquake perils in the critical category, which includes California and Japan, is <a class="ava-citation-link" data-citation="tsi-rate">5% of the exposed TSI</a> with a minimum of <a class="ava-citation-link" data-citation="min-floor">100,000 EUR and no maximum cap.</a>' },
+      { type: 'p', text: "For a TSI of 15,000,000 EUR, the deductible would be 5% of 15,000,000 EUR, which is 750,000 EUR, since this amount is higher than the minimum of 100,000 EUR. The requested 75,000 EUR represents only 0.5% of TSI — well below both the 5% mandatory rate and the 100,000 EUR floor." },
+      { type: 'p', html: true, text: 'Tokyo falls under the highest seismic risk classification (<a class="ava-citation-link" data-citation="zone">Zone 1 NatCat critical</a>), which is why the 5% mandatory floor applies rather than a standard deductible table.' },
+      { type: 'p', text: "To proceed, the minimum deductible must be set to 750,000 EUR. Would you like me to update the location rule draft accordingly?" }
     ]
   };
 
