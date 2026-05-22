@@ -4164,7 +4164,7 @@
         </div>
         <span class="ava-src-subtitle">${s.subtitle}</span>
         <span class="ava-src-excerpt">${s.excerpt}</span>
-        <button class="ava-src-link" onclick="window.open('${s.linkUrl}', '_blank')">${EXTERNAL_LINK_SVG}<span class="ava-src-link-text">${s.linkText}</span></button>
+        <button class="ava-src-link" data-url="${s.linkUrl}">${EXTERNAL_LINK_SVG}<span class="ava-src-link-text">${s.linkText}</span></button>
       </div>
     `).join('');
 
@@ -4172,7 +4172,6 @@
     pop.style.visibility = 'hidden';
     pop.style.opacity = '0';
     pop.classList.add('visible');
-    pop.setAttribute('aria-hidden', 'false');
 
     const anchorRect = anchorEl.getBoundingClientRect();
     const popW = pop.offsetWidth;
@@ -4195,7 +4194,6 @@
       top = Math.max(margin, Math.min(top, vh - popH - margin));
       arrowClass = 'arrow-right';
       arrowOffset = (anchorMidY - top) + 'px';
-      pop.style.setProperty('--arrow-offset', arrowOffset);
     }
     // Try ABOVE
     else if (anchorRect.top - popH - gap >= margin) {
@@ -4204,7 +4202,6 @@
       left = Math.max(margin, Math.min(left, vw - popW - margin));
       arrowClass = 'arrow-bottom';
       arrowOffset = (anchorMidX - left) + 'px';
-      pop.style.setProperty('--arrow-offset', arrowOffset);
     }
     // Fallback BELOW
     else {
@@ -4213,17 +4210,18 @@
       left = Math.max(margin, Math.min(left, vw - popW - margin));
       arrowClass = 'arrow-top';
       arrowOffset = (anchorMidX - left) + 'px';
-      pop.style.setProperty('--arrow-offset', arrowOffset);
     }
 
     pop.style.top = top + 'px';
     pop.style.left = left + 'px';
     pop.classList.remove('arrow-right', 'arrow-bottom', 'arrow-top');
     pop.classList.add(arrowClass);
+    pop.style.setProperty('--arrow-offset', arrowOffset);
 
     // Reveal
     pop.style.visibility = '';
     pop.style.opacity = '';
+    pop.setAttribute('aria-hidden', 'false');
   }
 
   function navIsOpen() { return !sideNav.classList.contains('collapsed'); }
@@ -5421,6 +5419,13 @@
     document.querySelectorAll('.ava-file-ctx-menu.open').forEach(function(m) {
       if (!m.contains(e.target)) m.classList.remove('open');
     });
+
+    // Open source links from citation popover
+    const srcLink = e.target.closest('.ava-src-link[data-url]');
+    if (srcLink) {
+      const url = srcLink.getAttribute('data-url');
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    }
   });
 
   function toggleHistoryPanel() {
