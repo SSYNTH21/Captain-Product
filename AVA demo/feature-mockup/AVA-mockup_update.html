@@ -5755,6 +5755,11 @@
         panelWrap.classList.remove('expanded');
         panelWrap.style.removeProperty('--ava-expanded-w');
         document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+        const expandBtn = document.getElementById('ava-expand-btn');
+        if (expandBtn) {
+          expandBtn.setAttribute('data-tooltip', 'Expand');
+          expandBtn.innerHTML = EXPAND_ICON_SVG;
+        }
       }
       _sourcesPreState = null;
     }
@@ -5763,8 +5768,6 @@
   function exitToChat() {
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
-    const bodyRow = document.getElementById('ava-body-row');
-    if (bodyRow) bodyRow.classList.remove('sources-mode');
     _exitSourcesSplit();
     _hideBreadcrumb();
   }
