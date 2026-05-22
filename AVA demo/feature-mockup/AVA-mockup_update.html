@@ -5916,11 +5916,13 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow || panelWrap.classList.contains('floating')) return;
 
-    // Save pre-state so _exitSourcesSplit can restore it
-    _sourcesPreState = {
-      wasExpanded: panelWrap.classList.contains('expanded'),
-      width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
-    };
+    // Save pre-state so _exitSourcesSplit can restore it — only on first entry
+    if (!_sourcesPreState) {
+      _sourcesPreState = {
+        wasExpanded: panelWrap.classList.contains('expanded'),
+        width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+      };
+    }
 
     // Force 768px split width — bypass hasRoom() guard
     panelWrap.classList.add('expanded');
