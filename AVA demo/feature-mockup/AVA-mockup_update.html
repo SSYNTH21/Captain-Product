@@ -5757,6 +5757,8 @@
     panelWrap.classList.add('expanded');
     panelWrap.style.setProperty('--ava-expanded-w', '768px');
     document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+    const expandBtnSrc = document.getElementById('ava-expand-btn');
+    if (expandBtnSrc) { expandBtnSrc.setAttribute('data-tooltip', 'Minimize'); expandBtnSrc.innerHTML = REDUCE_ICON_SVG; }
 
     // Close citation popover if open
     _closeCitationPopover();
@@ -5820,6 +5822,8 @@
     panelWrap.classList.add('expanded');
     panelWrap.style.setProperty('--ava-expanded-w', '768px');
     document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+    const expandBtnFiles = document.getElementById('ava-expand-btn');
+    if (expandBtnFiles) { expandBtnFiles.setAttribute('data-tooltip', 'Minimize'); expandBtnFiles.innerHTML = REDUCE_ICON_SVG; }
 
     // Apply files-mode to the body row (header stays full-width above the row)
     const avaPanel = document.querySelector('.ava-panel');
