@@ -2039,6 +2039,73 @@
     .ava-files-attach-btn:hover { background: var(--hover-secondary); }
     .ava-files-attach-btn:active { background: var(--ui-04); }
 
+    /* Files column — in-column preview toolbar breadcrumb */
+    .ava-files-toolbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+    .ava-files-crumb-parent {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      color: var(--breadcrumb-color);
+      padding: 0;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .ava-files-crumb-parent:hover { color: var(--breadcrumb-link-hover-color); }
+    .ava-files-crumb-sep { color: var(--breadcrumb-chevron-color); flex-shrink: 0; }
+    .ava-files-crumb-current {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.5rem;
+      color: var(--text-01);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Files column — preview content + footer */
+    .ava-files-preview-content {
+      flex: 1 0 0;
+      overflow-y: auto;
+      background: #f5f5f5;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .ava-files-preview-page {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      background: white;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ava-files-preview-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 56px;
+      flex-shrink: 0;
+      background: #ffffff;
+      border-top: 1px solid #d9d9d9;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
+
     /* Source list items — typography from ndbx.css paragraph-04 / paragraph-05 */
     .ava-src-item {
       display: flex;
@@ -4627,6 +4694,10 @@
       return;
     }
     if (avaIsExpanded()) {
+      // If a split panel is open, Minimize closes it instead of collapsing to default
+      const bodyRow = document.getElementById('ava-body-row');
+      if (bodyRow && bodyRow.classList.contains('sources-mode')) { exitToChat(); return; }
+      if (bodyRow && bodyRow.classList.contains('files-mode')) { exitToChat(); return; }
       minimizeAva();
       return;
     }
@@ -5270,7 +5341,10 @@
     const PDF_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g clip-path="url(#bfc)"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 21.4032H8C7.783 21.4032 7.601 21.2202 7.601 21.0042V3.00024C7.601 2.78324 7.783 2.59924 8 2.59924H15.4V6.79924C15.4 7.24124 15.759 7.59924 16.2 7.59924H20.4V21.0042C20.4 21.2202 20.217 21.4032 20 21.4032ZM19.269 6.00024H17V3.73124L19.269 6.00024ZM21.993 6.80524C21.994 6.59524 21.92 6.38824 21.766 6.23424L16.766 1.23424C16.608 1.07624 16.396 1.00224 16.181 1.00624L16.175 1.00024H8C6.9 1.00024 6 1.89924 6 3.00024V21.0042C6 22.1032 6.9 23.0042 8 23.0042H20C21.101 23.0042 22 22.1032 22 21.0042V6.81224L21.993 6.80524Z" fill="#767676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21 9H20H4C3.45 9 3 9.45 3 10V19C3 19.55 3.45 20 4 20H20H21H22V19V10V9H21Z" fill="#DC3149"/><path d="M18.4602 11.8315V12.7675H16.3722V14.2005H18.0602V15.1275H16.3722V17.1675H15.3802V11.8315H18.4602Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.22804 11.8317C8.59104 11.8317 8.90504 11.9047 9.17204 12.0477C9.43904 12.1927 9.64404 12.3947 9.78804 12.6567C9.93204 12.9167 10.004 13.2187 10.004 13.5597C10.004 13.8957 9.93204 14.1947 9.78804 14.4557C9.64404 14.7177 9.43904 14.9207 9.17204 15.0687C8.90504 15.2147 8.59104 15.2877 8.22804 15.2877H7.53204V17.1677H6.54004V11.8317H8.22804ZM8.22804 14.3517C8.46804 14.3517 8.65804 14.2807 8.80004 14.1357C8.94204 13.9917 9.01204 13.7997 9.01204 13.5597C9.01204 13.3207 8.94204 13.1277 8.80004 12.9847C8.65804 12.8397 8.46804 12.7677 8.22804 12.7677H7.53204V14.3517H8.22804Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1242 11.8324C12.6312 11.8324 13.0632 11.9424 13.4202 12.1644C13.7772 12.3854 14.0472 12.6974 14.2282 13.0994C14.4092 13.5024 14.5002 13.9704 14.5002 14.5034C14.5002 15.0374 14.4092 15.5034 14.2282 15.9044C14.0472 16.3034 13.7772 16.6144 13.4202 16.8354C13.0632 17.0574 12.6312 17.1674 12.1242 17.1674H10.8282V11.8324H12.1242ZM12.1242 16.2324C12.5932 16.2324 12.9412 16.0794 13.1682 15.7714C13.3952 15.4654 13.5082 15.0424 13.5082 14.5034C13.5082 13.9654 13.3952 13.5414 13.1682 13.2324C12.9412 12.9224 12.5932 12.7674 12.1242 12.7674H11.8202V16.2324H12.1242Z" fill="white"/></g><defs><clipPath id="bfc"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>`;
 
     // Track file attachment on the panel element for file list rendering
-    if (hasFile) avaPanel.dataset.hasFile = 'true';
+    if (hasFile) {
+      avaPanel.dataset.hasFile = 'true';
+      avaPanel.dataset.fileName = 'Lob-presentation_240116.pdf';
+    }
 
     const FNAME = 'Lob-presentation_240116.pdf';
     const fileChipHTML = hasFile ? `
@@ -5556,6 +5630,8 @@
     document.getElementById('ava-breadcrumb').textContent = c.title;
     // Track file state so file list panel knows what to show
     avaPanel.dataset.hasFile = (c.responseKey === 'tokyo') ? 'true' : 'false';
+    if (c.responseKey === 'tokyo') avaPanel.dataset.fileName = 'Lob-presentation_240116.pdf';
+    else delete avaPanel.dataset.fileName;
     _hideBreadcrumb();
 
     // Restore final state immediately (no animation)
@@ -5677,6 +5753,50 @@
     document.getElementById('ava-file-breadcrumb').style.display = 'none';
   }
 
+  // ── In-column file preview (within files split right panel) ──
+
+  const _OPEN_ICON = `<svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M864.0833333333333 846.07625A33.4420833333333 33.4420833333333 0 0 1 833.3333333333333 866.6708333333333H583.3333333333333A33.3254166666667 33.3254166666667 0 0 1 583.3333333333333 800.0204166666667H752.8891666666666L393.1070833333333 440.2383333333334A33.3183333333333 33.3183333333333 0 1 1 440.22625 393.1191666666668L800.0083333333332 752.90125V583.3454166666667A33.325 33.325 0 0 1 866.6583333333332 583.3454166666667V833.3454166666667A33.245 33.245 0 0 1 864.0833333333333 846.07625zM833.3333333333333 408.3375000000001A33.3416666666667 33.3416666666667 0 0 1 800.0083333333332 375.0120833333334V200.0041666666667H199.9916666666667V800.0204166666667H375A33.3254166666667 33.3254166666667 0 0 1 375 866.6708333333333H166.6666666666667A33.3416666666667 33.3416666666667 0 0 1 133.3416666666667 833.3454166666667V166.67875A33.34125 33.34125 0 0 1 166.6666666666667 133.35375H833.3333333333333A33.34125 33.34125 0 0 1 866.6583333333333 166.67875V375.0120833333334A33.3416666666667 33.3416666666667 0 0 1 833.3333333333333 408.3375000000001z"/></g></svg>`;
+  const _CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/></g></svg>`;
+
+  function _enterFilesPreview(filename) {
+    const col = document.getElementById('ava-files-col');
+    if (!col) return;
+    const truncated = filename.length > 22 ? filename.slice(0, 20) + '…' : filename;
+    col.innerHTML = `
+      <div class="ava-files-toolbar">
+        <div class="ava-files-toolbar-breadcrumb">
+          <button class="ava-files-crumb-parent" onclick="_exitFilesPreview()">Files</button>
+          <svg class="ava-files-crumb-sep" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/></svg>
+          <span class="ava-files-crumb-current" title="${filename}">${truncated}</span>
+        </div>
+        <div class="ava-files-toolbar-actions">
+          <button class="ava-plain-btn" data-tooltip="Open in new tab" data-tooltip-pos="below">${_OPEN_ICON}</button>
+          <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
+        </div>
+      </div>
+      <div class="ava-files-preview-content">
+        <div class="ava-files-preview-page">
+          <img src="images/MockupPDF_S.png" alt="${filename}" style="width:100%;height:auto;display:block;">
+        </div>
+      </div>
+      <div class="ava-files-preview-footer">
+        <div class="ava-pagination-nav">
+          <button class="ava-page-arrow" disabled aria-label="Previous page"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M345.5417 500L566.0833 279.4583A41.6667 41.6667 0 1 0 507.125 220.5417L286.5833 441.0833A41.6667 41.6667 0 0 0 286.5833 558.9167L507.125 779.4583A41.6667 41.6667 0 0 0 566.0833 720.5417z"/></g></svg></button>
+          <input class="ava-page-input" type="text" value="4" aria-label="Page number">
+          <span class="ava-page-of">of 13</span>
+          <button class="ava-page-arrow" aria-label="Next page"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M654.4583 500L433.9167 720.5417A41.6667 41.6667 0 1 0 492.875 779.4583L713.4167 558.9167A41.6667 41.6667 0 0 0 713.4167 441.0833L492.875 220.5417A41.6667 41.6667 0 0 0 433.9167 279.4583z"/></g></svg></button>
+        </div>
+        <div class="ava-pagination-sep"></div>
+        <button class="ava-zoom-btn" data-tooltip="Zoom out" data-tooltip-pos="above"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M958.3333 500A458.3333 458.3333 0 1 1 500 41.6667A458.3333 458.3333 0 0 1 958.3333 500zM291.6667 466.6667A33.3333 33.3333 0 0 0 291.6667 533.3333H708.3333A33.3333 33.3333 0 0 0 708.3333 466.6667z"/></g></svg></button>
+        <button class="ava-zoom-btn" data-tooltip="Zoom in" data-tooltip-pos="above"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M958.3333 500A458.3333 458.3333 0 1 1 500 41.6667A458.3333 458.3333 0 0 1 958.3333 500zM533.3333 291.6667A33.3333 33.3333 0 0 0 466.6667 291.6667V466.6667H291.6667A33.3333 33.3333 0 0 0 291.6667 533.3333H466.6667V708.3333A33.3333 33.3333 0 0 0 533.3333 708.3333V533.3333H708.3333A33.3333 33.3333 0 0 0 708.3333 466.6667H533.3333z"/></g></svg></button>
+      </div>`;
+  }
+
+  function _exitFilesPreview() {
+    const avaPanel = document.querySelector('.ava-panel');
+    _enterFilesSplit();
+  }
+
   function enterPreviewMode(filename) {
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('sources-mode');
@@ -5779,14 +5899,15 @@
   const _MENU_ICON = `<svg width="16" height="16" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M416.6666666666667 750A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 750A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 750M416.6666666666667 500A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 500A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 500M416.6666666666667 250A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 250A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 250"/></g></svg>`;
 
   function _makeFileRow(filename, date) {
+    const safe = filename.replace(/'/g, "\\'");
     return `<div class="ava-files-row">
-      <div class="ava-files-row-content">
+      <div class="ava-files-row-content" onclick="_enterFilesPreview('${safe}')" style="cursor:pointer">
         <div class="ava-files-row-filename">
           <span class="ava-files-row-icon">${_PDF_ICON}</span>
           <span class="ava-files-row-name" title="${filename}">${filename}</span>
         </div>
         <span class="ava-files-row-date">${date}</span>
-        <button class="ava-tertiary-btn" aria-label="More options">${_MENU_ICON}</button>
+        <button class="ava-tertiary-btn" aria-label="More options" onclick="event.stopPropagation()">${_MENU_ICON}</button>
       </div>
       <div class="ava-files-row-border"></div>
     </div>`;
@@ -5831,11 +5952,17 @@
     bodyRow.classList.remove('sources-mode');
     bodyRow.classList.add('files-mode');
 
-    // Populate files panel — empty state if no file attached, file list otherwise
+    // Populate files panel — empty state if no file attached, single file row otherwise
     const hasFile = avaPanel.dataset.hasFile === 'true';
+    const fname = avaPanel.dataset.fileName || 'Lob-presentation_240116.pdf';
     const panel = document.getElementById('ava-files-panel');
     if (hasFile) {
-      panel.innerHTML = _filesColHtml;
+      const today = new Date();
+      const dateStr = ('0'+today.getDate()).slice(-2)+'/'+('0'+(today.getMonth()+1)).slice(-2)+'/'+today.getFullYear();
+      panel.innerHTML = `<div class="ava-files-date-group">
+        <div class="ava-files-date-label">Today &middot; 1 file attached</div>
+        ${_makeFileRow(fname, dateStr)}
+      </div>`;
     } else {
       panel.innerHTML = `<div class="ava-files-empty">
         <p class="ava-files-empty-text">No files attached to this chat</p>
