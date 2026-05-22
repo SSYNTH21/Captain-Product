@@ -2265,32 +2265,6 @@
     .ava-help-link:hover { color: #008ED6; }
     /* History button open state — use #ececec (selected, not pressed) */
     .ava-history-btn.active { background: #ececec; }
-    .ava-file-empty-text {
-      font-size: 16px;
-      line-height: 24px;
-      color: #5B5B5B;
-      text-align: center;
-    }
-    .ava-attach-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 32px;
-      padding: 4px 12px;
-      background: transparent;
-      border: 2px solid transparent;
-      border-radius: 4px;
-      cursor: pointer;
-      color: var(--interactive-text);
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 20px;
-      letter-spacing: 0.2px;
-      transition: background var(--semantic-duration-static-fast);
-    }
-    .ava-attach-btn:hover { background: var(--hover-secondary); }
-    .ava-attach-btn:active { background: var(--ui-04); }
 
     /* AVA Content */
     .ava-content {
@@ -3818,7 +3792,7 @@
             <span class="crumb-sources-label">Sources</span>
             <!-- Level 2 clickable in preview-mode (crumb-files shown/hidden by CSS) -->
             <span class="crumb-files">
-              <button class="crumb-parent" onclick="enterFileListMode()">Files</button>
+              <button class="crumb-parent" onclick="_enterFilesSplit()">Files</button>
               <svg class="crumb-sep" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                 <path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/>
               </svg>
@@ -3846,7 +3820,7 @@
 
           <div class="ava-toolbar-actions">
             <!-- Document — nxButton="small tertiary", c-icon--file-text — toggles file list view -->
-            <button class="ava-tertiary-btn" data-tooltip="Files" data-tooltip-pos="below" onclick="enterFileListMode()">
+            <button class="ava-tertiary-btn" data-tooltip="Files" data-tooltip-pos="below" onclick="_enterFilesSplit()">
               <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
                 <g transform="scale(1,-1) translate(0,-1000)">
                   <path d="M666.6666666666666 491.6666666666667H333.3333333333333A33.3333333333333 33.3333333333333 0 1 1 333.3333333333333 425.0000000000001H666.6666666666666A33.3333333333333 33.3333333333333 0 0 1 666.6666666666666 491.6666666666667zM666.6666666666666 366.6666666666668H333.3333333333333A33.3333333333333 33.3333333333333 0 1 1 333.3333333333333 300H666.6666666666666A33.3333333333333 33.3333333333333 0 0 1 666.6666666666666 366.6666666666667zM500 241.6666666666668H333.3333333333333A33.3333333333333 33.3333333333333 0 1 1 333.3333333333333 175H500A33.3333333333333 33.3333333333333 0 0 1 500 241.6666666666668zM833.0416666666665 716.6666666666667A33.3333333333333 33.3333333333333 0 0 1 823.5416666666665 740.5L615.2083333333331 948.8333333333334A33.3333333333333 33.3333333333333 0 0 1 590.8749999999999 958.3333333333334L590.5833333333333 958.3333333333334H250A83.5833333333333 83.5833333333333 0 0 1 166.6666666666667 875V125A83.5833333333333 83.5833333333333 0 0 1 250 41.6666666666667H750A83.5833333333333 83.5833333333333 0 0 1 833.3333333333333 125V716.2083333333334zM719.5 750H625V844.5833333333334zM750 108.3333333333335H250A16.875 16.875 0 0 0 233.3333333333333 125V875A16.875 16.875 0 0 0 250 891.6666666666666H558.3333333333334V716.6666666666667A33.3333333333333 33.3333333333333 0 0 1 591.6666666666666 683.3333333333334H766.6666666666667V125A16.875 16.875 0 0 0 750 108.3333333333335z"/>
@@ -5451,10 +5425,6 @@
       btn.classList.remove('open');
       btn.setAttribute('aria-expanded', 'false');
     }
-    // Close file context menus when clicking outside
-    document.querySelectorAll('.ava-file-ctx-menu.open').forEach(function(m) {
-      if (!m.contains(e.target)) m.classList.remove('open');
-    });
 
     // Open source links from citation popover
     const srcLink = e.target.closest('.ava-src-link[data-url]');
@@ -5468,9 +5438,9 @@
     const avaPanel  = document.querySelector('.ava-panel');
     const historyBtn = document.getElementById('ava-history-btn');
     const isHistory = avaPanel.classList.toggle('history-mode');
-    // Close file-mode / preview-mode if open
+    // Close preview-mode if open
     if (isHistory) {
-      avaPanel.classList.remove('file-mode', 'preview-mode');
+      avaPanel.classList.remove('preview-mode');
       _hideBreadcrumb();
     }
     historyBtn.classList.toggle('active', isHistory);
@@ -5516,7 +5486,7 @@
   function startNewConversation() {
     const avaPanel   = document.querySelector('.ava-panel');
     const historyBtn = document.getElementById('ava-history-btn');
-    avaPanel.classList.remove('history-mode', 'file-mode', 'preview-mode', 'chat-mode');
+    avaPanel.classList.remove('history-mode', 'preview-mode', 'chat-mode');
     delete avaPanel.dataset.hasFile;
     historyBtn.classList.remove('active');
     document.getElementById('ava-breadcrumb').textContent = 'New chat';
@@ -5534,7 +5504,7 @@
     if (!c) return;
     const avaPanel   = document.querySelector('.ava-panel');
     const historyBtn = document.getElementById('ava-history-btn');
-    avaPanel.classList.remove('history-mode', 'file-mode', 'preview-mode');
+    avaPanel.classList.remove('history-mode', 'preview-mode');
     avaPanel.classList.add('chat-mode');
     historyBtn.classList.remove('active');
     document.getElementById('ava-breadcrumb').textContent = c.title;
@@ -5661,19 +5631,9 @@
     document.getElementById('ava-file-breadcrumb').style.display = 'none';
   }
 
-  function enterFileListMode() {
-    const avaPanel = document.querySelector('.ava-panel');
-    const inChatOrPreview = avaPanel.classList.contains('chat-mode') || avaPanel.classList.contains('preview-mode');
-    avaPanel.classList.remove('preview-mode');
-    avaPanel.classList.add('file-mode');
-    _showFileBreadcrumb();
-    // Populate file list with the attachment if we're in a tokyo chat
-    renderFileList(avaPanel.dataset.hasFile === 'true');
-  }
-
   function enterPreviewMode(filename) {
     const avaPanel = document.querySelector('.ava-panel');
-    avaPanel.classList.remove('file-mode', 'sources-mode');
+    avaPanel.classList.remove('sources-mode');
     avaPanel.classList.add('preview-mode');
     _showFileBreadcrumb();
     const crumbFilename = document.getElementById('ava-crumb-filename');
@@ -5730,6 +5690,7 @@
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
     _exitSourcesSplit();
+    _exitFilesSplit();
     _hideBreadcrumb();
   }
 
@@ -5753,7 +5714,7 @@
 
     // Apply sources-mode to the body row (header stays full-width above the row)
     const avaPanel = document.querySelector('.ava-panel');
-    avaPanel.classList.remove('file-mode', 'preview-mode');
+    avaPanel.classList.remove('preview-mode');
     bodyRow.classList.add('sources-mode');
 
     // Show sources breadcrumb
@@ -5794,61 +5755,6 @@
     if (_filesColHtml) {
       document.getElementById('ava-files-panel').innerHTML = _filesColHtml;
     }
-  }
-
-  function toggleFileList() {
-    const avaPanel = document.querySelector('.ava-panel');
-    if (avaPanel.classList.contains('file-mode')) {
-      exitToChat();
-    } else {
-      enterFileListMode();
-    }
-  }
-
-
-
-  function renderFileList(hasFile) {
-    const fileList = document.getElementById('ava-file-list');
-    if (!fileList) return;
-    if (hasFile) {
-      const PDF_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g clip-path="url(#fl-pdf-clip)"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 21.4032H8C7.783 21.4032 7.601 21.2202 7.601 21.0042V3.00024C7.601 2.78324 7.783 2.59924 8 2.59924H15.4V6.79924C15.4 7.24124 15.759 7.59924 16.2 7.59924H20.4V21.0042C20.4 21.2202 20.217 21.4032 20 21.4032ZM19.269 6.00024H17V3.73124L19.269 6.00024ZM21.993 6.80524C21.994 6.59524 21.92 6.38824 21.766 6.23424L16.766 1.23424C16.608 1.07624 16.396 1.00224 16.181 1.00624L16.175 1.00024H8C6.9 1.00024 6 1.89924 6 3.00024V21.0042C6 22.1032 6.9 23.0042 8 23.0042H20C21.101 23.0042 22 22.1032 22 21.0042V6.81224L21.993 6.80524Z" fill="#767676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21 9H20H4C3.45 9 3 9.45 3 10V19C3 19.55 3.45 20 4 20H20H21H22V19V10V9H21Z" fill="#DC3149"/><path d="M18.4602 11.8315V12.7675H16.3722V14.2005H18.0602V15.1275H16.3722V17.1675H15.3802V11.8315H18.4602Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.22804 11.8317C8.59104 11.8317 8.90504 11.9047 9.17204 12.0477C9.43904 12.1927 9.64404 12.3947 9.78804 12.6567C9.93204 12.9167 10.004 13.2187 10.004 13.5597C10.004 13.8957 9.93204 14.1947 9.78804 14.4557C9.64404 14.7177 9.43904 14.9207 9.17204 15.0687C8.90504 15.2147 8.59104 15.2877 8.22804 15.2877H7.53204V17.1677H6.54004V11.8317H8.22804ZM8.22804 14.3517C8.46804 14.3517 8.65804 14.2807 8.80004 14.1357C8.94204 13.9917 9.01204 13.7997 9.01204 13.5597C9.01204 13.3207 8.94204 13.1277 8.80004 12.9847C8.65804 12.8397 8.46804 12.7677 8.22804 12.7677H7.53204V14.3517H8.22804Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1242 11.8324C12.6312 11.8324 13.0632 11.9424 13.4202 12.1644C13.7772 12.3854 14.0472 12.6974 14.2282 13.0994C14.4092 13.5024 14.5002 13.9704 14.5002 14.5034C14.5002 15.0374 14.4092 15.5034 14.2282 15.9044C14.0472 16.3034 13.7772 16.6144 13.4202 16.8354C13.0632 17.0574 12.6312 17.1674 12.1242 17.1674H10.8282V11.8324H12.1242ZM12.1242 16.2324C12.5932 16.2324 12.9412 16.0794 13.1682 15.7714C13.3952 15.4654 13.5082 15.0424 13.5082 14.5034C13.5082 13.9654 13.3952 13.5414 13.1682 13.2324C12.9412 12.9224 12.5932 12.7674 12.1242 12.7674H11.8202V16.2324H12.1242Z" fill="white"/></g><defs><clipPath id="fl-pdf-clip"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>`;
-      const MENU_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M416.6666666666667 750A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 750A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 750M416.6666666666667 500A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 500A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 500M416.6666666666667 250A83.3333333333333 83.3333333333333 0 0 1 583.3333333333333 250A83.3333333333333 83.3333333333333 0 0 1 416.6666666666667 250"/></g></svg>`;
-
-      const todayGroup = document.createElement('div');
-      todayGroup.className = 'ava-file-date-group';
-      todayGroup.innerHTML = `
-        <div class="ava-file-date-label">${(function(){const d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}())}</div>
-        <div class="ava-file-row">
-          <span class="ava-file-row-icon">${PDF_ICON_SVG}</span>
-          <span class="ava-file-row-name" onclick="enterPreviewMode('Lob-presentation_240116.pdf')" title="Lob-presentation_240116.pdf">Lob-presentation_240116.pdf</span>
-          <span class="ava-file-row-size">1.9 MB</span>
-          <button class="ava-file-row-menu-btn" aria-label="More options" onclick="toggleFileCtxMenu(this, event)">${MENU_ICON_SVG}</button>
-          <div class="ava-file-ctx-menu">
-            <button class="ava-file-ctx-item" onclick="enterPreviewMode('Lob-presentation_240116.pdf')">Preview</button>
-            <button class="ava-file-ctx-item">Download</button>
-            <button class="ava-file-ctx-item">Open in new tab</button>
-          </div>
-        </div>
-      `;
-      fileList.innerHTML = '';
-      fileList.classList.add('has-files');
-      fileList.appendChild(todayGroup);
-    } else {
-      fileList.classList.remove('has-files');
-      fileList.innerHTML = `
-        <p class="ava-file-empty-text">No files attached to this chat</p>
-        <button class="ava-attach-btn" onclick="document.getElementById('ava-file-input').click()">Attach file</button>
-      `;
-    }
-  }
-
-  function toggleFileCtxMenu(btn, event) {
-    event.stopPropagation();
-    const menu = btn.nextElementSibling;
-    const isOpen = menu.classList.contains('open');
-    // Close all other open menus
-    document.querySelectorAll('.ava-file-ctx-menu.open').forEach(m => m.classList.remove('open'));
-    if (!isOpen) menu.classList.add('open');
   }
 
   function toggleThinkingSteps(btn) {
