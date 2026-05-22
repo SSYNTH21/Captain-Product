@@ -2002,6 +2002,43 @@
       width: 100%;
     }
 
+    /* Files column empty state */
+    .ava-files-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 8px;
+      padding: 16px;
+    }
+    .ava-files-empty-text {
+      font-size: 16px;
+      line-height: 24px;
+      color: #5B5B5B;
+      text-align: center;
+    }
+    .ava-files-attach-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 4px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--interactive-text);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      letter-spacing: 0.2px;
+      transition: background var(--semantic-duration-static-fast);
+    }
+    .ava-files-attach-btn:hover { background: var(--hover-secondary); }
+    .ava-files-attach-btn:active { background: var(--ui-04); }
+
     /* Source list items — typography from ndbx.css paragraph-04 / paragraph-05 */
     .ava-src-item {
       display: flex;
@@ -5790,9 +5827,16 @@
     bodyRow.classList.remove('sources-mode');
     bodyRow.classList.add('files-mode');
 
-    // Populate files panel
-    if (_filesColHtml) {
-      document.getElementById('ava-files-panel').innerHTML = _filesColHtml;
+    // Populate files panel — empty state if no file attached, file list otherwise
+    const hasFile = avaPanel.dataset.hasFile === 'true';
+    const panel = document.getElementById('ava-files-panel');
+    if (hasFile) {
+      panel.innerHTML = _filesColHtml;
+    } else {
+      panel.innerHTML = `<div class="ava-files-empty">
+        <p class="ava-files-empty-text">No files attached to this chat</p>
+        <button class="ava-files-attach-btn" onclick="document.getElementById('ava-attach-input').click()">Attach file</button>
+      </div>`;
     }
   }
 
