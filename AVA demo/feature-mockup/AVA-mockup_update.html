@@ -4136,6 +4136,96 @@
     }
   }
 
+  /* ── Citation popover ── */
+  function _closeCitationPopover() {
+    const pop = document.getElementById('ava-citation-popover');
+    if (!pop) return;
+    pop.classList.remove('visible', 'arrow-right', 'arrow-bottom', 'arrow-top');
+    pop.setAttribute('aria-hidden', 'true');
+  }
+
+  function _openCitationPopover(anchorEl, citationKey) {
+    const pop = document.getElementById('ava-citation-popover');
+    const body = document.getElementById('ava-citation-popover__body');
+    if (!pop || !body) return;
+    if (pop.classList.contains('visible')) return; // must close first
+
+    const sources = CITATION_SOURCES[citationKey] || [];
+
+    // Build source items HTML using existing .ava-src-item structure
+    const GLOBE_SVG = '<svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M500 958.3333333333334C247.2916666666667 958.3333333333334 41.6666666666667 752.7083333333334 41.6666666666667 500S247.2916666666667 41.6666666666667 500 41.6666666666667S958.3333333333331 247.2916666666667 958.3333333333331 500S752.7083333333334 958.3333333333334 500 958.3333333333334zM891.6666666666665 500C891.6666666666665 466.4583333333334 887.2916666666665 434 879.3749999999998 402.9583333333334H712.0416666666665C719.3333333333333 446.0416666666668 720.8333333333331 480.6666666666666 720.8333333333331 500C720.8333333333331 538.25 716.6666666666664 573.625 710.5833333333333 607.1666666666666H876.6249999999999C886.2916666666665 573.0833333333333 891.6666666666665 537.2083333333333 891.6666666666665 500zM333.3333333333333 500C333.3333333333333 538.375 337.5833333333333 573.9583333333334 344.2916666666666 607.125L655.6666666666665 607.1666666666666C662.4166666666665 573.9583333333333 666.6666666666665 538.375 666.6666666666665 500C666.6666666666665 488.5000000000001 666.2083333333331 452.0416666666667 657.0416666666665 402.9583333333334H342.9583333333332C333.7916666666665 452.0416666666667 333.3333333333332 488.5000000000001 333.3333333333332 500zM856.8333333333333 661.3333333333334H698.1249999999999C670.0416666666666 760.75 621.2499999999999 835.7916666666667 582.2083583333334 882.875C704.9166666666666 856.6666666666667 806.2499999999999 772.9583333333334 856.8333333333333 661.3333333333334zM500 891.6666666666666C516.0416666666666 876.75 599.5833333333334 796.1666666666666 641.9166666666666 661.3333333333334H358.0833333333334C400.4166666666667 796.1666666666667 483.9583333333334 876.75 500.0000000000001 891.6666666666666zM417.7916666666667 882.875C378.75 835.7916666666666 329.9583333333333 760.75 301.875 661.2916666666667H143.125C193.75 772.9166666666667 295.0833333333333 856.625 417.7916666666667 882.875zM123.375 607.125H289.4166666666667C283.3333333333333 573.5833333333334 279.1666666666667 538.2083333333334 279.1666666666667 500C279.1666666666667 480.6666666666666 280.6666666666667 446.0416666666668 288 402.9583333333334H120.6666666666666C112.7083333333333 434 108.3333333333333 466.4583333333334 108.3333333333333 500C108.3333333333333 537.1666666666667 113.7083333333333 573.0833333333333 123.375 607.125zM139 348.7916666666667H299.5833333333333C317.9583333333333 277.8749999999999 352.5416666666666 194.1666666666668 417.3333333333333 117.25C291.2083333333333 144.375 187.875 232.3333333333334 139 348.7916666666668zM355.6666666666667 348.7916666666667H644.2916666666666C623 273.8750000000001 581.3749999999999 184.0416666666666 500 108.3333333333333C418.625 184.0416666666666 377 273.8749999999999 355.6666666666667 348.7916666666667zM582.6666666666666 117.25C647.4999999999999 194.1666666666668 682.0416666666666 277.8750000000001 700.4166666666666 348.7916666666668H860.9999999999999C812.1249999999999 232.3333333333334 708.7916666666666 144.375 582.6666666666665 117.25z"/></g></svg>';
+    const EXTERNAL_LINK_SVG = '<svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M864.0833333333333 846.07625A33.4420833333333 33.4420833333333 0 0 1 833.3333333333333 866.6708333333333H583.3333333333333A33.3254166666667 33.3254166666667 0 0 1 583.3333333333333 800.0204166666667H752.8891666666666L393.1070833333333 440.2383333333334A33.3183333333333 33.3183333333333 0 1 1 440.22625 393.1191666666668L800.0083333333332 752.90125V583.3454166666667A33.325 33.325 0 0 1 866.6583333333332 583.3454166666667V833.3454166666667A33.245 33.245 0 0 1 864.0833333333333 846.07625zM833.3333333333333 408.3375000000001A33.3416666666667 33.3416666666667 0 0 1 800.0083333333332 375.0120833333334V200.0041666666667H199.9916666666667V800.0204166666667H375A33.3254166666667 33.3254166666667 0 0 1 375 866.6708333333333H166.6666666666667A33.3416666666667 33.3416666666667 0 0 1 133.3416666666667 833.3454166666667V166.67875A33.34125 33.34125 0 0 1 166.6666666666667 133.35375H833.3333333333333A33.34125 33.34125 0 0 1 866.6583333333333 166.67875V375.0120833333334A33.3416666666667 33.3416666666667 0 0 1 833.3333333333333 408.3375000000001z"/></g></svg>';
+
+    body.innerHTML = sources.map(s => `
+      <div class="ava-src-item">
+        <div class="ava-src-title-row">
+          <span class="ava-src-icon">${GLOBE_SVG}</span>
+          <span class="ava-src-title">${s.title}</span>
+        </div>
+        <span class="ava-src-subtitle">${s.subtitle}</span>
+        <span class="ava-src-excerpt">${s.excerpt}</span>
+        <button class="ava-src-link" onclick="window.open('${s.linkUrl}', '_blank')">${EXTERNAL_LINK_SVG}<span class="ava-src-link-text">${s.linkText}</span></button>
+      </div>
+    `).join('');
+
+    // Measure anchor and popover
+    pop.style.visibility = 'hidden';
+    pop.style.opacity = '0';
+    pop.classList.add('visible');
+    pop.setAttribute('aria-hidden', 'false');
+
+    const anchorRect = anchorEl.getBoundingClientRect();
+    const popW = pop.offsetWidth;
+    const popH = pop.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const margin = 24;
+    const gap = 12;
+
+    // Compute anchor midpoints
+    const anchorMidX = anchorRect.left + anchorRect.width / 2;
+    const anchorMidY = anchorRect.top + anchorRect.height / 2;
+
+    let top, left, arrowClass, arrowOffset;
+
+    // Try LEFT
+    if (anchorRect.left - popW - gap >= margin) {
+      left = anchorRect.left - popW - gap;
+      top = anchorMidY - popH / 2;
+      top = Math.max(margin, Math.min(top, vh - popH - margin));
+      arrowClass = 'arrow-right';
+      arrowOffset = (anchorMidY - top) + 'px';
+      pop.style.setProperty('--arrow-offset', arrowOffset);
+    }
+    // Try ABOVE
+    else if (anchorRect.top - popH - gap >= margin) {
+      top = anchorRect.top - popH - gap;
+      left = anchorMidX - popW / 2;
+      left = Math.max(margin, Math.min(left, vw - popW - margin));
+      arrowClass = 'arrow-bottom';
+      arrowOffset = (anchorMidX - left) + 'px';
+      pop.style.setProperty('--arrow-offset', arrowOffset);
+    }
+    // Fallback BELOW
+    else {
+      top = anchorRect.bottom + gap;
+      left = anchorMidX - popW / 2;
+      left = Math.max(margin, Math.min(left, vw - popW - margin));
+      arrowClass = 'arrow-top';
+      arrowOffset = (anchorMidX - left) + 'px';
+      pop.style.setProperty('--arrow-offset', arrowOffset);
+    }
+
+    pop.style.top = top + 'px';
+    pop.style.left = left + 'px';
+    pop.classList.remove('arrow-right', 'arrow-bottom', 'arrow-top');
+    pop.classList.add(arrowClass);
+
+    // Reveal
+    pop.style.visibility = '';
+    pop.style.opacity = '';
+  }
+
   function navIsOpen() { return !sideNav.classList.contains('collapsed'); }
   function avaIsOpen() { return panelWrap.classList.contains('open'); }
   function avaIsExpanded() { return panelWrap.classList.contains('expanded'); }
