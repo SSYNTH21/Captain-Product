@@ -325,23 +325,15 @@
       opacity: 1;
       pointer-events: auto;
     }
-    .ava-citation-popover__header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 16px 12px 24px;
-      border-bottom: 1px solid #d9d9d9;
-      flex-shrink: 0;
-    }
-    .ava-citation-popover__title {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 24px;
+    .ava-citation-popover__close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
       color: #414141;
     }
     .ava-citation-popover__body {
       overflow-y: auto;
-      padding: 16px 24px;
+      padding: 16px 48px 24px 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -5893,16 +5885,13 @@
 </script>
   <!-- Citation source popover (singleton) -->
   <div class="ava-citation-popover" id="ava-citation-popover" aria-hidden="true">
-    <div class="ava-citation-popover__header">
-      <span class="ava-citation-popover__title">Sources</span>
-      <button class="ava-plain-btn" onclick="_closeCitationPopover()" aria-label="Close sources">
-        <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
-          <g transform="scale(1,-1) translate(0,-1000)">
-            <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
-          </g>
-        </svg>
-      </button>
-    </div>
+    <button class="ava-plain-btn ava-citation-popover__close" onclick="_closeCitationPopover()" aria-label="Close sources">
+      <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+        <g transform="scale(1,-1) translate(0,-1000)">
+          <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
+        </g>
+      </svg>
+    </button>
     <div class="ava-citation-popover__body" id="ava-citation-popover__body"></div>
   </div>
 
