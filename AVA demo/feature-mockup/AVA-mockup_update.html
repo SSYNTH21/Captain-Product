@@ -4194,7 +4194,7 @@
 
         <!-- Files column: shown as right panel in files-mode split -->
         <div class="ava-files-col" id="ava-files-col">
-          <div class="ava-files-toolbar">
+          <div class="ava-files-toolbar" id="ava-files-toolbar">
             <span class="ava-files-toolbar-title">Files</span>
             <div class="ava-files-toolbar-actions">
               <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">
@@ -4207,6 +4207,43 @@
             </div>
           </div>
           <div class="ava-files-content" id="ava-files-panel"></div>
+          <div class="ava-pagination-footer" id="ava-files-preview-footer" style="display:none">
+            <div class="ava-pagination-nav">
+              <button class="ava-page-arrow" aria-label="Previous page" disabled>
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M791.6666666666666 541.6666666666667H308.9166666666667L404.4583333333333 637.25A41.6666666666667 41.6666666666667 0 1 1 345.5416666666667 696.1666666666667L178.875 529.5A41.6666666666667 41.6666666666667 0 0 1 169.8333333333333 484.0833333333334A41.6666666666667 41.6666666666667 0 0 1 178.875 470.4583333333334L345.5416666666667 303.7916666666668A41.6666666666667 41.6666666666667 0 0 1 404.4583333333333 362.7083333333334L308.9166666666667 458.3333333333334H791.6666666666666A41.6666666666667 41.6666666666667 0 0 1 791.6666666666666 541.6666666666667z"/>
+                  </g>
+                </svg>
+              </button>
+              <input class="ava-page-input" type="text" value="1" aria-label="Page number" inputmode="numeric">
+              <span class="ava-page-of">of 1</span>
+              <button class="ava-page-arrow" aria-label="Next page" disabled>
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M830.1249999999999 484.0833333333334A41.9166666666667 41.9166666666667 0 0 1 821.0833333333333 529.5416666666667L654.4166666666666 696.2083333333333A41.6666666666667 41.6666666666667 0 1 1 595.5 637.2916666666667L691.0833333333333 541.6666666666667H208.3333333333333A41.6666666666667 41.6666666666667 0 0 1 208.3333333333333 458.3333333333334H691.0833333333333L595.5416666666666 362.7916666666668A41.6666666666667 41.6666666666667 0 1 1 654.4583333333333 303.875L821.125 470.5416666666666A41.25 41.25 0 0 1 830.1249999999999 484.0833333333334z"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
+            <div class="ava-pagination-sep"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="ava-zoom-btn" aria-label="Zoom out">
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M750 458.3333333333334L250 458.3333333333334C227.125 458.3333333333334 208.3333333333333 477.125 208.3333333333333 500C208.3333333333333 522.875 227.125 541.6666666666667 250 541.6666666666667L750 541.6666666666667C772.8749999999999 541.6666666666667 791.6666666666666 522.875 791.6666666666666 500C791.6666666666666 477.125 772.8749999999999 458.3333333333334 750 458.3333333333334z"/>
+                  </g>
+                </svg>
+              </button>
+              <button class="ava-zoom-btn" aria-label="Zoom in">
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M750 541.6666666666667L541.6666666666666 541.6666666666667L541.6666666666666 750C541.6666666666666 772.875 522.875 791.6666666666667 500 791.6666666666667C477.125 791.6666666666667 458.3333333333333 772.875 458.3333333333333 750L458.3333333333333 541.6666666666667L250 541.6666666666667C227.125 541.6666666666667 208.3333333333333 522.875 208.3333333333333 500C208.3333333333333 477.125 227.125 458.3333333333334 250 458.3333333333334L458.3333333333333 458.3333333333334L458.3333333333333 250C458.3333333333333 227.1250000000001 477.125 208.3333333333334 500 208.3333333333334C522.875 208.3333333333334 541.6666666666666 227.1250000000001 541.6666666666666 250L541.6666666666666 458.3333333333334L750 458.3333333333334C772.8749999999999 458.3333333333334 791.6666666666666 477.125 791.6666666666666 500C791.6666666666666 522.875 772.8749999999999 541.6666666666667 750 541.6666666666667z"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div><!-- /ava-files-col -->
 
         </div><!-- /ava-body-row -->
@@ -5348,7 +5385,7 @@
 
     const FNAME = 'Lob-presentation_240116.pdf';
     const fileChipHTML = hasFile ? `
-      <div class="ava-msg-bubble-file" onclick="enterPreviewMode('${FNAME}')" title="${FNAME}">
+      <div class="ava-msg-bubble-file" onclick="_openFilePreview('${FNAME}')" title="${FNAME}">
         ${PDF_ICON_SVG}
         <span class="ava-msg-bubble-file-name">${FNAME}</span>
       </div>` : '';
@@ -5657,7 +5694,7 @@
       </div>
       <div class="ava-msg-bubble">
         <span class="ava-msg-bubble-text">${c.promptText || c.title}</span>
-        ${c.responseKey === 'tokyo' ? `<div class="ava-msg-bubble-file" onclick="enterPreviewMode(\'Lob-presentation_240116.pdf\')" title="Lob-presentation_240116.pdf"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g clip-path="url(#bfc2)"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 21.4032H8C7.783 21.4032 7.601 21.2202 7.601 21.0042V3.00024C7.601 2.78324 7.783 2.59924 8 2.59924H15.4V6.79924C15.4 7.24124 15.759 7.59924 16.2 7.59924H20.4V21.0042C20.4 21.2202 20.217 21.4032 20 21.4032ZM19.269 6.00024H17V3.73124L19.269 6.00024ZM21.993 6.80524C21.994 6.59524 21.92 6.38824 21.766 6.23424L16.766 1.23424C16.608 1.07624 16.396 1.00224 16.181 1.00624L16.175 1.00024H8C6.9 1.00024 6 1.89924 6 3.00024V21.0042C6 22.1032 6.9 23.0042 8 23.0042H20C21.101 23.0042 22 22.1032 22 21.0042V6.81224L21.993 6.80524Z" fill="#767676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21 9H20H4C3.45 9 3 9.45 3 10V19C3 19.55 3.45 20 4 20H20H21H22V19V10V9H21Z" fill="#DC3149"/><path d="M18.4602 11.8315V12.7675H16.3722V14.2005H18.0602V15.1275H16.3722V17.1675H15.3802V11.8315H18.4602Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.22804 11.8317C8.59104 11.8317 8.90504 11.9047 9.17204 12.0477C9.43904 12.1927 9.64404 12.3947 9.78804 12.6567C9.93204 12.9167 10.004 13.2187 10.004 13.5597C10.004 13.8957 9.93204 14.1947 9.78804 14.4557C9.64404 14.7177 9.43904 14.9207 9.17204 15.0687C8.90504 15.2147 8.59104 15.2877 8.22804 15.2877H7.53204V17.1677H6.54004V11.8317H8.22804ZM8.22804 14.3517C8.46804 14.3517 8.65804 14.2807 8.80004 14.1357C8.94204 13.9917 9.01204 13.7997 9.01204 13.5597C9.01204 13.3207 8.94204 13.1277 8.80004 12.9847C8.65804 12.8397 8.46804 12.7677 8.22804 12.7677H7.53204V14.3517H8.22804Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1242 11.8324C12.6312 11.8324 13.0632 11.9424 13.4202 12.1644C13.7772 12.3854 14.0472 12.6974 14.2282 13.0994C14.4092 13.5024 14.5002 13.9704 14.5002 14.5034C14.5002 15.0374 14.4092 15.5034 14.2282 15.9044C14.0472 16.3034 13.7772 16.6144 13.4202 16.8354C13.0632 17.0574 12.6312 17.1674 12.1242 17.1674H10.8282V11.8324H12.1242ZM12.1242 16.2324C12.5932 16.2324 12.9412 16.0794 13.1682 15.7714C13.3952 15.4654 13.5082 15.0424 13.5082 14.5034C13.5082 13.9654 13.3952 13.5414 13.1682 13.2324C12.9412 12.9224 12.5932 12.7674 12.1242 12.7674H11.8202V16.2324H12.1242Z" fill="white"/></g><defs><clipPath id="bfc2"><rect width="24" height="24" fill="white"/></clipPath></defs></svg><span class="ava-msg-bubble-file-name">Lob-presentation_240116.pdf</span></div>` : ''}
+        ${c.responseKey === 'tokyo' ? `<div class="ava-msg-bubble-file" onclick="_openFilePreview(\'Lob-presentation_240116.pdf\')" title="Lob-presentation_240116.pdf"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g clip-path="url(#bfc2)"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 21.4032H8C7.783 21.4032 7.601 21.2202 7.601 21.0042V3.00024C7.601 2.78324 7.783 2.59924 8 2.59924H15.4V6.79924C15.4 7.24124 15.759 7.59924 16.2 7.59924H20.4V21.0042C20.4 21.2202 20.217 21.4032 20 21.4032ZM19.269 6.00024H17V3.73124L19.269 6.00024ZM21.993 6.80524C21.994 6.59524 21.92 6.38824 21.766 6.23424L16.766 1.23424C16.608 1.07624 16.396 1.00224 16.181 1.00624L16.175 1.00024H8C6.9 1.00024 6 1.89924 6 3.00024V21.0042C6 22.1032 6.9 23.0042 8 23.0042H20C21.101 23.0042 22 22.1032 22 21.0042V6.81224L21.993 6.80524Z" fill="#767676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21 9H20H4C3.45 9 3 9.45 3 10V19C3 19.55 3.45 20 4 20H20H21H22V19V10V9H21Z" fill="#DC3149"/><path d="M18.4602 11.8315V12.7675H16.3722V14.2005H18.0602V15.1275H16.3722V17.1675H15.3802V11.8315H18.4602Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.22804 11.8317C8.59104 11.8317 8.90504 11.9047 9.17204 12.0477C9.43904 12.1927 9.64404 12.3947 9.78804 12.6567C9.93204 12.9167 10.004 13.2187 10.004 13.5597C10.004 13.8957 9.93204 14.1947 9.78804 14.4557C9.64404 14.7177 9.43904 14.9207 9.17204 15.0687C8.90504 15.2147 8.59104 15.2877 8.22804 15.2877H7.53204V17.1677H6.54004V11.8317H8.22804ZM8.22804 14.3517C8.46804 14.3517 8.65804 14.2807 8.80004 14.1357C8.94204 13.9917 9.01204 13.7997 9.01204 13.5597C9.01204 13.3207 8.94204 13.1277 8.80004 12.9847C8.65804 12.8397 8.46804 12.7677 8.22804 12.7677H7.53204V14.3517H8.22804Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1242 11.8324C12.6312 11.8324 13.0632 11.9424 13.4202 12.1644C13.7772 12.3854 14.0472 12.6974 14.2282 13.0994C14.4092 13.5024 14.5002 13.9704 14.5002 14.5034C14.5002 15.0374 14.4092 15.5034 14.2282 15.9044C14.0472 16.3034 13.7772 16.6144 13.4202 16.8354C13.0632 17.0574 12.6312 17.1674 12.1242 17.1674H10.8282V11.8324H12.1242ZM12.1242 16.2324C12.5932 16.2324 12.9412 16.0794 13.1682 15.7714C13.3952 15.4654 13.5082 15.0424 13.5082 14.5034C13.5082 13.9654 13.3952 13.5414 13.1682 13.2324C12.9412 12.9224 12.5932 12.7674 12.1242 12.7674H11.8202V16.2324H12.1242Z" fill="white"/></g><defs><clipPath id="bfc2"><rect width="24" height="24" fill="white"/></clipPath></defs></svg><span class="ava-msg-bubble-file-name">Lob-presentation_240116.pdf</span></div>` : ''}
       </div>
     `;
     messages.appendChild(userMsg);
@@ -5759,42 +5796,54 @@
   const _CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true"><g transform="scale(1,-1) translate(0,-1000)"><path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/></g></svg>`;
 
   function _enterFilesPreview(filename) {
-    const col = document.getElementById('ava-files-col');
-    if (!col) return;
+    const toolbar = document.getElementById('ava-files-toolbar');
+    const panel = document.getElementById('ava-files-panel');
+    const footer = document.getElementById('ava-files-preview-footer');
+    if (!toolbar || !panel) return;
     const truncated = filename.length > 22 ? filename.slice(0, 20) + '…' : filename;
-    col.innerHTML = `
-      <div class="ava-files-toolbar">
-        <div class="ava-files-toolbar-breadcrumb">
-          <button class="ava-files-crumb-parent" onclick="_exitFilesPreview()">Files</button>
-          <svg class="ava-files-crumb-sep" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/></svg>
-          <span class="ava-files-crumb-current" title="${filename}">${truncated}</span>
-        </div>
-        <div class="ava-files-toolbar-actions">
-          <button class="ava-plain-btn" data-tooltip="Open in new tab" data-tooltip-pos="below">${_OPEN_ICON}</button>
-          <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
-        </div>
+
+    toolbar.innerHTML = `
+      <div class="ava-files-toolbar-breadcrumb">
+        <button class="ava-files-crumb-parent" onclick="_exitFilesPreview()">Files</button>
+        <svg class="ava-files-crumb-sep" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5293 2.8623C5.78996 2.60165 6.21102 2.60164 6.47168 2.8623L11.1377 7.52832C11.3984 7.78899 11.3984 8.21101 11.1377 8.47168L6.47168 13.1377C6.34168 13.2677 6.17067 13.333 6 13.333C5.82945 13.333 5.65924 13.2676 5.5293 13.1377C5.26863 12.877 5.26863 12.456 5.5293 12.1953L9.72461 8L5.5293 3.80469C5.26863 3.54402 5.26863 3.12297 5.5293 2.8623Z"/></svg>
+        <span class="ava-files-crumb-current" title="${filename}">${truncated}</span>
       </div>
+      <div class="ava-files-toolbar-actions" style="gap:4px">
+        <button class="ava-tertiary-btn" data-tooltip="Open in new tab" data-tooltip-pos="below">${_OPEN_ICON}</button>
+        <button class="ava-tertiary-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
+      </div>`;
+
+    panel.style.padding = '0';
+    panel.innerHTML = `
       <div class="ava-files-preview-content">
         <div class="ava-files-preview-page">
           <img src="images/MockupPDF_S.png" alt="${filename}" style="width:100%;height:auto;display:block;">
         </div>
-      </div>
-      <div class="ava-files-preview-footer">
-        <div class="ava-pagination-nav">
-          <button class="ava-page-arrow" disabled aria-label="Previous page"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M345.5417 500L566.0833 279.4583A41.6667 41.6667 0 1 0 507.125 220.5417L286.5833 441.0833A41.6667 41.6667 0 0 0 286.5833 558.9167L507.125 779.4583A41.6667 41.6667 0 0 0 566.0833 720.5417z"/></g></svg></button>
-          <input class="ava-page-input" type="text" value="4" aria-label="Page number">
-          <span class="ava-page-of">of 13</span>
-          <button class="ava-page-arrow" aria-label="Next page"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M654.4583 500L433.9167 720.5417A41.6667 41.6667 0 1 0 492.875 779.4583L713.4167 558.9167A41.6667 41.6667 0 0 0 713.4167 441.0833L492.875 220.5417A41.6667 41.6667 0 0 0 433.9167 279.4583z"/></g></svg></button>
-        </div>
-        <div class="ava-pagination-sep"></div>
-        <button class="ava-zoom-btn" data-tooltip="Zoom out" data-tooltip-pos="above"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M958.3333 500A458.3333 458.3333 0 1 1 500 41.6667A458.3333 458.3333 0 0 1 958.3333 500zM291.6667 466.6667A33.3333 33.3333 0 0 0 291.6667 533.3333H708.3333A33.3333 33.3333 0 0 0 708.3333 466.6667z"/></g></svg></button>
-        <button class="ava-zoom-btn" data-tooltip="Zoom in" data-tooltip-pos="above"><svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor"><g transform="scale(1,-1) translate(0,-1000)"><path d="M958.3333 500A458.3333 458.3333 0 1 1 500 41.6667A458.3333 458.3333 0 0 1 958.3333 500zM533.3333 291.6667A33.3333 33.3333 0 0 0 466.6667 291.6667V466.6667H291.6667A33.3333 33.3333 0 0 0 291.6667 533.3333H466.6667V708.3333A33.3333 33.3333 0 0 0 533.3333 708.3333V533.3333H708.3333A33.3333 33.3333 0 0 0 708.3333 466.6667H533.3333z"/></g></svg></button>
       </div>`;
+
+    if (footer) footer.style.display = 'flex';
   }
 
   function _exitFilesPreview() {
-    const avaPanel = document.querySelector('.ava-panel');
+    const toolbar = document.getElementById('ava-files-toolbar');
+    const footer = document.getElementById('ava-files-preview-footer');
+    if (toolbar) toolbar.innerHTML = `
+      <span class="ava-files-toolbar-title">Files</span>
+      <div class="ava-files-toolbar-actions">
+        <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
+      </div>`;
+    if (footer) footer.style.display = 'none';
+    const panel = document.getElementById('ava-files-panel');
+    if (panel) panel.style.padding = '';
     _enterFilesSplit();
+  }
+
+  function _openFilePreview(filename) {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (!bodyRow || !bodyRow.classList.contains('files-mode')) {
+      _enterFilesSplit();
+    }
+    _enterFilesPreview(filename);
   }
 
   function enterPreviewMode(filename) {
@@ -5933,11 +5982,13 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow || panelWrap.classList.contains('floating')) return;
 
-    // Save pre-state so _exitFilesSplit can restore it
-    _filesPreState = {
-      wasExpanded: panelWrap.classList.contains('expanded'),
-      width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
-    };
+    // Save pre-state so _exitFilesSplit can restore it — only on first entry
+    if (!_filesPreState) {
+      _filesPreState = {
+        wasExpanded: panelWrap.classList.contains('expanded'),
+        width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+      };
+    }
 
     // Force 768px split width — bypass hasRoom() guard
     panelWrap.classList.add('expanded');
