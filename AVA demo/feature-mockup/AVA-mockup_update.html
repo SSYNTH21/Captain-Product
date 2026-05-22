@@ -1831,6 +1831,13 @@
       flex: 1;
       min-width: 0;
     }
+    .ava-sources-toolbar-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding-right: 4px;
+      flex-shrink: 0;
+    }
 
     /* Sources list area */
     .ava-sources-panel {
@@ -4068,13 +4075,15 @@
         <div class="ava-sources-col">
           <div class="ava-sources-toolbar">
             <span class="ava-sources-toolbar-title">Sources</span>
-            <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close sources">
-              <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
-                <g transform="scale(1,-1) translate(0,-1000)">
-                  <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
-                </g>
-              </svg>
-            </button>
+            <div class="ava-sources-toolbar-actions">
+              <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close sources">
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
           </div>
           <div class="ava-sources-panel" id="ava-sources-panel"></div>
         </div><!-- /ava-sources-col -->
@@ -5053,9 +5062,9 @@
     ],
     tokyo: [
       { type: 'p', text: "No, setting the deductible to 75,000 EUR for a location based in Tokyo with a TSI of 15,000,000 EUR is not possible." },
-      { type: 'p', html: true, text: 'The mandatory deductible for earthquake perils in the critical category, which includes California and Japan, is <a class="ava-citation-link" data-citation="tsi-rate">5% of the exposed TSI</a> with a minimum of <a class="ava-citation-link" data-citation="min-floor">100,000 EUR and no maximum cap.</a>' },
+      { type: 'p', html: true, text: 'The mandatory deductible for earthquake perils in the critical category, which includes California and Japan, is <a class="ava-citation-link" data-citation="tsi-rate" data-tooltip="View cited source" data-tooltip-pos="above">5% of the exposed TSI</a> with a minimum of <a class="ava-citation-link" data-citation="min-floor" data-tooltip="View cited source" data-tooltip-pos="above">100,000 EUR and no maximum cap.</a>' },
       { type: 'p', text: "For a TSI of 15,000,000 EUR, the deductible would be 5% of 15,000,000 EUR, which is 750,000 EUR, since this amount is higher than the minimum of 100,000 EUR. The requested 75,000 EUR represents only 0.5% of TSI — well below both the 5% mandatory rate and the 100,000 EUR floor." },
-      { type: 'p', html: true, text: 'Tokyo falls under the highest seismic risk classification (<a class="ava-citation-link" data-citation="zone">Zone 1 NatCat critical</a>), which is why the 5% mandatory floor applies rather than a standard deductible table.' },
+      { type: 'p', html: true, text: 'Tokyo falls under the highest seismic risk classification (<a class="ava-citation-link" data-citation="zone" data-tooltip="View cited source" data-tooltip-pos="above">Zone 1 NatCat critical</a>), which is why the 5% mandatory floor applies rather than a standard deductible table.' },
       { type: 'p', text: "To proceed, the minimum deductible must be set to 750,000 EUR. Would you like me to update the location rule draft accordingly?" }
     ]
   };
@@ -5712,14 +5721,14 @@
     panelWrap.style.setProperty('--ava-expanded-w', '768px');
     document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
 
+    // Close citation popover if open
+    _closeCitationPopover();
+
     // Apply sources-mode to the body row (header stays full-width above the row)
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('preview-mode');
     bodyRow.classList.remove('files-mode');
     bodyRow.classList.add('sources-mode');
-
-    // Show sources breadcrumb
-    _showFileBreadcrumb('Sources');
 
     // Populate sources panel
     if (_sourcesHtml) {
@@ -5780,9 +5789,6 @@
     avaPanel.classList.remove('preview-mode');
     bodyRow.classList.remove('sources-mode');
     bodyRow.classList.add('files-mode');
-
-    // Show files breadcrumb
-    _showFileBreadcrumb('Files');
 
     // Populate files panel
     if (_filesColHtml) {
