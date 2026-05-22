@@ -5743,9 +5743,29 @@
     if (crumbFilename) crumbFilename.textContent = filename || 'Lob-presentation_240116.pdf';
   }
 
+  function _exitSourcesSplit() {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (bodyRow) bodyRow.classList.remove('sources-mode');
+
+    if (_sourcesPreState) {
+      if (_sourcesPreState.wasExpanded) {
+        panelWrap.style.setProperty('--ava-expanded-w', _sourcesPreState.width + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', (_sourcesPreState.width - 40) + 'px');
+      } else {
+        panelWrap.classList.remove('expanded');
+        panelWrap.style.removeProperty('--ava-expanded-w');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+      }
+      _sourcesPreState = null;
+    }
+  }
+
   function exitToChat() {
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
+    const bodyRow = document.getElementById('ava-body-row');
+    if (bodyRow) bodyRow.classList.remove('sources-mode');
+    _exitSourcesSplit();
     _hideBreadcrumb();
   }
 
