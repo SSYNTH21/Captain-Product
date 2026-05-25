@@ -1898,6 +1898,29 @@
     .ava-body-row.files-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.files-mode .ava-footer-actions { max-width: none; }
 
+    /* ── History split layout ── */
+
+    /* The history column: fixed 320px, hidden by default, left of chat */
+    .ava-history-col {
+      display: none;
+      flex-direction: column;
+      width: 320px;
+      flex-shrink: 0;
+      border-right: 1px solid #d9d9d9;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    /* In history-mode: body-row becomes a side-by-side row, history column becomes visible */
+    .ava-body-row.history-mode {
+      flex-direction: row;
+    }
+    .ava-body-row.history-mode .ava-history-col { display: flex; }
+    /* Constrain bubbles in the narrower chat column */
+    .ava-body-row.history-mode .ava-msg-wrap,
+    .ava-body-row.history-mode .ava-footer > * { max-width: 344px; }
+    .ava-body-row.history-mode .ava-footer-actions { max-width: none; }
+
     /* Files column toolbar */
     .ava-files-toolbar {
       display: flex;
