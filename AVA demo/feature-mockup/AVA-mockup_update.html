@@ -5957,6 +5957,10 @@
 
     const historyBtn = document.getElementById('ava-history-btn');
     if (historyBtn) historyBtn.classList.add('active');
+
+    // History split keeps Expand icon (not Minimize) — clicking it closes history + maximizes
+    const expandBtn = document.getElementById('ava-expand-btn');
+    if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Expand'); expandBtn.innerHTML = EXPAND_ICON_SVG; }
   }
 
   function _exitHistorySplit() {
@@ -5964,13 +5968,16 @@
     if (bodyRow) bodyRow.classList.remove('history-mode');
 
     if (_historyPreState) {
+      const expandBtn = document.getElementById('ava-expand-btn');
       if (_historyPreState.wasExpanded) {
         panelWrap.style.setProperty('--ava-expanded-w', _historyPreState.width + 'px');
         document.documentElement.style.setProperty('--ava-bubble-max-w', (_historyPreState.width - 40) + 'px');
+        if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Minimize'); expandBtn.innerHTML = REDUCE_ICON_SVG; }
       } else {
         panelWrap.classList.remove('expanded');
         panelWrap.style.removeProperty('--ava-expanded-w');
         document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+        if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Expand'); expandBtn.innerHTML = EXPAND_ICON_SVG; }
       }
       _historyPreState = null;
     }
