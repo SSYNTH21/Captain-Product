@@ -5032,6 +5032,7 @@
   }
 
   function closeAva() {
+    _exitHistorySplit();
     avaAutoUnpinned = false;
     avaLastWasFloating = avaIsFloating() && !isMedium() && !isSmall();
     // At medium/small AVA is always floating — pin it back silently so layout state is clean
@@ -5668,11 +5669,10 @@
   }
 
   function startNewConversation() {
+    _exitHistorySplit();
     const avaPanel   = document.querySelector('.ava-panel');
-    const historyBtn = document.getElementById('ava-history-btn');
-    avaPanel.classList.remove('history-mode', 'preview-mode', 'chat-mode');
+    avaPanel.classList.remove('preview-mode', 'chat-mode');
     delete avaPanel.dataset.hasFile;
-    historyBtn.classList.remove('active');
     document.getElementById('ava-breadcrumb').textContent = 'New chat';
     _hideBreadcrumb();
     const content = document.getElementById('ava-content');
@@ -5686,11 +5686,10 @@
   function loadConversation(index) {
     const c = conversations[index];
     if (!c) return;
+    _exitHistorySplit();
     const avaPanel   = document.querySelector('.ava-panel');
-    const historyBtn = document.getElementById('ava-history-btn');
-    avaPanel.classList.remove('history-mode', 'preview-mode');
+    avaPanel.classList.remove('preview-mode');
     avaPanel.classList.add('chat-mode');
-    historyBtn.classList.remove('active');
     document.getElementById('ava-breadcrumb').textContent = c.title;
     // Track file state so file list panel knows what to show
     avaPanel.dataset.hasFile = (c.responseKey === 'tokyo') ? 'true' : 'false';
