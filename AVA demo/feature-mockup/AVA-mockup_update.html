@@ -4508,13 +4508,8 @@
 
   function unpinAva() {
     const pinBtn = document.getElementById('ava-pin-btn');
-    // Exit history mode when floating — history panel doesn't belong in pip
-    const avaPanel = document.querySelector('.ava-panel');
-    if (avaPanel && avaPanel.classList.contains('history-mode')) {
-      avaPanel.classList.remove('history-mode');
-      const histBtn = document.getElementById('ava-history-btn');
-      if (histBtn) histBtn.classList.remove('active');
-    }
+    // Exit history split when entering PiP — history panel doesn't belong in pip
+    _exitHistorySplit();
     const wasExpanded = avaIsExpanded();
     avaPipMaximized = false;
     avaPipSize = { width: 384, height: 616 };
@@ -5610,15 +5605,13 @@
   });
 
   function toggleHistoryPanel() {
-    const avaPanel  = document.querySelector('.ava-panel');
-    const historyBtn = document.getElementById('ava-history-btn');
-    const isHistory = avaPanel.classList.toggle('history-mode');
-    // Close preview-mode if open
+    const bodyRow = document.getElementById('ava-body-row');
+    const isHistory = bodyRow && bodyRow.classList.contains('history-mode');
     if (isHistory) {
-      avaPanel.classList.remove('preview-mode');
-      _hideBreadcrumb();
+      _exitHistorySplit();
+    } else {
+      _enterHistorySplit();
     }
-    historyBtn.classList.toggle('active', isHistory);
   }
 
   /* ── Shared feedback icon paths (outline variant) ── */
@@ -5924,6 +5917,7 @@
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
     _exitSourcesSplit();
     _exitFilesSplit();
+    _exitHistorySplit();
     _hideBreadcrumb();
   }
 
