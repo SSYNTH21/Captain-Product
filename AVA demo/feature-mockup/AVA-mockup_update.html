@@ -4736,6 +4736,16 @@
     syncExpandBtn();
   }
 
+  function expandAva() {
+    const expandBtn = document.getElementById('ava-expand-btn');
+    const MAX_AVA = 768;
+    panelWrap.classList.add('expanded');
+    panelWrap.style.setProperty('--ava-expanded-w', MAX_AVA + 'px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', (MAX_AVA - 40) + 'px');
+    expandBtn.setAttribute('data-tooltip', 'Minimize');
+    expandBtn.innerHTML = REDUCE_ICON_SVG;
+  }
+
   function toggleExpandAva() {
     if (!avaIsOpen()) return;
     // Float mode: maximize/minimize the pip panel instead of dock expand
@@ -4748,6 +4758,12 @@
       const bodyRow = document.getElementById('ava-body-row');
       if (bodyRow && bodyRow.classList.contains('sources-mode')) { exitToChat(); return; }
       if (bodyRow && bodyRow.classList.contains('files-mode')) { exitToChat(); return; }
+      // History-mode: Expand closes history and maximizes the panel
+      if (bodyRow && bodyRow.classList.contains('history-mode')) {
+        _exitHistorySplit();
+        expandAva();
+        return;
+      }
       minimizeAva();
       return;
     }
