@@ -5927,6 +5927,49 @@
     _hideBreadcrumb();
   }
 
+  let _historyPreState = null;
+
+  function _enterHistorySplit() {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (!bodyRow || panelWrap.classList.contains('floating')) return;
+
+    if (!_historyPreState) {
+      _historyPreState = {
+        wasExpanded: panelWrap.classList.contains('expanded'),
+        width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+      };
+    }
+
+    panelWrap.classList.add('expanded');
+    panelWrap.style.setProperty('--ava-expanded-w', '704px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+
+    bodyRow.classList.add('history-mode');
+
+    const historyBtn = document.getElementById('ava-history-btn');
+    if (historyBtn) historyBtn.classList.add('active');
+  }
+
+  function _exitHistorySplit() {
+    const bodyRow = document.getElementById('ava-body-row');
+    if (bodyRow) bodyRow.classList.remove('history-mode');
+
+    if (_historyPreState) {
+      if (_historyPreState.wasExpanded) {
+        panelWrap.style.setProperty('--ava-expanded-w', _historyPreState.width + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', (_historyPreState.width - 40) + 'px');
+      } else {
+        panelWrap.classList.remove('expanded');
+        panelWrap.style.removeProperty('--ava-expanded-w');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '312px');
+      }
+      _historyPreState = null;
+    }
+
+    const historyBtn = document.getElementById('ava-history-btn');
+    if (historyBtn) historyBtn.classList.remove('active');
+  }
+
   let _sourcesPreState = null;
   let _sourcesHtml = '';
 
