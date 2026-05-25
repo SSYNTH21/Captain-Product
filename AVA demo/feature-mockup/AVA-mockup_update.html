@@ -2228,7 +2228,7 @@
     .ava-history-btn.active { background: var(--ui-04); }
 
     .ava-history-panel {
-      display: none;
+      display: flex;
       flex: 1;
       flex-direction: column;
       overflow: hidden;
@@ -2240,7 +2240,6 @@
       padding: 16px;
       flex-shrink: 0;
       width: 100%;
-      max-width: calc(672px + 32px);
       box-sizing: border-box;
       align-self: center;
     }
@@ -2303,7 +2302,6 @@
     }
     .ava-history-list > * {
       width: 100%;
-      max-width: 672px;
     }
     #ava-history-cards {
       display: flex;
@@ -3907,6 +3905,58 @@
         <!-- Body row: sits below the header; becomes flex-row in sources-mode -->
         <div class="ava-body-row" id="ava-body-row">
 
+        <!-- History column: shown as left panel in history-mode split -->
+        <div class="ava-history-col" id="ava-history-col">
+          <div class="ava-history-panel" id="ava-history-panel">
+          <!-- Search bar -->
+          <div class="ava-history-search-wrap">
+            <div class="ava-history-search">
+              <input type="text" placeholder="Search for chats" aria-label="Search for chats">
+              <button class="ava-history-search-btn" type="button" aria-label="Search">
+                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                  <g transform="scale(1,-1) translate(0,-1000)">
+                    <path d="M862.7916666666666 196.1250000000001L725.2916666666666 333.6250000000001A336.2916666666667 336.2916666666667 0 1 1 666.25 275.0000000000001L680.875 260.4166666666668H680.875L766.6666666666665 174.5L803.9166666666665 137.2083333333334A41.6666666666667 41.6666666666667 0 0 1 862.8333333333333 196.1250000000001zM191.6666666666666 539.4583333333333A268.875 268.875 0 1 0 460.5416666666667 270.6249999999999A269.2083333333333 269.2083333333333 0 0 0 191.6666666666666 539.4583333333333z"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div class="ava-history-list" id="ava-history-list">
+            <!-- Start new conversation -->
+            <button class="ava-history-item new-chat" onclick="startNewConversation()">
+              <div class="ava-history-item-text">
+                <div class="ava-history-item-title">Start a new conversation</div>
+                <div class="ava-history-item-meta">Ask me anything</div>
+              </div>
+              <svg class="ava-history-item-chevron" width="24" height="24"><use href="#ico-chevron-right"/></svg>
+            </button>
+
+            <!-- Conversation history section -->
+            <div class="ava-history-section-label">Conversation history</div>
+            <div id="ava-history-cards">
+              <!-- populated by renderHistoryList() -->
+              <div class="ava-history-empty">
+                <span class="ava-history-empty-text">No conversations with AVA</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Help center footer -->
+          <div class="ava-history-footer">
+            <button class="ava-help-link" type="button">
+              <svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
+                <g transform="scale(1,-1) translate(0,-1000)">
+                  <path d="M500 958.3333333333334A458.3333333333333 458.3333333333333 0 1 1 958.3333333333331 500A458.3333333333333 458.3333333333333 0 0 1 500 958.3333333333334zM500 108.3333333333335A391.6666666666667 391.6666666666667 0 1 0 891.6666666666665 500A392.125 392.125 0 0 0 500 108.3333333333335zM487.4999999999999 583.3333333333334H512.4999999999999A29.1666666666667 29.1666666666667 0 0 0 541.6666666666665 554.1666666666667V279.1666666666669A29.1666666666667 29.1666666666667 0 0 0 512.4999999999999 250.0000000000003H487.4999999999999A29.1666666666667 29.1666666666667 0 0 0 458.3333333333333 279.1666666666669V554.1666666666667A29.1666666666667 29.1666666666667 0 0 0 487.4999999999999 583.3333333333335zM495.8333333333333 750H504.1666666666667A41.6666666666667 41.6666666666667 0 0 0 545.8333333333334 708.3333333333334V700A41.6666666666667 41.6666666666667 0 0 0 504.1666666666667 658.3333333333334H495.8333333333334A41.6666666666667 41.6666666666667 0 0 0 454.1666666666667 700V708.3333333333334A41.6666666666667 41.6666666666667 0 0 0 495.8333333333334 750z"/>
+                </g>
+              </svg>
+              AVA Help center
+            </button>
+          </div>
+        </div>
+        </div><!-- /ava-history-col -->
+
         <!-- Chat column: toolbar + content + footer (left side in sources-mode split) -->
         <div class="ava-chat-col">
 
@@ -4045,56 +4095,6 @@
                   <path d="M750 541.6666666666667L541.6666666666666 541.6666666666667L541.6666666666666 750C541.6666666666666 772.875 522.875 791.6666666666667 500 791.6666666666667C477.125 791.6666666666667 458.3333333333333 772.875 458.3333333333333 750L458.3333333333333 541.6666666666667L250 541.6666666666667C227.125 541.6666666666667 208.3333333333333 522.875 208.3333333333333 500C208.3333333333333 477.125 227.125 458.3333333333334 250 458.3333333333334L458.3333333333333 458.3333333333334L458.3333333333333 250C458.3333333333333 227.1250000000001 477.125 208.3333333333334 500 208.3333333333334C522.875 208.3333333333334 541.6666666666666 227.1250000000001 541.6666666666666 250L541.6666666666666 458.3333333333334L750 458.3333333333334C772.8749999999999 458.3333333333334 791.6666666666666 477.125 791.6666666666666 500C791.6666666666666 522.875 772.8749999999999 541.6666666666667 750 541.6666666666667z"/>
                 </g>
               </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- History panel -->
-        <div class="ava-history-panel" id="ava-history-panel">
-          <!-- Search bar -->
-          <div class="ava-history-search-wrap">
-            <div class="ava-history-search">
-              <input type="text" placeholder="Search for chats" aria-label="Search for chats">
-              <button class="ava-history-search-btn" type="button" aria-label="Search">
-                <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
-                  <g transform="scale(1,-1) translate(0,-1000)">
-                    <path d="M862.7916666666666 196.1250000000001L725.2916666666666 333.6250000000001A336.2916666666667 336.2916666666667 0 1 1 666.25 275.0000000000001L680.875 260.4166666666668H680.875L766.6666666666665 174.5L803.9166666666665 137.2083333333334A41.6666666666667 41.6666666666667 0 0 1 862.8333333333333 196.1250000000001zM191.6666666666666 539.4583333333333A268.875 268.875 0 1 0 460.5416666666667 270.6249999999999A269.2083333333333 269.2083333333333 0 0 0 191.6666666666666 539.4583333333333z"/>
-                  </g>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- List -->
-          <div class="ava-history-list" id="ava-history-list">
-            <!-- Start new conversation -->
-            <button class="ava-history-item new-chat" onclick="startNewConversation()">
-              <div class="ava-history-item-text">
-                <div class="ava-history-item-title">Start a new conversation</div>
-                <div class="ava-history-item-meta">Ask me anything</div>
-              </div>
-              <svg class="ava-history-item-chevron" width="24" height="24"><use href="#ico-chevron-right"/></svg>
-            </button>
-
-            <!-- Conversation history section -->
-            <div class="ava-history-section-label">Conversation history</div>
-            <div id="ava-history-cards">
-              <!-- populated by renderHistoryList() -->
-              <div class="ava-history-empty">
-                <span class="ava-history-empty-text">No conversations with AVA</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Help center footer -->
-          <div class="ava-history-footer">
-            <button class="ava-help-link" type="button">
-              <svg width="20" height="20" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
-                <g transform="scale(1,-1) translate(0,-1000)">
-                  <path d="M500 958.3333333333334A458.3333333333333 458.3333333333333 0 1 1 958.3333333333331 500A458.3333333333333 458.3333333333333 0 0 1 500 958.3333333333334zM500 108.3333333333335A391.6666666666667 391.6666666666667 0 1 0 891.6666666666665 500A392.125 392.125 0 0 0 500 108.3333333333335zM487.4999999999999 583.3333333333334H512.4999999999999A29.1666666666667 29.1666666666667 0 0 0 541.6666666666665 554.1666666666667V279.1666666666669A29.1666666666667 29.1666666666667 0 0 0 512.4999999999999 250.0000000000003H487.4999999999999A29.1666666666667 29.1666666666667 0 0 0 458.3333333333333 279.1666666666669V554.1666666666667A29.1666666666667 29.1666666666667 0 0 0 487.4999999999999 583.3333333333335zM495.8333333333333 750H504.1666666666667A41.6666666666667 41.6666666666667 0 0 0 545.8333333333334 708.3333333333334V700A41.6666666666667 41.6666666666667 0 0 0 504.1666666666667 658.3333333333334H495.8333333333334A41.6666666666667 41.6666666666667 0 0 0 454.1666666666667 700V708.3333333333334A41.6666666666667 41.6666666666667 0 0 0 495.8333333333334 750z"/>
-                </g>
-              </svg>
-              AVA Help center
             </button>
           </div>
         </div>
