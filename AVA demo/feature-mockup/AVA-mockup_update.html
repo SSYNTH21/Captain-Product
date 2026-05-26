@@ -1378,6 +1378,12 @@
     .ava-panel-wrap.floating #ava-expand-btn {
       display: flex;
     }
+    /* In floating mode, remove the 672px content cap so content fills the panel width */
+    .ava-panel-wrap.floating .ava-messages,
+    .ava-panel-wrap.floating .ava-welcome-area,
+    .ava-panel-wrap.floating .ava-footer > * {
+      max-width: var(--ava-bubble-max-w, 100%);
+    }
     .pip-resize-handle {
       position: absolute;
       z-index: 10;
@@ -4549,6 +4555,7 @@
     pinBtn.setAttribute('data-tooltip', 'Pin');
     pinBtn.innerHTML = PIN_ICON_SVG;
     if (wasExpanded) _togglePipMaximize();
+    else document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
   }
 
   function pinAva() {
@@ -4679,7 +4686,11 @@
   function _onResizeMove(e) {
     if (!_resizeState) return;
     const { dir, startMouseX, startMouseY, startWidth, startHeight, startRight, startBottom } = _resizeState;
-    const MIN_W = 384, MAX_W = window.innerWidth  - 48;
+    const bodyRow = document.getElementById('ava-body-row');
+    const inSplit = bodyRow && (bodyRow.classList.contains('files-mode') ||
+                                bodyRow.classList.contains('sources-mode') ||
+                                bodyRow.classList.contains('history-mode'));
+    const MIN_W = inSplit ? 774 : 384, MAX_W = window.innerWidth  - 48;
     const MIN_H = Math.round(window.innerHeight * 0.5), MAX_H = window.innerHeight - 48;
     const dx = e.clientX - startMouseX;
     const dy = e.clientY - startMouseY;
@@ -4718,10 +4729,46 @@
     _resizeState = null;
     document.removeEventListener('mousemove', _onResizeMove);
     document.removeEventListener('mouseup',   _onResizeEnd);
+    // Reflow split columns to fill new panel width, preserving chat ratio
+    _reflowSplitColumns();
+  }
+
+  let _splitLastTotal = 0;
+
+  function _reflowSplitColumns() {
+    if (!avaIsFloating()) return;
+    const bodyRow = document.getElementById('ava-body-row');
+    const chatCol = document.querySelector('.ava-chat-col');
+    if (!bodyRow || !chatCol) return;
+    const inSplit = bodyRow.classList.contains('files-mode') ||
+                    bodyRow.classList.contains('sources-mode') ||
+                    bodyRow.classList.contains('history-mode');
+    if (!inSplit) {
+      const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
+      document.documentElement.style.setProperty('--ava-bubble-max-w', (pipW - 40) + 'px');
+      return;
+    }
+    const totalWidth = bodyRow.getBoundingClientRect().width - 6;
+    const prevTotal  = _splitLastTotal || totalWidth;
+    const prevChatW  = parseFloat(chatCol.style.width) || totalWidth / 2;
+    const ratio      = prevChatW / prevTotal;
+    const chatW = Math.max(384, Math.min(totalWidth - 384, Math.round(ratio * totalWidth)));
+    const secW  = totalWidth - chatW;
+    chatCol.style.width = chatW + 'px';
+    const secCol = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
+                   document.querySelector('.ava-body-row.sources-mode .ava-sources-col') ||
+                   document.querySelector('.ava-body-row.history-mode .ava-history-col');
+    if (secCol) secCol.style.width = secW + 'px';
+    document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+    _splitLastTotal = totalWidth;
   }
 
   function _togglePipMaximize() {
     const expandBtn = document.getElementById('ava-expand-btn');
+    const bodyRow = document.getElementById('ava-body-row');
+    const inSplit = bodyRow && (bodyRow.classList.contains('files-mode') ||
+                                bodyRow.classList.contains('sources-mode') ||
+                                bodyRow.classList.contains('history-mode'));
     if (avaPipMaximized) {
       avaPipMaximized = false;
       const w = 384, h = 616;
@@ -4730,6 +4777,7 @@
       avaPipSize = { width: w, height: h };
       expandBtn.setAttribute('data-tooltip', 'Maximize');
       expandBtn.innerHTML = EXPAND_ICON_SVG;
+      if (!inSplit) document.documentElement.style.setProperty('--ava-bubble-max-w', (w - 40) + 'px');
     } else {
       avaPipMaximized = true;
       const w = Math.min(900, window.innerWidth  - 48);
@@ -4739,6 +4787,7 @@
       avaPipSize = { width: w, height: h };
       expandBtn.setAttribute('data-tooltip', 'Minimize');
       expandBtn.innerHTML = REDUCE_ICON_SVG;
+      if (!inSplit) document.documentElement.style.setProperty('--ava-bubble-max-w', (w - 40) + 'px');
     }
     _updatePipNarrow();
   }
@@ -5975,6 +6024,7 @@
       chatCol.style.width = '';
       chatCol.style.flex  = '';
     }
+    _splitLastTotal = 0;
   }
 
   function _initSplitColumns() {
@@ -5997,6 +6047,7 @@
     if (secCol) secCol.style.width = secW + 'px';
 
     document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+    _splitLastTotal = totalWidth;
   }
 
   let _splitDragState = null;
@@ -6039,6 +6090,7 @@
   }
 
   function _onSplitDragEnd() {
+    if (_splitDragState) _splitLastTotal = _splitDragState.totalWidth;
     _splitDragState = null;
     document.removeEventListener('mousemove', _onSplitDragMove);
     document.removeEventListener('mouseup',   _onSplitDragEnd);
