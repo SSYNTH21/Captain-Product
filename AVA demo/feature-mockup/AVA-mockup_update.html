@@ -1378,9 +1378,6 @@
     .ava-panel-wrap.floating #ava-expand-btn {
       display: flex;
     }
-    .ava-panel-wrap.floating #ava-history-btn {
-      display: none;
-    }
     .pip-resize-handle {
       position: absolute;
       z-index: 10;
@@ -6063,7 +6060,7 @@
 
   function _enterHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
-    if (!bodyRow || panelWrap.classList.contains('floating')) return;
+    if (!bodyRow) return;
 
     // If a secondary split is open, close it first (history takes priority over the panel width)
     if (bodyRow.classList.contains('files-mode')) {
@@ -6076,16 +6073,25 @@
       _historyReplacedSplit = null;
     }
 
-    if (!_historyPreState) {
-      _historyPreState = {
-        wasExpanded: panelWrap.classList.contains('expanded'),
-        width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
-      };
+    if (avaIsFloating()) {
+      // Auto-maximize if not already at 900×840
+      if (!avaPipMaximized) {
+        _togglePipMaximize();
+        _splitAutoMaximized = true;
+      } else {
+        _splitAutoMaximized = false;
+      }
+    } else {
+      if (!_historyPreState) {
+        _historyPreState = {
+          wasExpanded: panelWrap.classList.contains('expanded'),
+          width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+        };
+      }
+      panelWrap.classList.add('expanded');
+      panelWrap.style.setProperty('--ava-expanded-w', '704px');
+      document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
     }
-
-    panelWrap.classList.add('expanded');
-    panelWrap.style.setProperty('--ava-expanded-w', '704px');
-    document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
 
     bodyRow.classList.add('history-mode');
 
@@ -6100,6 +6106,11 @@
   function _exitHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (bodyRow) bodyRow.classList.remove('history-mode');
+
+    if (avaIsFloating() && _splitAutoMaximized) {
+      _togglePipMaximize(); // restores to 384×616
+      _splitAutoMaximized = false;
+    }
 
     if (_historyPreState) {
       const expandBtn = document.getElementById('ava-expand-btn');
