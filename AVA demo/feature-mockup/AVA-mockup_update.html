@@ -1951,6 +1951,12 @@
     .ava-body-row.history-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.history-mode .ava-footer-actions { max-width: none; }
 
+    /* 3-panel floating: history + secondary panel both visible simultaneously */
+    .ava-panel-wrap.floating .ava-body-row.history-mode.files-mode .ava-files-col,
+    .ava-panel-wrap.floating .ava-body-row.history-mode.sources-mode .ava-sources-col {
+      display: flex;
+    }
+
     /* Files column toolbar */
     .ava-files-toolbar {
       display: flex;
@@ -4541,9 +4547,15 @@
 
   function unpinAva() {
     const pinBtn = document.getElementById('ava-pin-btn');
-    // Exit history split when entering PiP — history panel doesn't belong in pip
-    _historyReplacedSplit = null;
-    _exitHistorySplit();
+    const bodyRow = document.getElementById('ava-body-row');
+    const historyWasOpen = bodyRow && bodyRow.classList.contains('history-mode');
+
+    // Exit history split — we'll re-enter it in floating mode after setup
+    if (historyWasOpen) {
+      _historyReplacedSplit = null;
+      _historyPreState = null; // discard pinned pre-state; floating has its own sizing
+      _exitHistorySplit();
+    }
     const wasExpanded = avaIsExpanded();
     avaPipMaximized = false;
     avaPipSize = { width: 384, height: 616 };
@@ -4559,6 +4571,9 @@
     pinBtn.innerHTML = PIN_ICON_SVG;
     if (wasExpanded) _togglePipMaximize();
     else document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
+
+    // Re-enter history panel if it was open before unpinning
+    if (historyWasOpen) _enterHistorySplit();
   }
 
   function pinAva() {
@@ -4573,17 +4588,19 @@
     document.removeEventListener('mousemove', _onResizeMove);
     document.removeEventListener('mouseup',   _onResizeEnd);
 
-    // Close any open split before leaving floating mode
-    const bodyRow = document.getElementById('ava-body-row');
-    if (bodyRow) {
-      if (bodyRow.classList.contains('history-mode')) {
+    // Track if history was open so we can re-enter it after pinning
+    const bodyRowPin = document.getElementById('ava-body-row');
+    const historyWasOpenPin = bodyRowPin && bodyRowPin.classList.contains('history-mode');
+
+    // Close all splits before leaving floating mode (we'll re-enter history after)
+    if (bodyRowPin) {
+      if (bodyRowPin.classList.contains('history-mode')) {
         _historyReplacedSplit = null;
+        _historyPreState = null; // discard floating pre-state; pinned will set its own
         _exitHistorySplit();
-      } else if (bodyRow.classList.contains('files-mode')) {
-        _exitFilesSplit();
-      } else if (bodyRow.classList.contains('sources-mode')) {
-        _exitSourcesSplit();
       }
+      if (bodyRowPin.classList.contains('files-mode')) _exitFilesSplit();
+      if (bodyRowPin.classList.contains('sources-mode')) _exitSourcesSplit();
     }
     _splitAutoMaximized = false;
     _resetSplitColumns();
@@ -4611,6 +4628,9 @@
     avaPipMaximized = false;
     pinBtn.setAttribute('data-tooltip', 'Unpin');
     pinBtn.innerHTML = UNPIN_ICON_SVG;
+
+    // Re-enter history panel if it was open in floating mode
+    if (historyWasOpenPin) _enterHistorySplit();
   }
 
   function togglePinAva() {
@@ -4706,10 +4726,12 @@
     if (!_resizeState) return;
     const { dir, startMouseX, startMouseY, startWidth, startHeight, startRight, startBottom } = _resizeState;
     const bodyRow = document.getElementById('ava-body-row');
-    const inSplit = bodyRow && (bodyRow.classList.contains('files-mode') ||
-                                bodyRow.classList.contains('sources-mode') ||
-                                bodyRow.classList.contains('history-mode'));
-    const MIN_W = inSplit ? 774 : 384, MAX_W = window.innerWidth  - 48;
+    const inSecSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode'));
+    const inHistSplit = bodyRow && bodyRow.classList.contains('history-mode');
+    // 2-panel: 384 chat + 384 sec + 6 handle = 774; 3-panel: +321 hist = 1095
+    // history-only: 320 hist + 384 chat = 704
+    const MIN_W = (inSecSplit && inHistSplit) ? 1095 : inSecSplit ? 774 : inHistSplit ? 704 : 384;
+    const MAX_W = window.innerWidth  - 48;
     const MIN_H = Math.round(window.innerHeight * 0.5), MAX_H = window.innerHeight - 48;
     const dx = e.clientX - startMouseX;
     const dy = e.clientY - startMouseY;
@@ -4759,15 +4781,25 @@
     const bodyRow = document.getElementById('ava-body-row');
     const chatCol = document.querySelector('.ava-chat-col');
     if (!bodyRow || !chatCol) return;
-    const inSplit = bodyRow.classList.contains('files-mode') ||
-                    bodyRow.classList.contains('sources-mode') ||
-                    bodyRow.classList.contains('history-mode');
-    if (!inSplit) {
+    const inSecSplit = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
+    const inHistSplit = bodyRow.classList.contains('history-mode');
+    if (!inSecSplit && !inHistSplit) {
       const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       document.documentElement.style.setProperty('--ava-bubble-max-w', (pipW - 40) + 'px');
       return;
     }
-    const totalWidth = bodyRow.getBoundingClientRect().width - 6;
+    if (inHistSplit && !inSecSplit) {
+      // History-only split: history col is fixed 320px, chat takes the rest; no drag handle
+      const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
+      const chatW = pipW - 320 - 1;
+      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
+      return;
+    }
+    // Secondary split (files/sources) — possibly also with history (3-panel)
+    // Total draggable space = bodyRow width minus history col (if open) minus drag handle
+    const histOffset = inHistSplit ? 321 : 0; // 320px col + 1px border
+    const rowW = bodyRow.getBoundingClientRect().width;
+    const totalWidth = rowW - histOffset - 6; // 6px drag handle
     const prevTotal  = _splitLastTotal || totalWidth;
     const prevChatW  = parseFloat(chatCol.style.width) || totalWidth / 2;
     const ratio      = prevChatW / prevTotal;
@@ -4775,10 +4807,9 @@
     const secW  = totalWidth - chatW;
     chatCol.style.width = chatW + 'px';
     const secCol = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
-                   document.querySelector('.ava-body-row.sources-mode .ava-sources-col') ||
-                   document.querySelector('.ava-body-row.history-mode .ava-history-col');
+                   document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
     if (secCol) secCol.style.width = secW + 'px';
-    document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
     _splitLastTotal = totalWidth;
   }
 
@@ -4851,10 +4882,9 @@
       const bodyRow = document.getElementById('ava-body-row');
       if (bodyRow && bodyRow.classList.contains('sources-mode')) { exitToChat(); return; }
       if (bodyRow && bodyRow.classList.contains('files-mode')) { exitToChat(); return; }
-      // History-mode: Expand closes history and maximizes the panel
+      // History-mode: Minimize closes history and restores pre-state
       if (bodyRow && bodyRow.classList.contains('history-mode')) {
         _exitHistorySplit();
-        expandAva();
         return;
       }
       minimizeAva();
@@ -6053,8 +6083,9 @@
     const handle   = document.getElementById('ava-split-handle');
     if (!chatCol || !handle) return;
 
-    const panelInner = document.getElementById('ava-body-row');
-    const totalWidth = panelInner.getBoundingClientRect().width - 6; // 6px handle
+    const bodyRow    = document.getElementById('ava-body-row');
+    const histOffset = (bodyRow && bodyRow.classList.contains('history-mode')) ? 321 : 0;
+    const totalWidth = bodyRow.getBoundingClientRect().width - histOffset - 6; // 6px handle
 
     const half  = Math.floor(totalWidth / 2);
     const chatW = Math.max(384, Math.min(totalWidth - 384, half));
@@ -6067,7 +6098,7 @@
                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
     if (secCol) secCol.style.width = secW + 'px';
 
-    document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
     _splitLastTotal = totalWidth;
   }
 
@@ -6081,11 +6112,12 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!chatCol || !secCol || !bodyRow) return;
 
+    const histOffset = bodyRow.classList.contains('history-mode') ? 321 : 0;
     _splitDragState = {
       startX:     e.clientX,
       chatW0:     chatCol.getBoundingClientRect().width,
       secW0:      secCol.getBoundingClientRect().width,
-      totalWidth: bodyRow.getBoundingClientRect().width - 6
+      totalWidth: bodyRow.getBoundingClientRect().width - histOffset - 6
     };
 
     document.addEventListener('mousemove', _onSplitDragMove);
@@ -6135,18 +6167,31 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
-    // If a secondary split is open, close it first (history takes priority over the panel width)
-    if (bodyRow.classList.contains('files-mode')) {
-      _exitFilesSplit();
-      _historyReplacedSplit = 'files';
-    } else if (bodyRow.classList.contains('sources-mode')) {
-      _exitSourcesSplit();
-      _historyReplacedSplit = 'sources';
-    } else {
-      _historyReplacedSplit = null;
-    }
-
     if (avaIsFloating()) {
+      // In floating mode: if a secondary split is open, check if viewport has room for all 3 panels
+      // 3-panel = history(320) + split-handle(6) + chat(≥384) + secondary-col(384) + 48px margin
+      const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
+      if (secondaryIsOpen) {
+        const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
+        const available = pipW - 320 - 1; // space left after history col + border
+        // secondary needs at least 384px, chat needs at least 384px
+        if (available >= 384 + 6 + 384) {
+          // Enough room — keep secondary panel, just add history alongside it
+          _historyReplacedSplit = null;
+        } else {
+          // Not enough room — close secondary to make room for history
+          if (bodyRow.classList.contains('files-mode')) {
+            _exitFilesSplit();
+            _historyReplacedSplit = 'files';
+          } else {
+            _exitSourcesSplit();
+            _historyReplacedSplit = 'sources';
+          }
+        }
+      } else {
+        _historyReplacedSplit = null;
+      }
+
       // Auto-maximize if not already at 900×840
       if (!avaPipMaximized) {
         _togglePipMaximize();
@@ -6155,15 +6200,28 @@
         _splitAutoMaximized = false;
       }
     } else {
+      // Pinned: close any open secondary split (history takes full width priority)
+      if (bodyRow.classList.contains('files-mode')) {
+        _exitFilesSplit();
+        _historyReplacedSplit = 'files';
+      } else if (bodyRow.classList.contains('sources-mode')) {
+        _exitSourcesSplit();
+        _historyReplacedSplit = 'sources';
+      } else {
+        _historyReplacedSplit = null;
+      }
+
       if (!_historyPreState) {
         _historyPreState = {
           wasExpanded: panelWrap.classList.contains('expanded'),
           width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
         };
       }
+      // Expand to 768px (maximized size) and show Minimize icon
       panelWrap.classList.add('expanded');
-      panelWrap.style.setProperty('--ava-expanded-w', '704px');
-      document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+      panelWrap.style.setProperty('--ava-expanded-w', '768px');
+      // Chat col = 768 - 320(history) - 1(border) = 447px; bubble max = 447 - 40 = 407px
+      document.documentElement.style.setProperty('--ava-bubble-max-w', '407px');
     }
 
     bodyRow.classList.add('history-mode');
@@ -6173,17 +6231,26 @@
 
     const expandBtn = document.getElementById('ava-expand-btn');
     if (avaIsFloating()) {
-      // In floating history split, show Minimize (panel is maximized) and set column widths
+      // Floating: show Minimize (panel is maximized) and set column widths
       if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Minimize'); expandBtn.innerHTML = REDUCE_ICON_SVG; }
-      // Set history col width and update chat bubble max-w
       const histCol = document.getElementById('ava-history-col');
       if (histCol) histCol.style.width = '320px';
       const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
-      const chatW = pipW - 320 - 1; // 320px history col + 1px border
-      document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+      // In 3-panel mode the split handle + secondary col also take space
+      const secondaryNow = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
+      let chatW;
+      if (secondaryNow) {
+        // Reflow split columns in 3-panel: equal split of remaining space
+        _reflowSplitColumns();
+        const chatCol = document.querySelector('.ava-chat-col');
+        chatW = chatCol ? parseFloat(chatCol.style.width) || (pipW - 320 - 1) / 2 : (pipW - 320 - 1) / 2;
+      } else {
+        chatW = pipW - 320 - 1; // 320px history col + 1px border
+      }
+      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
     } else {
-      // Pinned history split keeps Expand icon — clicking it closes history + maximizes
-      if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Expand'); expandBtn.innerHTML = EXPAND_ICON_SVG; }
+      // Pinned: show Minimize icon since we just maximized to 768px
+      if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Minimize'); expandBtn.innerHTML = REDUCE_ICON_SVG; }
     }
   }
 
