@@ -6168,25 +6168,30 @@
     if (!bodyRow) return;
 
     if (avaIsFloating()) {
-      // Auto-maximize first so we know the actual panel width before checking room
-      if (!avaPipMaximized) {
-        _togglePipMaximize();
-        _splitAutoMaximized = true;
-      } else {
-        _splitAutoMaximized = false;
-      }
-
-      // Now check if there is room for all 3 panels at the maximized pip width
-      // 3-panel needs: history(321) + chat(≥384) + handle(6) + secondary(≥384) = 1095px
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
+
       if (secondaryIsOpen) {
-        const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
-        const available = pipW - 321; // space left after history col + 1px border
-        if (available >= 384 + 6 + 384) {
-          // Enough room — keep secondary panel visible alongside history (3-panel)
+        // Check if viewport has room for all 3 panels: history(321) + chat(≥384) + handle(6) + secondary(≥384) = 1095px
+        const viewportW = window.innerWidth - 48; // 24px padding each side
+        if (viewportW >= 1095) {
+          // Viewport has room — expand pip to fill available space (up to viewport - 48) and keep secondary
+          const targetW = Math.min(viewportW, window.innerWidth - 48);
+          const targetH = Math.min(840, window.innerHeight - 48);
+          panelWrap.style.setProperty('--pip-w', targetW + 'px');
+          panelWrap.style.setProperty('--pip-h', targetH + 'px');
+          avaPipSize = { width: targetW, height: targetH };
+          if (!avaPipMaximized) {
+            avaPipMaximized = true;
+            _splitAutoMaximized = true;
+            _updatePipNarrow();
+          } else {
+            _splitAutoMaximized = false;
+          }
           _historyReplacedSplit = null;
         } else {
-          // Not enough room — close secondary to make room for history
+          // Not enough viewport room — auto-maximize for 2-panel and close secondary
+          if (!avaPipMaximized) { _togglePipMaximize(); _splitAutoMaximized = true; }
+          else { _splitAutoMaximized = false; }
           if (bodyRow.classList.contains('files-mode')) {
             _exitFilesSplit();
             _historyReplacedSplit = 'files';
@@ -6196,6 +6201,9 @@
           }
         }
       } else {
+        // No secondary open — just auto-maximize for history-only split
+        if (!avaPipMaximized) { _togglePipMaximize(); _splitAutoMaximized = true; }
+        else { _splitAutoMaximized = false; }
         _historyReplacedSplit = null;
       }
     } else {
@@ -6258,7 +6266,20 @@
     if (bodyRow) bodyRow.classList.remove('history-mode');
 
     if (avaIsFloating() && _splitAutoMaximized) {
-      _togglePipMaximize(); // restores to 384×616
+      const stillInSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode'));
+      if (stillInSplit) {
+        // Was in 3-panel — secondary still open, restore pip to 900×840 (standard 2-panel size)
+        const w = Math.min(900, window.innerWidth - 48);
+        const h = Math.min(840, window.innerHeight - 48);
+        panelWrap.style.setProperty('--pip-w', w + 'px');
+        panelWrap.style.setProperty('--pip-h', h + 'px');
+        avaPipSize = { width: w, height: h };
+        // avaPipMaximized stays true — still in secondary split
+        _updatePipNarrow();
+        _reflowSplitColumns();
+      } else {
+        _togglePipMaximize(); // restores to 384×616
+      }
       _splitAutoMaximized = false;
     }
 
