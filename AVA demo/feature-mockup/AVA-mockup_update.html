@@ -4707,8 +4707,8 @@
       expandBtn.innerHTML = EXPAND_ICON_SVG;
     } else {
       avaPipMaximized = true;
-      const w = Math.min(1030, window.innerWidth  - 48);
-      const h = Math.min(Math.round(window.innerHeight * 0.8), window.innerHeight - 48);
+      const w = Math.min(900, window.innerWidth  - 48);
+      const h = Math.min(840, window.innerHeight - 48);
       panelWrap.style.setProperty('--pip-w', w + 'px');
       panelWrap.style.setProperty('--pip-h', h + 'px');
       avaPipSize = { width: w, height: h };
