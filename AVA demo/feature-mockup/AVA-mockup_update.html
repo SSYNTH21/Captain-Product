@@ -5951,6 +5951,83 @@
     }
   }
 
+  let _splitAutoMaximized = false;
+
+  function _resetSplitColumns() {
+    const chatCol = document.querySelector('.ava-chat-col');
+    if (chatCol) {
+      chatCol.style.width = '';
+      chatCol.style.flex  = '';
+    }
+  }
+
+  function _initSplitColumns() {
+    const chatCol  = document.querySelector('.ava-chat-col');
+    const handle   = document.getElementById('ava-split-handle');
+    if (!chatCol || !handle) return;
+
+    const panelInner = document.getElementById('ava-body-row');
+    const totalWidth = panelInner.getBoundingClientRect().width - 6; // 6px handle
+
+    const half  = Math.floor(totalWidth / 2);
+    const chatW = Math.max(384, Math.min(totalWidth - 384, half));
+    const secW  = totalWidth - chatW;
+
+    chatCol.style.width = chatW + 'px';
+    chatCol.style.flex  = 'none';
+
+    const secCol = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
+                   document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
+    if (secCol) secCol.style.width = secW + 'px';
+
+    document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+  }
+
+  let _splitDragState = null;
+
+  function _onSplitDragStart(e) {
+    e.preventDefault();
+    const chatCol = document.querySelector('.ava-chat-col');
+    const secCol  = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
+                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
+    const bodyRow = document.getElementById('ava-body-row');
+    if (!chatCol || !secCol || !bodyRow) return;
+
+    _splitDragState = {
+      startX:     e.clientX,
+      chatW0:     chatCol.getBoundingClientRect().width,
+      secW0:      secCol.getBoundingClientRect().width,
+      totalWidth: bodyRow.getBoundingClientRect().width - 6
+    };
+
+    document.addEventListener('mousemove', _onSplitDragMove);
+    document.addEventListener('mouseup',   _onSplitDragEnd);
+  }
+
+  function _onSplitDragMove(e) {
+    if (!_splitDragState) return;
+    const dx    = e.clientX - _splitDragState.startX;
+    const total = _splitDragState.totalWidth;
+
+    let chatW = _splitDragState.chatW0 + dx;
+    chatW = Math.max(384, Math.min(total - 384, chatW));
+    const secW = total - chatW;
+
+    const chatCol = document.querySelector('.ava-chat-col');
+    const secCol  = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
+                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
+    if (chatCol) chatCol.style.width = chatW + 'px';
+    if (secCol)  secCol.style.width  = secW  + 'px';
+
+    document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+  }
+
+  function _onSplitDragEnd() {
+    _splitDragState = null;
+    document.removeEventListener('mousemove', _onSplitDragMove);
+    document.removeEventListener('mouseup',   _onSplitDragEnd);
+  }
+
   function exitToChat() {
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
@@ -6250,6 +6327,8 @@
       if (e.target.closest('[data-tooltip]')) hideTip();
     });
     document.addEventListener('mousedown', hideTip);
+    const splitHandle = document.getElementById('ava-split-handle');
+    if (splitHandle) splitHandle.addEventListener('mousedown', _onSplitDragStart);
     document.addEventListener('scroll', hideTip, true);
   })();
 
