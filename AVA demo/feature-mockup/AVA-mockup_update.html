@@ -1378,12 +1378,6 @@
     .ava-panel-wrap.floating #ava-expand-btn {
       display: flex;
     }
-    /* In floating mode, remove the 672px content cap so content fills the panel width */
-    .ava-panel-wrap.floating .ava-messages,
-    .ava-panel-wrap.floating .ava-welcome-area,
-    .ava-panel-wrap.floating .ava-footer > * {
-      max-width: var(--ava-bubble-max-w, 100%);
-    }
     .pip-resize-handle {
       position: absolute;
       z-index: 10;
@@ -4569,6 +4563,22 @@
     document.removeEventListener('mouseup',   _onDragEnd);
     document.removeEventListener('mousemove', _onResizeMove);
     document.removeEventListener('mouseup',   _onResizeEnd);
+
+    // Close any open split before leaving floating mode
+    const bodyRow = document.getElementById('ava-body-row');
+    if (bodyRow) {
+      if (bodyRow.classList.contains('history-mode')) {
+        _historyReplacedSplit = null;
+        _exitHistorySplit();
+      } else if (bodyRow.classList.contains('files-mode')) {
+        _exitFilesSplit();
+      } else if (bodyRow.classList.contains('sources-mode')) {
+        _exitSourcesSplit();
+      }
+    }
+    _splitAutoMaximized = false;
+    _resetSplitColumns();
+
     panelWrap.classList.remove('floating');
     panelWrap.classList.remove('pip-narrow');
     panelWrap.style.right  = '';
@@ -6024,6 +6034,8 @@
       chatCol.style.width = '';
       chatCol.style.flex  = '';
     }
+    const histCol = document.getElementById('ava-history-col');
+    if (histCol) histCol.style.width = '';
     _splitLastTotal = 0;
   }
 
@@ -6150,9 +6162,20 @@
     const historyBtn = document.getElementById('ava-history-btn');
     if (historyBtn) historyBtn.classList.add('active');
 
-    // History split keeps Expand icon (not Minimize) — clicking it closes history + maximizes
     const expandBtn = document.getElementById('ava-expand-btn');
-    if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Expand'); expandBtn.innerHTML = EXPAND_ICON_SVG; }
+    if (avaIsFloating()) {
+      // In floating history split, show Minimize (panel is maximized) and set column widths
+      if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Minimize'); expandBtn.innerHTML = REDUCE_ICON_SVG; }
+      // Set history col width and update chat bubble max-w
+      const histCol = document.getElementById('ava-history-col');
+      if (histCol) histCol.style.width = '320px';
+      const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
+      const chatW = pipW - 320 - 1; // 320px history col + 1px border
+      document.documentElement.style.setProperty('--ava-bubble-max-w', (chatW - 40) + 'px');
+    } else {
+      // Pinned history split keeps Expand icon — clicking it closes history + maximizes
+      if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Expand'); expandBtn.innerHTML = EXPAND_ICON_SVG; }
+    }
   }
 
   function _exitHistorySplit() {
