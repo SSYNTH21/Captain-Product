@@ -1898,6 +1898,27 @@
     .ava-body-row.files-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.files-mode .ava-footer-actions { max-width: none; }
 
+    /* Drag handle between chat col and secondary col */
+    .ava-split-handle {
+      display: none;
+      width: 6px;
+      flex-shrink: 0;
+      background: #f5f5f5;
+      border-left: 1px solid #d9d9d9;
+      border-right: 1px solid #d9d9d9;
+      cursor: col-resize;
+      position: relative;
+      z-index: 1;
+      align-self: stretch;
+      box-sizing: border-box;
+    }
+
+    /* Show handle in files-mode and sources-mode (not history — uses border-right on col) */
+    .ava-body-row.files-mode .ava-split-handle,
+    .ava-body-row.sources-mode .ava-split-handle {
+      display: block;
+    }
+
     /* ── History split layout ── */
 
     /* The history column: fixed 320px, hidden by default, left of chat */
@@ -4192,6 +4213,9 @@
         </div>
 
         </div><!-- /ava-chat-col -->
+
+        <!-- Split drag handle — shown in files-mode and sources-mode -->
+        <div class="ava-split-handle" id="ava-split-handle"></div>
 
         <!-- Sources column: shown as right panel in sources-mode split -->
         <div class="ava-sources-col">
