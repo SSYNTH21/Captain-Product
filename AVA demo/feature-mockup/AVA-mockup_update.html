@@ -6133,6 +6133,12 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
+    // If history is open (pinned), close it — secondary panel takes priority; no restore needed
+    if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
+      _historyReplacedSplit = null;
+      _exitHistorySplit();
+    }
+
     // Save pre-state (pinned only — floating uses pip size, not --ava-expanded-w)
     if (!_sourcesPreState && !avaIsFloating()) {
       _sourcesPreState = {
@@ -6212,6 +6218,12 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+
+    // If history is open (pinned), close it — secondary panel takes priority; no restore needed
+    if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
+      _historyReplacedSplit = null;
+      _exitHistorySplit();
+    }
 
     // Save pre-state (pinned only — floating uses pip size, not --ava-expanded-w)
     if (!_filesPreState && !avaIsFloating()) {
