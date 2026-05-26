@@ -6168,15 +6168,22 @@
     if (!bodyRow) return;
 
     if (avaIsFloating()) {
-      // In floating mode: if a secondary split is open, check if viewport has room for all 3 panels
-      // 3-panel = history(320) + split-handle(6) + chat(≥384) + secondary-col(384) + 48px margin
+      // Auto-maximize first so we know the actual panel width before checking room
+      if (!avaPipMaximized) {
+        _togglePipMaximize();
+        _splitAutoMaximized = true;
+      } else {
+        _splitAutoMaximized = false;
+      }
+
+      // Now check if there is room for all 3 panels at the maximized pip width
+      // 3-panel needs: history(321) + chat(≥384) + handle(6) + secondary(≥384) = 1095px
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
       if (secondaryIsOpen) {
         const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
-        const available = pipW - 320 - 1; // space left after history col + border
-        // secondary needs at least 384px, chat needs at least 384px
+        const available = pipW - 321; // space left after history col + 1px border
         if (available >= 384 + 6 + 384) {
-          // Enough room — keep secondary panel, just add history alongside it
+          // Enough room — keep secondary panel visible alongside history (3-panel)
           _historyReplacedSplit = null;
         } else {
           // Not enough room — close secondary to make room for history
@@ -6190,14 +6197,6 @@
         }
       } else {
         _historyReplacedSplit = null;
-      }
-
-      // Auto-maximize if not already at 900×840
-      if (!avaPipMaximized) {
-        _togglePipMaximize();
-        _splitAutoMaximized = true;
-      } else {
-        _splitAutoMaximized = false;
       }
     } else {
       // Pinned: close any open secondary split (history takes full width priority)
