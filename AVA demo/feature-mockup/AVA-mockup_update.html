@@ -4840,7 +4840,7 @@
       avaPipMaximized = true;
       _pipRestoreState = null; // manual maximize clears any saved restore state
       const w = Math.min(900, window.innerWidth  - 48);
-      const h = Math.round(window.innerHeight * 0.80);
+      const h = Math.round(window.innerHeight * 0.85);
       panelWrap.style.setProperty('--pip-w', w + 'px');
       panelWrap.style.setProperty('--pip-h', h + 'px');
       avaPipSize = { width: w, height: h };
@@ -6213,7 +6213,7 @@
         if (viewportW >= 1095) {
           // Viewport has room — expand pip to 1283px (Figma 3-panel spec) capped to viewport
           const targetW = Math.min(1283, window.innerWidth - 48);
-          const targetH = Math.round(window.innerHeight * 0.80);
+          const targetH = Math.round(window.innerHeight * 0.85);
           panelWrap.style.setProperty('--pip-w', targetW + 'px');
           panelWrap.style.setProperty('--pip-h', targetH + 'px');
           avaPipSize = { width: targetW, height: targetH };
@@ -6307,7 +6307,7 @@
       if (stillInSplit) {
         // Always resize back to 900×840 (standard 2-panel size) regardless of how we got here
         const w = Math.min(900, window.innerWidth - 48);
-        const h = Math.round(window.innerHeight * 0.80);
+        const h = Math.round(window.innerHeight * 0.85);
         panelWrap.style.setProperty('--pip-w', w + 'px');
         panelWrap.style.setProperty('--pip-h', h + 'px');
         avaPipSize = { width: w, height: h };
