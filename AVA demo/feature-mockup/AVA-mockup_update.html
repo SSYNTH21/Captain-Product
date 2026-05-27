@@ -6272,17 +6272,13 @@
           // Default pip — jump to maximize
           if (!avaPipMaximized) _togglePipMaximize();
         } else {
-          // Manually resized — grow pip only enough to keep chat ≥ 384px
-          // history col is fixed 321px (320 + 1px border); chat gets the rest
-          const needed = 384 + 321; // 705px minimum pip width
-          if (currentW < needed) {
-            const newW = Math.min(needed, window.innerWidth - 48);
-            const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-            panelWrap.style.setProperty('--pip-w', newW + 'px');
-            avaPipSize = { width: newW, height: newH };
-            avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
-            _updatePipNarrow();
-          }
+          // Manually resized — history extends out additively; chat keeps its current width
+          const targetW = Math.min(currentW + 321 + 1, window.innerWidth - 48);
+          const targetH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', targetW + 'px');
+          avaPipSize = { width: targetW, height: targetH };
+          avaPipMaximized = targetW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
         }
         _historyReplacedSplit = null;
       }
