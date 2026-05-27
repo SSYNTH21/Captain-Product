@@ -6271,8 +6271,19 @@
         if (!_pipManuallyResized) {
           // Default pip — jump to maximize
           if (!avaPipMaximized) _togglePipMaximize();
+        } else {
+          // Manually resized — grow pip only enough to keep chat ≥ 384px
+          // history col is fixed 321px (320 + 1px border); chat gets the rest
+          const needed = 384 + 321; // 705px minimum pip width
+          if (currentW < needed) {
+            const newW = Math.min(needed, window.innerWidth - 48);
+            const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+            panelWrap.style.setProperty('--pip-w', newW + 'px');
+            avaPipSize = { width: newW, height: newH };
+            avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
+            _updatePipNarrow();
+          }
         }
-        // Manually resized — leave pip width as-is; columns distribute available space
         _historyReplacedSplit = null;
       }
     } else {
@@ -6414,8 +6425,18 @@
       if (!inAnySplitS) _pipPreSplitW = currentW;
       if (!_pipManuallyResized) {
         if (!avaPipMaximized) _togglePipMaximize();
+      } else {
+        // Manually resized — grow pip only enough to fit both panels at min width (384+6+384=774px)
+        const needed = 384 + 6 + 384;
+        if (currentW < needed) {
+          const newW = Math.min(needed, window.innerWidth - 48);
+          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', newW + 'px');
+          avaPipSize = { width: newW, height: newH };
+          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
+        }
       }
-      // Manually resized — leave pip width as-is; _initSplitColumns distributes available space
 
       // Close citation popover if open
       _closeCitationPopover();
@@ -6522,8 +6543,18 @@
       if (!_pipManuallyResized) {
         // Default pip — jump to maximize
         if (!avaPipMaximized) _togglePipMaximize();
+      } else {
+        // Manually resized — grow pip only enough to fit both panels at min width (384+6+384=774px)
+        const needed = 384 + 6 + 384;
+        if (currentW < needed) {
+          const newW = Math.min(needed, window.innerWidth - 48);
+          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', newW + 'px');
+          avaPipSize = { width: newW, height: newH };
+          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
+        }
       }
-      // Manually resized — leave pip width as-is; _initSplitColumns distributes available space
 
       // Apply files-mode
       const avaPanelF = document.querySelector('.ava-panel');
