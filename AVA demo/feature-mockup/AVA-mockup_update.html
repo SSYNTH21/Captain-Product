@@ -6174,8 +6174,8 @@
         // Check if viewport has room for all 3 panels: history(321) + chat(≥384) + handle(6) + secondary(≥384) = 1095px
         const viewportW = window.innerWidth - 48; // 24px padding each side
         if (viewportW >= 1095) {
-          // Viewport has room — expand pip to fill available space (up to viewport - 48) and keep secondary
-          const targetW = Math.min(viewportW, window.innerWidth - 48);
+          // Viewport has room — expand pip to 1283px (Figma 3-panel spec) capped to viewport
+          const targetW = Math.min(1283, window.innerWidth - 48);
           const targetH = Math.min(840, window.innerHeight - 48);
           panelWrap.style.setProperty('--pip-w', targetW + 'px');
           panelWrap.style.setProperty('--pip-h', targetH + 'px');
