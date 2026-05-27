@@ -6271,18 +6271,8 @@
         if (!_pipManuallyResized) {
           // Default pip — jump to maximize
           if (!avaPipMaximized) _togglePipMaximize();
-        } else {
-          // Manually resized — open history at min width; only grow pip if needed
-          const minNeededH = 384 + 321; // chat-min(384) + history(320) + border(1) = 705px
-          if (currentW < minNeededH) {
-            const targetW = Math.min(minNeededH, window.innerWidth - 48);
-            const targetH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-            panelWrap.style.setProperty('--pip-w', targetW + 'px');
-            avaPipSize = { width: targetW, height: targetH };
-            avaPipMaximized = targetW >= Math.min(900, window.innerWidth - 48);
-            _updatePipNarrow();
-          }
         }
+        // Manually resized — leave pip width as-is; columns distribute available space
         _historyReplacedSplit = null;
       }
     } else {
@@ -6424,18 +6414,8 @@
       if (!inAnySplitS) _pipPreSplitW = currentW;
       if (!_pipManuallyResized) {
         if (!avaPipMaximized) _togglePipMaximize();
-      } else {
-        // User manually resized — open secondary at min width (384px); only grow pip if needed
-        const minNeededS = 384 + 6 + 384; // chat-min + handle + secondary-min = 774px
-        if (currentW < minNeededS) {
-          const newW = Math.min(minNeededS, window.innerWidth - 48);
-          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-          panelWrap.style.setProperty('--pip-w', newW + 'px');
-          avaPipSize = { width: newW, height: newH };
-          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
-          _updatePipNarrow();
-        }
       }
+      // Manually resized — leave pip width as-is; _initSplitColumns distributes available space
 
       // Close citation popover if open
       _closeCitationPopover();
@@ -6542,18 +6522,8 @@
       if (!_pipManuallyResized) {
         // Default pip — jump to maximize
         if (!avaPipMaximized) _togglePipMaximize();
-      } else {
-        // User manually resized — open secondary at min width (384px); only grow pip if needed
-        const minNeeded = 384 + 6 + 384; // chat-min + handle + secondary-min = 774px
-        if (currentW < minNeeded) {
-          const newW = Math.min(minNeeded, window.innerWidth - 48);
-          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-          panelWrap.style.setProperty('--pip-w', newW + 'px');
-          avaPipSize = { width: newW, height: newH };
-          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
-          _updatePipNarrow();
-        }
       }
+      // Manually resized — leave pip width as-is; _initSplitColumns distributes available space
 
       // Apply files-mode
       const avaPanelF = document.querySelector('.ava-panel');
