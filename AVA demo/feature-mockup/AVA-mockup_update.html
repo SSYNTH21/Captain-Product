@@ -6066,6 +6066,11 @@
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
         document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        const expandBtnF = document.getElementById('ava-expand-btn');
+        if (expandBtnF) {
+          expandBtnF.setAttribute('data-tooltip', avaPipMaximized ? 'Minimize' : 'Maximize');
+          expandBtnF.innerHTML = avaPipMaximized ? REDUCE_ICON_SVG : EXPAND_ICON_SVG;
+        }
       }
     }
 
@@ -6103,6 +6108,11 @@
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
         document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        const expandBtnS = document.getElementById('ava-expand-btn');
+        if (expandBtnS) {
+          expandBtnS.setAttribute('data-tooltip', avaPipMaximized ? 'Minimize' : 'Maximize');
+          expandBtnS.innerHTML = avaPipMaximized ? REDUCE_ICON_SVG : EXPAND_ICON_SVG;
+        }
       }
     }
 
@@ -6363,6 +6373,12 @@
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
         document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        // Sync expand button icon to match restored maximize state
+        const expandBtnH = document.getElementById('ava-expand-btn');
+        if (expandBtnH) {
+          expandBtnH.setAttribute('data-tooltip', avaPipMaximized ? 'Minimize' : 'Maximize');
+          expandBtnH.innerHTML = avaPipMaximized ? REDUCE_ICON_SVG : EXPAND_ICON_SVG;
+        }
       }
     }
 
