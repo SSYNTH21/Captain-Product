@@ -4603,6 +4603,7 @@
       if (bodyRowPin.classList.contains('sources-mode')) _exitSourcesSplit();
     }
     _splitAutoMaximized = false;
+    _pipRestoreState = null;
     _resetSplitColumns();
 
     panelWrap.classList.remove('floating');
@@ -4830,6 +4831,7 @@
       if (!inSplit) document.documentElement.style.setProperty('--ava-bubble-max-w', (w - 40) + 'px');
     } else {
       avaPipMaximized = true;
+      _pipRestoreState = null; // manual maximize clears any saved restore state
       const w = Math.min(900, window.innerWidth  - 48);
       const h = Math.min(840, window.innerHeight - 48);
       panelWrap.style.setProperty('--pip-w', w + 'px');
@@ -4872,9 +4874,35 @@
 
   function toggleExpandAva() {
     if (!avaIsOpen()) return;
-    // Float mode: maximize/minimize the pip panel instead of dock expand
+    // Float mode: minimize/maximize the pip panel
     if (avaIsFloating()) {
-      _togglePipMaximize();
+      if (avaPipMaximized) {
+        // Minimize — save layout state so we can restore it
+        const bodyRow = document.getElementById('ava-body-row');
+        _pipRestoreState = {
+          filesOpen:   bodyRow ? bodyRow.classList.contains('files-mode')   : false,
+          sourcesOpen: bodyRow ? bodyRow.classList.contains('sources-mode') : false,
+          historyOpen: bodyRow ? bodyRow.classList.contains('history-mode') : false,
+        };
+        // Close all splits first, then minimize
+        _splitAutoMaximized = false;
+        _historyReplacedSplit = null;
+        if (bodyRow && bodyRow.classList.contains('history-mode')) { _historyPreState = null; _exitHistorySplit(); }
+        if (bodyRow && bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
+        if (bodyRow && bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
+        _resetSplitColumns();
+        _togglePipMaximize(); // minimizes to 384×616
+      } else if (_pipRestoreState) {
+        // Maximize — restore saved layout
+        const rs = _pipRestoreState;
+        _pipRestoreState = null;
+        _togglePipMaximize(); // maximizes to 900×840
+        if (rs.historyOpen) _enterHistorySplit();
+        else if (rs.filesOpen)   _enterFilesSplit();
+        else if (rs.sourcesOpen) _enterSourcesSplit();
+      } else {
+        _togglePipMaximize();
+      }
       return;
     }
     if (avaIsExpanded()) {
@@ -6066,6 +6094,7 @@
   }
 
   let _splitAutoMaximized = false;
+  let _pipRestoreState = null; // saved layout before pip minimize: { wasMaximized, filesOpen, sourcesOpen, historyOpen }
 
   function _resetSplitColumns() {
     const chatCol = document.querySelector('.ava-chat-col');
@@ -6154,6 +6183,7 @@
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
     _splitAutoMaximized = false;
     _historyReplacedSplit = null;
+    _pipRestoreState = null;
     _exitSourcesSplit();
     _exitFilesSplit();
     _exitHistorySplit();
@@ -6265,22 +6295,23 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (bodyRow) bodyRow.classList.remove('history-mode');
 
-    if (avaIsFloating() && _splitAutoMaximized) {
+    if (avaIsFloating()) {
       const stillInSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode'));
       if (stillInSplit) {
-        // Was in 3-panel — secondary still open, restore pip to 900×840 (standard 2-panel size)
+        // Always resize back to 900×840 (standard 2-panel size) regardless of how we got here
         const w = Math.min(900, window.innerWidth - 48);
         const h = Math.min(840, window.innerHeight - 48);
         panelWrap.style.setProperty('--pip-w', w + 'px');
         panelWrap.style.setProperty('--pip-h', h + 'px');
         avaPipSize = { width: w, height: h };
-        // avaPipMaximized stays true — still in secondary split
+        avaPipMaximized = true;
         _updatePipNarrow();
         _reflowSplitColumns();
-      } else {
+        // keep _splitAutoMaximized for secondary split's own exit restore
+      } else if (_splitAutoMaximized) {
         _togglePipMaximize(); // restores to 384×616
+        _splitAutoMaximized = false;
       }
-      _splitAutoMaximized = false;
     }
 
     if (_historyPreState) {
@@ -6333,13 +6364,37 @@
     }
 
     if (avaIsFloating()) {
-      // Auto-maximize if not already at 900×840
-      if (!avaPipMaximized) {
+      const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
+      const alreadyWide = currentW >= 900;
+      if (!alreadyWide) {
         _togglePipMaximize();
         _splitAutoMaximized = true;
       } else {
         _splitAutoMaximized = false;
       }
+
+      // Close citation popover if open
+      _closeCitationPopover();
+
+      // Apply sources-mode
+      const avaPanel = document.querySelector('.ava-panel');
+      avaPanel.classList.remove('preview-mode');
+      bodyRow.classList.remove('files-mode');
+      bodyRow.classList.add('sources-mode');
+
+      // Populate sources panel
+      if (_sourcesHtml) {
+        document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
+      }
+
+      // If history is open, re-enter history to handle 3-panel sizing
+      if (bodyRow.classList.contains('history-mode')) {
+        bodyRow.classList.remove('history-mode');
+        _enterHistorySplit();
+      } else {
+        _initSplitColumns();
+      }
+      return;
     } else {
       // Force 768px split width — bypass hasRoom() guard
       panelWrap.classList.add('expanded');
@@ -6362,8 +6417,6 @@
     if (_sourcesHtml) {
       document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
     }
-
-    if (avaIsFloating()) _initSplitColumns();
   }
 
   const _PDF_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g clip-path="url(#fl-pdf-clip)"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 21.4032H8C7.783 21.4032 7.601 21.2202 7.601 21.0042V3.00024C7.601 2.78324 7.783 2.59924 8 2.59924H15.4V6.79924C15.4 7.24124 15.759 7.59924 16.2 7.59924H20.4V21.0042C20.4 21.2202 20.217 21.4032 20 21.4032ZM19.269 6.00024H17V3.73124L19.269 6.00024ZM21.993 6.80524C21.994 6.59524 21.92 6.38824 21.766 6.23424L16.766 1.23424C16.608 1.07624 16.396 1.00224 16.181 1.00624L16.175 1.00024H8C6.9 1.00024 6 1.89924 6 3.00024V21.0042C6 22.1032 6.9 23.0042 8 23.0042H20C21.101 23.0042 22 22.1032 22 21.0042V6.81224L21.993 6.80524Z" fill="#767676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21 9H20H4C3.45 9 3 9.45 3 10V19C3 19.55 3.45 20 4 20H20H21H22V19V10V9H21Z" fill="#DC3149"/><path d="M18.4602 11.8315V12.7675H16.3722V14.2005H18.0602V15.1275H16.3722V17.1675H15.3802V11.8315H18.4602Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.22804 11.8317C8.59104 11.8317 8.90504 11.9047 9.17204 12.0477C9.43904 12.1927 9.64404 12.3947 9.78804 12.6567C9.93204 12.9167 10.004 13.2187 10.004 13.5597C10.004 13.8957 9.93204 14.1947 9.78804 14.4557C9.64404 14.7177 9.43904 14.9207 9.17204 15.0687C8.90504 15.2147 8.59104 15.2877 8.22804 15.2877H7.53204V17.1677H6.54004V11.8317H8.22804ZM8.22804 14.3517C8.46804 14.3517 8.65804 14.2807 8.80004 14.1357C8.94204 13.9917 9.01204 13.7997 9.01204 13.5597C9.01204 13.3207 8.94204 13.1277 8.80004 12.9847C8.65804 12.8397 8.46804 12.7677 8.22804 12.7677H7.53204V14.3517H8.22804Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1242 11.8324C12.6312 11.8324 13.0632 11.9424 13.4202 12.1644C13.7772 12.3854 14.0472 12.6974 14.2282 13.0994C14.4092 13.5024 14.5002 13.9704 14.5002 14.5034C14.5002 15.0374 14.4092 15.5034 14.2282 15.9044C14.0472 16.3034 13.7772 16.6144 13.4202 16.8354C13.0632 17.0574 12.6312 17.1674 12.1242 17.1674H10.8282V11.8324H12.1242ZM12.1242 16.2324C12.5932 16.2324 12.9412 16.0794 13.1682 15.7714C13.3952 15.4654 13.5082 15.0424 13.5082 14.5034C13.5082 13.9654 13.3952 13.5414 13.1682 13.2324C12.9412 12.9224 12.5932 12.7674 12.1242 12.7674H11.8202V16.2324H12.1242Z" fill="white"/></g><defs><clipPath id="fl-pdf-clip"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>`;
@@ -6419,13 +6472,47 @@
     }
 
     if (avaIsFloating()) {
-      // Auto-maximize if not already at 900×840
-      if (!avaPipMaximized) {
+      const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
+      const alreadyWide = currentW >= 900;
+      if (!alreadyWide) {
         _togglePipMaximize();
         _splitAutoMaximized = true;
       } else {
         _splitAutoMaximized = false;
       }
+
+      // Apply files-mode
+      const avaPanelF = document.querySelector('.ava-panel');
+      avaPanelF.classList.remove('preview-mode');
+      bodyRow.classList.remove('sources-mode');
+      bodyRow.classList.add('files-mode');
+
+      // Populate files panel
+      const hasFl = avaPanelF.dataset.hasFile === 'true';
+      const fnameFl = avaPanelF.dataset.fileName || 'Lob-presentation_240116.pdf';
+      const panelFl = document.getElementById('ava-files-panel');
+      if (hasFl) {
+        const today = new Date();
+        const dateStr = ('0'+today.getDate()).slice(-2)+'/'+('0'+(today.getMonth()+1)).slice(-2)+'/'+today.getFullYear();
+        panelFl.innerHTML = `<div class="ava-files-date-group">
+          <div class="ava-files-date-label">Today &middot; 1 file attached</div>
+          ${_makeFileRow(fnameFl, dateStr)}
+        </div>`;
+      } else {
+        panelFl.innerHTML = `<div class="ava-files-empty">
+          <p class="ava-files-empty-text">No files attached to this chat</p>
+          <button class="ava-files-attach-btn" onclick="document.getElementById('ava-attach-input').click()">Attach file</button>
+        </div>`;
+      }
+
+      // If history is open, re-enter history to handle 3-panel sizing
+      if (bodyRow.classList.contains('history-mode')) {
+        bodyRow.classList.remove('history-mode');
+        _enterHistorySplit();
+      } else {
+        _initSplitColumns();
+      }
+      return;
     } else {
       // Force 768px split width — bypass hasRoom() guard
       panelWrap.classList.add('expanded');
