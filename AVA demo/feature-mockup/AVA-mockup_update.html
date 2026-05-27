@@ -1348,7 +1348,7 @@
       border-radius: 8px;
       box-shadow: var(--shadow-overlay);
       width: var(--pip-w, 384px);
-      height: var(--pip-h, 65vh);
+      height: var(--pip-h, 75vh);
       right: 24px;
       bottom: 24px;
       top: auto;
@@ -4558,9 +4558,9 @@
     }
     const wasExpanded = avaIsExpanded();
     avaPipMaximized = false;
-    avaPipSize = { width: 384, height: Math.round(window.innerHeight * 0.65) };
+    avaPipSize = { width: 384, height: Math.round(window.innerHeight * 0.75) };
     panelWrap.style.setProperty('--pip-w', '384px');
-    panelWrap.style.setProperty('--pip-h', Math.round(window.innerHeight * 0.65) + 'px');
+    panelWrap.style.setProperty('--pip-h', Math.round(window.innerHeight * 0.75) + 'px');
     panelWrap.style.right  = '24px';
     panelWrap.style.bottom = '24px';
     panelWrap.classList.add('floating');
@@ -4829,7 +4829,7 @@
                                 bodyRow.classList.contains('history-mode'));
     if (avaPipMaximized) {
       avaPipMaximized = false;
-      const w = 384, h = Math.round(window.innerHeight * 0.65);
+      const w = 384, h = Math.round(window.innerHeight * 0.75);
       panelWrap.style.setProperty('--pip-w', w + 'px');
       panelWrap.style.setProperty('--pip-h', h + 'px');
       avaPipSize = { width: w, height: h };
@@ -4840,7 +4840,7 @@
       avaPipMaximized = true;
       _pipRestoreState = null; // manual maximize clears any saved restore state
       const w = Math.min(900, window.innerWidth  - 48);
-      const h = Math.round(window.innerHeight * 0.75);
+      const h = Math.round(window.innerHeight * 0.80);
       panelWrap.style.setProperty('--pip-w', w + 'px');
       panelWrap.style.setProperty('--pip-h', h + 'px');
       avaPipSize = { width: w, height: h };
@@ -6213,7 +6213,7 @@
         if (viewportW >= 1095) {
           // Viewport has room — expand pip to 1283px (Figma 3-panel spec) capped to viewport
           const targetW = Math.min(1283, window.innerWidth - 48);
-          const targetH = Math.round(window.innerHeight * 0.75);
+          const targetH = Math.round(window.innerHeight * 0.80);
           panelWrap.style.setProperty('--pip-w', targetW + 'px');
           panelWrap.style.setProperty('--pip-h', targetH + 'px');
           avaPipSize = { width: targetW, height: targetH };
@@ -6307,7 +6307,7 @@
       if (stillInSplit) {
         // Always resize back to 900×840 (standard 2-panel size) regardless of how we got here
         const w = Math.min(900, window.innerWidth - 48);
-        const h = Math.round(window.innerHeight * 0.75);
+        const h = Math.round(window.innerHeight * 0.80);
         panelWrap.style.setProperty('--pip-w', w + 'px');
         panelWrap.style.setProperty('--pip-h', h + 'px');
         avaPipSize = { width: w, height: h };
