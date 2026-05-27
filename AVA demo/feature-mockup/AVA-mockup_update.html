@@ -4532,7 +4532,11 @@
     }
     const navW = (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
     const spW  = (currentSidePanel !== null && !isMedium() && !isSmall()) ? 384 : 0;
-    const canExpand = window.innerWidth - navW - 56 - spW - 544 >= 768;
+    // AVA's current width (384px) is already in use — only the *extra* 768-384=384px needs to fit in MIN_CONTENT
+    const avaCurrentW = avaIsExpanded()
+      ? (parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 768)
+      : 384;
+    const canExpand = window.innerWidth - navW - 56 - spW - 544 - (768 - avaCurrentW) >= 0;
     expandBtn.disabled = !canExpand;
     expandBtn.setAttribute('data-tooltip', expandBtn.disabled ? 'Not enough space to expand' : 'Expand');
   }
@@ -4933,7 +4937,8 @@
 
     const navW = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
     const spW  = () => (currentSidePanel !== null) ? 384 : 0;
-    const hasRoom = () => window.innerWidth - navW() - TAB_W - spW() - MIN_CONTENT >= MAX_AVA;
+    const avaCurrentW = () => avaIsExpanded() ? (parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || MAX_AVA) : MIN_AVA;
+    const hasRoom = () => window.innerWidth - navW() - TAB_W - spW() - MIN_CONTENT - (MAX_AVA - avaCurrentW()) >= 0;
 
     // Step 1: try with everything as-is
     // Step 2: if not enough room for 768px, collapse nav first
