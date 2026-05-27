@@ -4563,6 +4563,7 @@
     panelWrap.style.setProperty('--pip-h', Math.round(window.innerHeight * 0.75) + 'px');
     panelWrap.style.right  = '24px';
     panelWrap.style.bottom = '24px';
+    _pipManuallyResized = false;
     panelWrap.classList.add('floating');
     _updatePipNarrow();
     _injectResizeHandles();
@@ -4775,6 +4776,7 @@
       width:  parseFloat(panelWrap.style.getPropertyValue('--pip-w')),
       height: parseFloat(panelWrap.style.getPropertyValue('--pip-h')),
     };
+    _pipManuallyResized = true;
     _updatePipNarrow();
     _resizeState = null;
     document.removeEventListener('mousemove', _onResizeMove);
@@ -4784,6 +4786,7 @@
   }
 
   let _splitLastTotal = 0;
+  let _pipManuallyResized = false; // true after user drags a resize handle on the pip
 
   function _reflowSplitColumns() {
     if (!avaIsFloating()) return;
@@ -4839,6 +4842,7 @@
       if (!inSplit) document.documentElement.style.setProperty('--ava-bubble-max-w', (w - 40) + 'px');
     } else {
       avaPipMaximized = true;
+      _pipManuallyResized = false; // explicit maximize resets manual-resize flag
       _pipRestoreState = null; // manual maximize clears any saved restore state
       const w = Math.min(900, window.innerWidth  - 48);
       const h = Math.round(window.innerHeight * 0.85);
@@ -6262,14 +6266,20 @@
           _updatePipNarrow();
         }
       } else {
-        // No secondary — save pre-split width and grow pip by 321px for history
+        // No secondary — save pre-split width
         _pipPreSplitW = currentW;
-        const targetW = Math.min(currentW + 321 + 1, window.innerWidth - 48);
-        const targetH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-        panelWrap.style.setProperty('--pip-w', targetW + 'px');
-        avaPipSize = { width: targetW, height: targetH };
-        avaPipMaximized = targetW >= Math.min(900, window.innerWidth - 48);
-        _updatePipNarrow();
+        if (!_pipManuallyResized) {
+          // Default pip — jump to maximize
+          if (!avaPipMaximized) _togglePipMaximize();
+        } else {
+          // Manually resized — grow additively by 322px (history col)
+          const targetW = Math.min(currentW + 321 + 1, window.innerWidth - 48);
+          const targetH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', targetW + 'px');
+          avaPipSize = { width: targetW, height: targetH };
+          avaPipMaximized = targetW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
+        }
         _historyReplacedSplit = null;
       }
     } else {
@@ -6409,14 +6419,18 @@
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplitS = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplitS) _pipPreSplitW = currentW;
-      const minNeededS = currentW + 384 + 6;
-      if (currentW < minNeededS) {
-        const newW = Math.min(minNeededS, window.innerWidth - 48);
-        const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-        panelWrap.style.setProperty('--pip-w', newW + 'px');
-        avaPipSize = { width: newW, height: newH };
-        avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
-        _updatePipNarrow();
+      if (!_pipManuallyResized) {
+        if (!avaPipMaximized) _togglePipMaximize();
+      } else {
+        const minNeededS = currentW + 384 + 6;
+        if (currentW < minNeededS) {
+          const newW = Math.min(minNeededS, window.innerWidth - 48);
+          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', newW + 'px');
+          avaPipSize = { width: newW, height: newH };
+          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
+        }
       }
 
       // Close citation popover if open
@@ -6519,18 +6533,22 @@
 
     if (avaIsFloating()) {
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
-      // Save pre-split width once (not if already in another split)
       const inAnySplit = bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplit) _pipPreSplitW = currentW;
-      // Grow pip by 384px (min secondary width) if not already wide enough for 2-panel
-      const minNeeded = currentW + 384 + 6; // current chat + secondary min + handle
-      if (currentW < minNeeded) {
-        const newW = Math.min(minNeeded, window.innerWidth - 48);
-        const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-        panelWrap.style.setProperty('--pip-w', newW + 'px');
-        avaPipSize = { width: newW, height: newH };
-        avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
-        _updatePipNarrow();
+      if (!_pipManuallyResized) {
+        // Default pip — jump to maximize
+        if (!avaPipMaximized) _togglePipMaximize();
+      } else {
+        // User manually resized — grow additively by 390px (384 secondary + 6 handle)
+        const minNeeded = currentW + 384 + 6;
+        if (currentW < minNeeded) {
+          const newW = Math.min(minNeeded, window.innerWidth - 48);
+          const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+          panelWrap.style.setProperty('--pip-w', newW + 'px');
+          avaPipSize = { width: newW, height: newH };
+          avaPipMaximized = newW >= Math.min(900, window.innerWidth - 48);
+          _updatePipNarrow();
+        }
       }
 
       // Apply files-mode
