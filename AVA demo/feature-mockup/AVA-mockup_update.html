@@ -4237,7 +4237,7 @@
           <div class="ava-sources-toolbar">
             <span class="ava-sources-toolbar-title">Sources</span>
             <div class="ava-sources-toolbar-actions">
-              <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close sources">
+              <button class="ava-plain-btn" onclick="_exitSourcesSplit()" aria-label="Close sources">
                 <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
                   <g transform="scale(1,-1) translate(0,-1000)">
                     <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
@@ -4254,7 +4254,7 @@
           <div class="ava-files-toolbar" id="ava-files-toolbar">
             <span class="ava-files-toolbar-title">Files</span>
             <div class="ava-files-toolbar-actions">
-              <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">
+              <button class="ava-plain-btn" onclick="_exitFilesSplit()" aria-label="Close files">
                 <svg width="24" height="24" viewBox="0 0 1000 1000" fill="currentColor" aria-hidden="true">
                   <g transform="scale(1,-1) translate(0,-1000)">
                     <path d="M558.9166666666666 500L779.4583333333334 720.5416666666667A41.6666666666667 41.6666666666667 0 1 1 720.5416666666666 779.4583333333334L500 558.9166666666667L279.4583333333333 779.4583333333334A41.6666666666667 41.6666666666667 0 0 1 220.5416666666667 720.5416666666667L441.0833333333333 500L220.5416666666667 279.4583333333334A41.6666666666667 41.6666666666667 0 1 1 279.4583333333333 220.5416666666666L500 441.0833333333334L720.5416666666666 220.5416666666666A41.6666666666667 41.6666666666667 0 0 1 779.4583333333334 279.4583333333334z"/>
@@ -6003,7 +6003,7 @@
       </div>
       <div class="ava-files-toolbar-actions" style="gap:4px">
         <button class="ava-tertiary-btn" data-tooltip="Open in new tab" data-tooltip-pos="below">${_OPEN_ICON}</button>
-        <button class="ava-tertiary-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
+        <button class="ava-tertiary-btn" onclick="_exitFilesSplit()" aria-label="Close files">${_CLOSE_ICON}</button>
       </div>`;
 
     panel.style.padding = '0';
@@ -6023,7 +6023,7 @@
     if (toolbar) toolbar.innerHTML = `
       <span class="ava-files-toolbar-title">Files</span>
       <div class="ava-files-toolbar-actions">
-        <button class="ava-plain-btn" onclick="exitToChat()" aria-label="Close files">${_CLOSE_ICON}</button>
+        <button class="ava-plain-btn" onclick="_exitFilesSplit()" aria-label="Close files">${_CLOSE_ICON}</button>
       </div>`;
     if (footer) footer.style.display = 'none';
     const panel = document.getElementById('ava-files-panel');
