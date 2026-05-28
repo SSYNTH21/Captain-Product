@@ -2448,8 +2448,8 @@
     .ava-content.chat-mode {
       justify-content: flex-start;
       align-items: stretch;
-      padding: 16px;           /* keeps 16px gap at all scroll edges */
-      scroll-padding-top: 16px; /* so scrollIntoView also respects the top gap */
+      padding: 0;
+      scroll-padding-top: 16px;
     }
     .ava-content.chat-mode .ava-welcome-area,
     .ava-content.chat-mode .ava-disclaimer { display: none; }
@@ -2461,7 +2461,7 @@
       width: 100%;
       max-width: 992px;
       margin: 0 auto;
-      padding: 16px 0 24px; /* 16px top so first message doesn't sit flush against toolbar */
+      padding: 16px 16px 24px; /* 16px on all sides so content never sits flush against edges */
     }
     .ava-content.chat-mode .ava-messages { display: flex; }
     /* User message — right-aligned */
@@ -5767,6 +5767,10 @@
     `;
     messages.appendChild(thinking);
 
+    // Scroll user message to top so user bubble + thinking indicator are both visible
+    const contentEl = document.getElementById('ava-content');
+    if (contentEl) contentEl.scrollTop = userMsg.offsetTop - 16;
+
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
     const LAST_STEP = thinkingSteps.length - 1;
@@ -5911,6 +5915,10 @@
       avaMsg.appendChild(feedbackRow);
 
       messages.appendChild(avaMsg);
+
+      // Scroll AVA response into view
+      const avaChatContent = document.getElementById('ava-content');
+      if (avaChatContent) avaChatContent.scrollTop = avaMsg.offsetTop - 16;
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
