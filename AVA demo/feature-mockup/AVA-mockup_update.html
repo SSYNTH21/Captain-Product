@@ -4632,8 +4632,8 @@
     if (wasExpanded) _togglePipMaximize();
     else document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
 
-    // Re-enter history panel if it was open before unpinning
-    if (historyWasOpen) _enterHistorySplit();
+    // Re-enter history panel if it was open before unpinning (not at xLarge — no splits)
+    if (historyWasOpen && !isXLarge()) _enterHistorySplit();
   }
 
   function pinAva() {
@@ -4691,8 +4691,8 @@
     pinBtn.setAttribute('data-tooltip', 'Unpin');
     pinBtn.innerHTML = UNPIN_ICON_SVG;
 
-    // Re-enter history panel if it was open in floating mode
-    if (historyWasOpenPin) _enterHistorySplit();
+    // Re-enter history panel if it was open in floating mode (not at xLarge — no splits)
+    if (historyWasOpenPin && !isXLarge()) _enterHistorySplit();
   }
 
   function togglePinAva() {
@@ -5136,6 +5136,15 @@
         document.getElementById('sp-btn-errorlog').classList.remove('active');
         document.getElementById('sp-btn-fnd').classList.remove('active');
         document.getElementById('sp-expand-icon').classList.remove('flipped');
+      }
+    }
+    // At xLarge pinned: clear any active split state — panels should not be visible
+    if (isXLarge() && !avaIsFloating()) {
+      const bodyRow = document.getElementById('ava-body-row');
+      if (bodyRow) {
+        if (bodyRow.classList.contains('history-mode')) _exitHistorySplit();
+        if (bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
+        if (bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
       }
     }
     syncExpandBtn();
