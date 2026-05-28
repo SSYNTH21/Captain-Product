@@ -5767,9 +5767,13 @@
     `;
     messages.appendChild(thinking);
 
-    // Scroll user message to top so user bubble + thinking indicator are both visible
+    // Scroll so user message sits at the top of the content area (16px gap)
     const contentEl = document.getElementById('ava-content');
-    if (contentEl) contentEl.scrollTop = userMsg.offsetTop - 16;
+    if (contentEl) {
+      const msgTop = userMsg.getBoundingClientRect().top;
+      const containerTop = contentEl.getBoundingClientRect().top;
+      contentEl.scrollTop += msgTop - containerTop - 16;
+    }
 
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
@@ -5915,9 +5919,13 @@
 
       messages.appendChild(avaMsg);
 
-      // Scroll AVA response into view
+      // Scroll AVA response to top of content area (16px gap)
       const avaChatContent = document.getElementById('ava-content');
-      if (avaChatContent) avaChatContent.scrollTop = avaMsg.offsetTop - 16;
+      if (avaChatContent) {
+        const avaMsgTop = avaMsg.getBoundingClientRect().top;
+        const avaChatTop = avaChatContent.getBoundingClientRect().top;
+        avaChatContent.scrollTop += avaMsgTop - avaChatTop - 16;
+      }
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
