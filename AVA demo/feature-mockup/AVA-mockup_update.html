@@ -1909,19 +1909,21 @@
     .ava-body-row.files-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.files-mode .ava-footer-actions { max-width: none; }
 
-    /* xLarge pinned: no split layout — panels replace chat, files/sources col hidden */
-    @media (min-width: 1280px) and (max-width: 1471px) {
-      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode,
-      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode,
-      .ava-panel-wrap:not(.floating) .ava-body-row.history-mode {
-        flex-direction: column;
-      }
-      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col,
-      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col { display: none; }
-      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-msg-wrap,
-      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-footer > *,
-      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-msg-wrap,
-      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-footer > * { max-width: 992px; }
+    /* xLarge pinned: no split layout — panels replace chat, files/sources col hidden.
+       Controlled via .is-xlarge class on body, set by JS syncBreakpointClass(). */
+    /* xLarge pinned: files/sources/history replace chat full-width (old mockup behaviour).
+       Chat col hides, panel col fills full width. No split. */
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode,
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode {
+      flex-direction: row;
+    }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col,
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col,
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col {
+      display: flex;
+      width: 100%;
+      border-left: none;
     }
 
     /* Drag handle between chat col and secondary col */
@@ -4387,6 +4389,12 @@
   function isLarge()   { return window.innerWidth >= 992 && window.innerWidth <= 1279; }
   function isXLarge()  { return window.innerWidth >= 1280 && window.innerWidth <= 1471; }
 
+  function syncBreakpointClass() {
+    document.body.classList.toggle('is-xlarge', isXLarge());
+  }
+  syncBreakpointClass();
+  window.addEventListener('resize', syncBreakpointClass);
+
   /* Returns the domain content width given hypothetical panel states.
      Uses window.innerWidth (always current) with CSS-aware panel widths.
      At ≤991px CSS forces nav to 56px regardless of the collapsed class,
@@ -6466,9 +6474,6 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
-    // At xLarge pinned: no split pattern — do nothing
-    if (isXLarge() && !avaIsFloating()) return;
-
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
@@ -6649,9 +6654,6 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
-    // At xLarge pinned: no split pattern — do nothing
-    if (isXLarge() && !avaIsFloating()) return;
-
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
       _historyReplacedSplit = null;
@@ -6771,9 +6773,6 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-
-    // At xLarge pinned: no split pattern — do nothing (panel replace is handled by preview mode)
-    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
