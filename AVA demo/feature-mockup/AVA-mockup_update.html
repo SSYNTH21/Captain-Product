@@ -6559,6 +6559,7 @@
         panelWrap.style.setProperty('--ava-expanded-w', '768px');
         // Chat col = 768 - 320(history) - 1(border) = 447px; bubble max = 447 - 40 = 407px
         document.documentElement.style.setProperty('--ava-bubble-max-w', '407px');
+        syncNav();
       }
     }
 
@@ -6726,6 +6727,7 @@
         document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
         const expandBtnSrc = document.getElementById('ava-expand-btn');
         if (expandBtnSrc) { expandBtnSrc.setAttribute('data-tooltip', 'Minimize'); expandBtnSrc.innerHTML = REDUCE_ICON_SVG; }
+        syncNav();
       }
     }
 
@@ -6857,6 +6859,7 @@
         document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
         const expandBtnFiles = document.getElementById('ava-expand-btn');
         if (expandBtnFiles) { expandBtnFiles.setAttribute('data-tooltip', 'Minimize'); expandBtnFiles.innerHTML = REDUCE_ICON_SVG; }
+        syncNav();
       }
     }
 
