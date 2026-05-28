@@ -314,7 +314,7 @@
       border: 1px solid #d9d9d9;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(65,65,65,0.5);
-      z-index: 3000;
+      z-index: 9001; /* above pip z-index: 9000 so it renders on top in floating mode */
       opacity: 0;
       pointer-events: none;
       transition: opacity 200ms ease;
@@ -2668,7 +2668,7 @@
     .ava-msg-table-wrap {
       /* Stretch past the parent's padding-right: 40px so the table reaches full column width */
       width: calc(100% + 40px);
-      overflow-x: scroll;
+      overflow-x: hidden; /* JS _initTableScroll switches to scroll when table overflows */
       margin: 4px 0 12px;
       -webkit-overflow-scrolling: touch;
     }
@@ -5528,6 +5528,19 @@
     ]
   };
 
+  /* ── Watch a table wrap and toggle scrollbar visibility based on overflow ── */
+  function _initTableScroll(wrap) {
+    const check = () => {
+      const overflows = wrap.scrollWidth > wrap.clientWidth + 1;
+      wrap.style.overflowX = overflows ? 'scroll' : 'hidden';
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(wrap);
+    // Also recheck on pip resize events
+    wrap.addEventListener('pip-resized', check);
+  }
+
   /* ── Shared: build a table element from a line descriptor ── */
   function _buildTableEl(line) {
     const wrap = document.createElement('div');
@@ -5554,6 +5567,8 @@
     });
     table.appendChild(tbody);
     wrap.appendChild(table);
+    // Attach ResizeObserver to show scrollbar only when table actually overflows
+    requestAnimationFrame(() => _initTableScroll(wrap));
     return wrap;
   }
 
@@ -5751,6 +5766,9 @@
     `;
     messages.appendChild(thinking);
 
+    // Scroll so the user bubble + thinking indicator are visible
+    thinking.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
     const LAST_STEP = thinkingSteps.length - 1;
@@ -5765,17 +5783,21 @@
         const nextIndex = stepIndex + 1;
         if (nextIndex > LAST_STEP) return;
 
+        // Fade out, then swap text only after transition fully completes
         textEl.style.opacity = '0';
-        setTimeout(() => {
+        textEl.addEventListener('transitionend', function onFadeOut() {
+          textEl.removeEventListener('transitionend', onFadeOut);
           stepIndex = nextIndex;
           textEl.textContent = thinkingSteps[stepIndex];
+          // Force reflow so opacity transition restarts from 0
+          void textEl.offsetWidth;
           textEl.style.opacity = '1';
 
           if (stepIndex === LAST_STEP) {
             clearInterval(thinkingInterval);
             setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
           }
-        }, 300);
+        }, { once: true });
       }, 1800);
     };
     // Small initial pause so the first step label is visible before cycling begins
@@ -5879,6 +5901,9 @@
       avaMsg.appendChild(feedbackRow);
 
       messages.appendChild(avaMsg);
+
+      // Scroll so the top of AVA's response is visible
+      avaMsg.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
