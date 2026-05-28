@@ -4572,6 +4572,12 @@
       }
       return;
     }
+    // At xLarge (1280–1471px) pinned AVA never has room to expand — domain is only 552px
+    if (isXLarge()) {
+      expandBtn.disabled = true;
+      expandBtn.setAttribute('data-tooltip', 'Not enough space to expand');
+      return;
+    }
     // Check if expansion is possible after auto-adjustments (nav collapsed, side panel closed)
     // Use minimum nav width (56) and no side panel — mirrors the auto-collapse steps in toggleExpandAva
     const canExpand = window.innerWidth - 56 - 56 - 544 >= 768;
@@ -5144,6 +5150,11 @@
   }
 
   function openSidePanel(panel) {
+    // xLarge pinned: AVA and side panel share the same slot — opening side panel closes AVA
+    if (isXLarge() && !avaIsFloating() && avaIsOpen()) {
+      autoClosedAva = true;
+      closeAva();
+    }
     // large+ pinned: rule 5 — shrink expanded AVA; rule 2 — auto-collapse nav only if needed
     if (!isMedium() && !isSmall() && !avaIsFloating()) {
       if (avaIsExpanded()) minimizeAva();
@@ -5159,7 +5170,7 @@
         wouldViolateDomain(navIsOpen(), true, true, false)) {
       autoClosedAva = true;
       closeAva();
-    } else {
+    } else if (!isXLarge()) {
       autoClosedAva = false;
     }
     document.getElementById('sp-panel-errorlog').style.display = 'none';
@@ -5227,6 +5238,11 @@
       btn.classList.remove('has-response', 'pulse-ring');
       _hideToast();
     }
+    // xLarge pinned: AVA and side panel share the same slot — opening AVA closes side panel
+    if (isXLarge() && !avaIsFloating() && currentSidePanel !== null) {
+      autoClosedSidePanel = currentSidePanel;
+      closeSidePanel();
+    }
     // large+ pinned: rule 1 — auto-collapse nav when AVA opens only if domain would fall below 544px
     if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen() &&
         wouldViolateDomain(true, currentSidePanel !== null, true, false)) {
@@ -5238,7 +5254,7 @@
         wouldViolateDomain(navIsOpen(), true, true, false)) {
       autoClosedSidePanel = currentSidePanel;
       closeSidePanel();
-    } else {
+    } else if (!isXLarge()) {
       autoClosedSidePanel = null;
     }
     panelWrap.classList.add('open');
@@ -6499,17 +6515,20 @@
         _historyReplacedSplit = null;
       }
 
-      if (!_historyPreState) {
-        _historyPreState = {
-          wasExpanded: panelWrap.classList.contains('expanded'),
-          width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
-        };
+      // At xLarge pinned: no split — history replaces chat, AVA stays at default width
+      if (!isXLarge()) {
+        if (!_historyPreState) {
+          _historyPreState = {
+            wasExpanded: panelWrap.classList.contains('expanded'),
+            width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
+          };
+        }
+        // Expand to 768px (maximized size) and show Minimize icon
+        panelWrap.classList.add('expanded');
+        panelWrap.style.setProperty('--ava-expanded-w', '768px');
+        // Chat col = 768 - 320(history) - 1(border) = 447px; bubble max = 447 - 40 = 407px
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '407px');
       }
-      // Expand to 768px (maximized size) and show Minimize icon
-      panelWrap.classList.add('expanded');
-      panelWrap.style.setProperty('--ava-expanded-w', '768px');
-      // Chat col = 768 - 320(history) - 1(border) = 447px; bubble max = 447 - 40 = 407px
-      document.documentElement.style.setProperty('--ava-bubble-max-w', '407px');
     }
 
     bodyRow.classList.add('history-mode');
@@ -6668,12 +6687,15 @@
       }
       return;
     } else {
-      // Force 768px split width — bypass hasRoom() guard
-      panelWrap.classList.add('expanded');
-      panelWrap.style.setProperty('--ava-expanded-w', '768px');
-      document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
-      const expandBtnSrc = document.getElementById('ava-expand-btn');
-      if (expandBtnSrc) { expandBtnSrc.setAttribute('data-tooltip', 'Minimize'); expandBtnSrc.innerHTML = REDUCE_ICON_SVG; }
+      // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
+      if (!isXLarge()) {
+        // Force 768px split width — bypass hasRoom() guard
+        panelWrap.classList.add('expanded');
+        panelWrap.style.setProperty('--ava-expanded-w', '768px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+        const expandBtnSrc = document.getElementById('ava-expand-btn');
+        if (expandBtnSrc) { expandBtnSrc.setAttribute('data-tooltip', 'Minimize'); expandBtnSrc.innerHTML = REDUCE_ICON_SVG; }
+      }
     }
 
     // Close citation popover if open
@@ -6796,12 +6818,15 @@
       }
       return;
     } else {
-      // Force 768px split width — bypass hasRoom() guard
-      panelWrap.classList.add('expanded');
-      panelWrap.style.setProperty('--ava-expanded-w', '768px');
-      document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
-      const expandBtnFiles = document.getElementById('ava-expand-btn');
-      if (expandBtnFiles) { expandBtnFiles.setAttribute('data-tooltip', 'Minimize'); expandBtnFiles.innerHTML = REDUCE_ICON_SVG; }
+      // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
+      if (!isXLarge()) {
+        // Force 768px split width — bypass hasRoom() guard
+        panelWrap.classList.add('expanded');
+        panelWrap.style.setProperty('--ava-expanded-w', '768px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
+        const expandBtnFiles = document.getElementById('ava-expand-btn');
+        if (expandBtnFiles) { expandBtnFiles.setAttribute('data-tooltip', 'Minimize'); expandBtnFiles.innerHTML = REDUCE_ICON_SVG; }
+      }
     }
 
     // Apply files-mode to the body row (header stays full-width above the row)
