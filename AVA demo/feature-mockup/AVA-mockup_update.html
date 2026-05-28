@@ -5704,7 +5704,8 @@
     const avaPanel   = document.querySelector('.ava-panel');
     const avaContent = document.getElementById('ava-content');
     const avaFooter  = document.querySelector('.ava-footer');
-    const messages   = document.getElementById('ava-messages');
+    // Scope to avaContent to avoid picking up the duplicate #ava-messages in the pinned panel
+    const messages   = avaContent ? avaContent.querySelector('#ava-messages') : document.getElementById('ava-messages');
     const breadcrumb = document.getElementById('ava-breadcrumb');
     const input      = document.getElementById('ava-input');
 
