@@ -5810,7 +5810,10 @@
             // Step 3: one more frame so browser registers the text change before fading in
             requestAnimationFrame(() => {
               textEl.style.opacity = '1';
-              _thinkingBusy = false;
+
+              // Release busy only after fade-in (300ms) fully completes —
+              // releasing earlier lets the next interval tick fire mid-fade, causing overlap
+              setTimeout(() => { _thinkingBusy = false; }, 300);
 
               if (stepIndex === LAST_STEP) {
                 clearInterval(thinkingInterval);
