@@ -5777,44 +5777,43 @@
     let stepIndex = 0;
 
     let thinkingInterval;
-    let _thinkingBusy = false; // guard against overlapping transitions
+    let _thinkingBusy = false;
 
     const startThinkingCycle = () => {
       thinkingInterval = setInterval(() => {
         const textEl = thinking.querySelector('.ava-thinking-text');
         if (!textEl) { clearInterval(thinkingInterval); return; }
-        if (_thinkingBusy) return; // previous swap not done — skip this tick
+        if (_thinkingBusy) return;
 
         const nextIndex = stepIndex + 1;
         if (nextIndex > LAST_STEP) return;
 
         _thinkingBusy = true;
 
-        // Fade out
+        // Step 1: fade out (CSS transition: 300ms)
         textEl.style.opacity = '0';
 
-        // Wait slightly longer than the 300ms CSS transition to guarantee opacity is 0
+        // Step 2: after fade-out is complete, swap text in a requestAnimationFrame
+        // so the DOM change happens in a fresh paint frame at opacity 0
         setTimeout(() => {
-          // Disable transition so text swap happens at exact opacity 0 — no flash
-          textEl.style.transition = 'none';
-          stepIndex = nextIndex;
-          textEl.textContent = thinkingSteps[stepIndex];
-          void textEl.offsetWidth; // force reflow before re-enabling transition
-          textEl.style.transition = ''; // restore CSS transition
-          void textEl.offsetWidth; // force reflow so fade-in fires cleanly
-          textEl.style.opacity = '1';
+          requestAnimationFrame(() => {
+            stepIndex = nextIndex;
+            textEl.textContent = thinkingSteps[stepIndex];
 
-          // Mark as done after fade-in completes (another 320ms)
-          setTimeout(() => { _thinkingBusy = false; }, 320);
+            // Step 3: one more frame so browser registers the text change before fading in
+            requestAnimationFrame(() => {
+              textEl.style.opacity = '1';
+              _thinkingBusy = false;
 
-          if (stepIndex === LAST_STEP) {
-            clearInterval(thinkingInterval);
-            setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
-          }
-        }, 320); // 320ms > 300ms CSS transition — guaranteed to be fully faded out
+              if (stepIndex === LAST_STEP) {
+                clearInterval(thinkingInterval);
+                setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
+              }
+            });
+          });
+        }, 320); // 320ms > 300ms CSS transition
       }, 1800);
     };
-    // Small initial pause so the first step label is visible before cycling begins
     setTimeout(startThinkingCycle, 800);
 
     // Clear textarea and reset height
