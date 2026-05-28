@@ -6451,6 +6451,9 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
+    // At xLarge pinned: no split pattern — do nothing
+    if (isXLarge() && !avaIsFloating()) return;
+
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
@@ -6631,6 +6634,9 @@
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
 
+    // At xLarge pinned: no split pattern — do nothing
+    if (isXLarge() && !avaIsFloating()) return;
+
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
       _historyReplacedSplit = null;
@@ -6750,6 +6756,9 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+
+    // At xLarge pinned: no split pattern — do nothing (panel replace is handled by preview mode)
+    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
