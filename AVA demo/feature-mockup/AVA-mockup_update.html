@@ -5767,9 +5767,8 @@
     `;
     messages.appendChild(thinking);
 
-    // Defer scroll until after browser has painted, so the layout forced by
-    // getBoundingClientRect doesn't interrupt the thinking text CSS transition
-    const contentEl = document.getElementById('ava-content');
+    // Find the actual scroll container for this messages list (works for both pinned + floating)
+    const contentEl = messages.closest('.ava-content');
     requestAnimationFrame(() => {
       if (contentEl) {
         const msgTop = userMsg.getBoundingClientRect().top;
@@ -5922,8 +5921,8 @@
 
       messages.appendChild(avaMsg);
 
-      // Scroll AVA response to top of content area (16px gap)
-      const avaChatContent = document.getElementById('ava-content');
+      // Scroll AVA response to top — use closest() to get the correct container in both pinned + floating
+      const avaChatContent = messages.closest('.ava-content');
       if (avaChatContent) {
         const avaMsgTop = avaMsg.getBoundingClientRect().top;
         const avaChatTop = avaChatContent.getBoundingClientRect().top;
