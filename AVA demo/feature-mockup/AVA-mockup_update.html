@@ -1385,7 +1385,7 @@
     .ava-panel-wrap.floating .ava-body-row.files-mode .ava-footer > *,
     .ava-panel-wrap.floating .ava-body-row.sources-mode .ava-msg-wrap,
     .ava-panel-wrap.floating .ava-body-row.sources-mode .ava-footer > * {
-      max-width: 672px;
+      max-width: 992px;
     }
     .pip-resize-handle {
       position: absolute;
@@ -2455,7 +2455,7 @@
       flex-direction: column;
       gap: 24px;
       width: 100%;
-      max-width: 672px;
+      max-width: 992px;
       margin: 0 auto;
       padding-bottom: 24px;
     }
@@ -2724,7 +2724,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      max-width: 672px;
+      max-width: 992px;
       width: 100%;
     }
     .ava-ask-row {
@@ -2810,7 +2810,7 @@
     }
     .ava-footer > * {
       width: 100%;
-      max-width: 672px;
+      max-width: 992px;
     }
     .ava-suggestions {
       display: flex;
@@ -4804,7 +4804,7 @@
       // History-only split: history col is fixed 320px, chat takes the rest; no drag handle
       const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
       const chatW = pipW - 320 - 1;
-      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
+      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 992) + 'px');
       return;
     }
     // Secondary split (files/sources) — possibly also with history (3-panel)
@@ -4821,7 +4821,7 @@
     const secCol = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
     if (secCol) secCol.style.width = secW + 'px';
-    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 992) + 'px');
     _splitLastTotal = totalWidth;
   }
 
@@ -6065,7 +6065,7 @@
         avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
-        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 992) + 'px');
         const expandBtnF = document.getElementById('ava-expand-btn');
         if (expandBtnF) {
           expandBtnF.setAttribute('data-tooltip', avaPipMaximized ? 'Minimize' : 'Maximize');
@@ -6107,7 +6107,7 @@
         avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
-        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 992) + 'px');
         const expandBtnS = document.getElementById('ava-expand-btn');
         if (expandBtnS) {
           expandBtnS.setAttribute('data-tooltip', avaPipMaximized ? 'Minimize' : 'Maximize');
@@ -6169,7 +6169,7 @@
                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
     if (secCol) secCol.style.width = secW + 'px';
 
-    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
+    document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 992) + 'px');
     _splitLastTotal = totalWidth;
   }
 
@@ -6340,7 +6340,7 @@
       } else {
         chatW = pipW - 320 - 1; // 320px history col + 1px border
       }
-      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 672) + 'px');
+      document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 992) + 'px');
     } else {
       // Pinned: show Minimize icon since we just maximized to 768px
       if (expandBtn) { expandBtn.setAttribute('data-tooltip', 'Minimize'); expandBtn.innerHTML = REDUCE_ICON_SVG; }
@@ -6372,7 +6372,7 @@
         avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
-        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
+        document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 992) + 'px');
         // Sync expand button icon to match restored maximize state
         const expandBtnH = document.getElementById('ava-expand-btn');
         if (expandBtnH) {
