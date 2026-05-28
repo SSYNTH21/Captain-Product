@@ -4780,6 +4780,7 @@
     };
     _pipManuallyResized = true;
     _updatePipNarrow();
+    _syncExpandBtnFloating();
     _resizeState = null;
     document.removeEventListener('mousemove', _onResizeMove);
     document.removeEventListener('mouseup',   _onResizeEnd);
@@ -4856,6 +4857,23 @@
       if (!inSplit) document.documentElement.style.setProperty('--ava-bubble-max-w', (w - 40) + 'px');
     }
     _updatePipNarrow();
+  }
+
+  // Sync the expand/minimize icon in floating mode based on actual pip size.
+  // Shows EXPAND (maximize) when pip is at/below default size (384px × 75vh).
+  // Shows REDUCE (minimize) when pip is larger than default in either dimension.
+  function _syncExpandBtnFloating() {
+    if (!avaIsFloating()) return;
+    const expandBtn = document.getElementById('ava-expand-btn');
+    if (!expandBtn) return;
+    const w = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
+    const h = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+    const defaultW = 384;
+    const defaultH = Math.round(window.innerHeight * 0.75);
+    const isAtDefault = w <= defaultW && h <= defaultH;
+    avaPipMaximized = !isAtDefault;
+    expandBtn.setAttribute('data-tooltip', isAtDefault ? 'Maximize' : 'Minimize');
+    expandBtn.innerHTML = isAtDefault ? EXPAND_ICON_SVG : REDUCE_ICON_SVG;
   }
 
   function minimizeAva() {
