@@ -1956,6 +1956,18 @@
     .ava-body-row.history-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.history-mode .ava-footer-actions { max-width: none; }
 
+    /* xLarge pinned: panels replace chat full-width inside the 384px panel (old mockup behaviour) */
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-history-col { display: flex; width: 100%; border-right: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col { display: flex; width: 100%; border-left: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col { display: flex; width: 100%; border-left: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-split-handle { display: none; }
+
     /* 3-panel floating: history + secondary panel both visible simultaneously */
     .ava-panel-wrap.floating .ava-body-row.history-mode.files-mode .ava-files-col,
     .ava-panel-wrap.floating .ava-body-row.history-mode.sources-mode .ava-sources-col {
@@ -4375,6 +4387,12 @@
   function isLarge()   { return window.innerWidth >= 992 && window.innerWidth <= 1279; }
   function isXLarge()  { return window.innerWidth >= 1280 && window.innerWidth <= 1471; }
 
+  function syncBreakpointClass() {
+    document.body.classList.toggle('is-xlarge', isXLarge());
+  }
+  syncBreakpointClass();
+  window.addEventListener('resize', syncBreakpointClass);
+
 
   /* Returns the domain content width given hypothetical panel states.
      Uses window.innerWidth (always current) with CSS-aware panel widths.
@@ -4633,7 +4651,7 @@
     else document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
 
     // Re-enter history panel if it was open before unpinning (not at xLarge — no splits)
-    if (historyWasOpen && !isXLarge()) _enterHistorySplit();
+    if (historyWasOpen) _enterHistorySplit();
   }
 
   function pinAva() {
@@ -4692,7 +4710,7 @@
     pinBtn.innerHTML = UNPIN_ICON_SVG;
 
     // Re-enter history panel if it was open in floating mode (not at xLarge — no splits)
-    if (historyWasOpenPin && !isXLarge()) _enterHistorySplit();
+    if (historyWasOpenPin) _enterHistorySplit();
   }
 
   function togglePinAva() {
@@ -6463,7 +6481,6 @@
   function _enterHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if (isXLarge() && !avaIsFloating()) return;
 
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
@@ -6644,7 +6661,6 @@
   function _enterSourcesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
@@ -6765,7 +6781,6 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
