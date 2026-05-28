@@ -1911,20 +1911,6 @@
 
     /* xLarge pinned: no split layout — panels replace chat, files/sources col hidden.
        Controlled via .is-xlarge class on body, set by JS syncBreakpointClass(). */
-    /* xLarge pinned: files/sources/history replace chat full-width (old mockup behaviour).
-       Chat col hides, panel col fills full width. No split. */
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode,
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode {
-      flex-direction: row;
-    }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col,
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col { display: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col,
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col {
-      display: flex;
-      width: 100%;
-      border-left: none;
-    }
 
     /* Drag handle between chat col and secondary col */
     .ava-split-handle {
@@ -4389,11 +4375,6 @@
   function isLarge()   { return window.innerWidth >= 992 && window.innerWidth <= 1279; }
   function isXLarge()  { return window.innerWidth >= 1280 && window.innerWidth <= 1471; }
 
-  function syncBreakpointClass() {
-    document.body.classList.toggle('is-xlarge', isXLarge());
-  }
-  syncBreakpointClass();
-  window.addEventListener('resize', syncBreakpointClass);
 
   /* Returns the domain content width given hypothetical panel states.
      Uses window.innerWidth (always current) with CSS-aware panel widths.
@@ -6473,6 +6454,7 @@
   function _enterHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if (isXLarge() && !avaIsFloating()) return;
 
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
@@ -6653,6 +6635,7 @@
   function _enterSourcesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
@@ -6773,6 +6756,7 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if (isXLarge() && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
