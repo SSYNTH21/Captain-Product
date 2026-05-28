@@ -2540,6 +2540,7 @@
       color: #767676;
       letter-spacing: 0.2px;
       white-space: nowrap;
+      min-width: 260px; /* prevents layout shift when longer step labels fade in */
       transition: opacity 300ms ease;
     }
     /* AVA response message */
@@ -2651,6 +2652,7 @@
     }
     /* AVA response body */
     .ava-msg-body {
+      width: 100%;
       font-size: 16px;
       line-height: 24px;
       color: #414141;
@@ -2666,7 +2668,7 @@
     .ava-msg-table-wrap {
       /* Stretch past the parent's padding-right: 40px so the table reaches full column width */
       width: calc(100% + 40px);
-      overflow-x: auto;
+      overflow-x: scroll;
       margin: 4px 0 12px;
       -webkit-overflow-scrolling: touch;
     }
@@ -5754,25 +5756,30 @@
     const LAST_STEP = thinkingSteps.length - 1;
     let stepIndex = 0;
 
-    const thinkingInterval = setInterval(() => {
-      const textEl = thinking.querySelector('.ava-thinking-text');
-      if (!textEl) { clearInterval(thinkingInterval); return; }
+    let thinkingInterval;
+    const startThinkingCycle = () => {
+      thinkingInterval = setInterval(() => {
+        const textEl = thinking.querySelector('.ava-thinking-text');
+        if (!textEl) { clearInterval(thinkingInterval); return; }
 
-      const nextIndex = stepIndex + 1;
-      if (nextIndex > LAST_STEP) return;
+        const nextIndex = stepIndex + 1;
+        if (nextIndex > LAST_STEP) return;
 
-      textEl.style.opacity = '0';
-      setTimeout(() => {
-        stepIndex = nextIndex;
-        textEl.textContent = thinkingSteps[stepIndex];
-        textEl.style.opacity = '1';
+        textEl.style.opacity = '0';
+        setTimeout(() => {
+          stepIndex = nextIndex;
+          textEl.textContent = thinkingSteps[stepIndex];
+          textEl.style.opacity = '1';
 
-        if (stepIndex === LAST_STEP) {
-          clearInterval(thinkingInterval);
-          setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
-        }
-      }, 300);
-    }, 1800);
+          if (stepIndex === LAST_STEP) {
+            clearInterval(thinkingInterval);
+            setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
+          }
+        }, 300);
+      }, 1800);
+    };
+    // Small initial pause so the first step label is visible before cycling begins
+    setTimeout(startThinkingCycle, 800);
 
     // Clear textarea and reset height
     input.value = '';
