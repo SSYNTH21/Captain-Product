@@ -2448,7 +2448,8 @@
     .ava-content.chat-mode {
       justify-content: flex-start;
       align-items: stretch;
-      padding: 0; /* messages container owns its own padding in chat mode */
+      padding: 16px;           /* keeps 16px gap at all scroll edges */
+      scroll-padding-top: 16px; /* so scrollIntoView also respects the top gap */
     }
     .ava-content.chat-mode .ava-welcome-area,
     .ava-content.chat-mode .ava-disclaimer { display: none; }
@@ -2460,7 +2461,7 @@
       width: 100%;
       max-width: 992px;
       margin: 0 auto;
-      padding: 16px 16px 24px; /* 16px top/sides matching Figma content frame, 24px bottom breathing room */
+      padding-bottom: 24px; /* bottom breathing room only — top/sides come from .ava-content padding */
     }
     .ava-content.chat-mode .ava-messages { display: flex; }
     /* User message — right-aligned */
