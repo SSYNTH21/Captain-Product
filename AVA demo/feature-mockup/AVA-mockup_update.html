@@ -5767,10 +5767,6 @@
     `;
     messages.appendChild(thinking);
 
-    // Scroll to user message (block: start) so it appears at top of viewport
-    // with thinking visible below — avoids cutting off the user bubble
-    userMsg.scrollIntoView({ behavior: 'instant', block: 'start' });
-
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
     const LAST_STEP = thinkingSteps.length - 1;
@@ -5915,9 +5911,6 @@
       avaMsg.appendChild(feedbackRow);
 
       messages.appendChild(avaMsg);
-
-      // Scroll so the top of AVA's response is visible
-      avaMsg.scrollIntoView({ behavior: 'instant', block: 'start' });
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
