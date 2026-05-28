@@ -2661,56 +2661,42 @@
     .ava-msg-body ul { margin: 4px 0 12px; padding-left: 20px; }
     .ava-msg-body ul:last-child { margin-bottom: 0; }
     .ava-msg-body li { margin-bottom: 4px; line-height: 24px; }
-    /* ── AVA inline table — bleeds outside text max-width, scrolls horizontally ── */
+    /* ── AVA inline table — NDBX A1 Light styling, fills message column width, scrolls horizontally ── */
+    .ava-msg-ava { width: 100%; }
     .ava-msg-table-wrap {
-      width: calc(100vw - 80px); /* bleed to near-full chat col width */
-      max-width: 100%;
+      /* Stretch past the parent's padding-right: 40px so the table reaches full column width */
+      width: calc(100% + 40px);
       overflow-x: auto;
       margin: 4px 0 12px;
-      border-radius: 4px;
       -webkit-overflow-scrolling: touch;
     }
     .ava-msg-table-wrap table {
       border-collapse: collapse;
       width: 100%;
-      min-width: 600px;
-      font-size: 14px;
-      line-height: 20px;
-      color: #414141;
+      min-width: 700px;    /* ensures horizontal scroll kicks in on narrow containers */
+      font-size: 1rem;     /* paragraph-03 */
+      line-height: 1.5rem;
+      color: #414141;      /* --text-01 */
       background: #fff;
     }
+    .ava-msg-table-wrap thead tr {
+      background: #F4F4F5; /* --core-color-gray-100 */
+    }
     .ava-msg-table-wrap th {
-      background: #f5f5f5;
-      font-weight: 700;
+      font-weight: 600;    /* --table-header-cell-font-weight */
       text-align: left;
-      padding: 10px 16px;
-      border: 1px solid #d9d9d9;
+      padding: 16px;       /* --table-cell-vertical-padding / --table-cell-horizontal-padding */
+      border-bottom: 1px solid #d9d9d9; /* --ui-04 */
       white-space: nowrap;
+      color: #414141;
     }
     .ava-msg-table-wrap td {
-      padding: 10px 16px;
-      border: 1px solid #d9d9d9;
+      padding: 16px;
+      border-top: 1px solid #d9d9d9; /* --table-cell-border-top-color → --ui-04 in light mode */
       vertical-align: top;
       min-width: 120px;
     }
-    .ava-msg-table-wrap tr:hover td { background: #fafafa; }
-    /* Suggestion chip shown after tokyo response */
-    .ava-followup-chip {
-      display: inline-flex;
-      align-items: center;
-      margin-top: 12px;
-      padding: 6px 14px;
-      border: 1.5px solid #006192;
-      border-radius: 20px;
-      background: #fff;
-      color: #006192;
-      font-size: 14px;
-      line-height: 20px;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-    .ava-followup-chip:hover { background: #e8f4fb; }
-    .ava-followup-chip:active { background: #c8e8f7; }
+    .ava-msg-table-wrap tbody tr:hover td { background: #ececec; } /* --hover-secondary */
     /* ── AVA inline citation link (NDBX Link / medium) ── */
     .ava-citation-link {
       display: inline;
@@ -5509,7 +5495,6 @@
       { type: 'p', html: true, text: 'The mandatory deductible for earthquake perils in the critical category, which includes California and Japan, is <a class="ava-citation-link" data-citation="tsi-rate" data-tooltip="View cited source" data-tooltip-pos="above">5% of the exposed TSI</a> with a minimum of <a class="ava-citation-link" data-citation="min-floor" data-tooltip="View cited source" data-tooltip-pos="above">100,000 EUR and no maximum cap.</a>' },
       { type: 'p', text: "For a TSI of 15,000,000 EUR, the deductible would be 5% of 15,000,000 EUR, which is 750,000 EUR, since this amount is higher than the minimum of 100,000 EUR. The requested 75,000 EUR represents only 0.5% of TSI — well below both the 5% mandatory rate and the 100,000 EUR floor." },
       { type: 'p', html: true, text: 'Tokyo falls under the highest seismic risk classification (<a class="ava-citation-link" data-citation="zone" data-tooltip="View cited source" data-tooltip-pos="above">Zone 1 NatCat critical</a>), which is why the 5% mandatory floor applies rather than a standard deductible table.' },
-      JAPAN_DEDUCTIBLE_TABLE,
       { type: 'p', text: "To proceed, the minimum deductible must be set to 750,000 EUR. Would you like me to update the location rule draft accordingly?" }
     ],
     tokyo_followup: [
@@ -5887,19 +5872,6 @@
       avaMsg.appendChild(feedbackRow);
 
       messages.appendChild(avaMsg);
-
-      // Suggestion chip — pre-fills follow-up question after tokyo response
-      if (responseKey === 'tokyo') {
-        const chip = document.createElement('button');
-        chip.className = 'ava-followup-chip';
-        chip.textContent = 'So the 5% deductible rule — does it apply to all perils in Japan, or just earthquake?';
-        chip.onclick = function() {
-          const input = document.getElementById('ava-input');
-          if (input) { input.value = chip.textContent; input.focus(); }
-          chip.remove();
-        };
-        messages.appendChild(chip);
-      }
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
