@@ -5767,10 +5767,9 @@
     `;
     messages.appendChild(thinking);
 
-    // Scroll so the user bubble + thinking indicator are visible
-    // Use instant (not smooth) — a concurrent smooth scroll causes reflow
-    // contention that breaks the opacity transition during step cycling
-    thinking.scrollIntoView({ behavior: 'instant', block: 'end' });
+    // Scroll to user message (block: start) so it appears at top of viewport
+    // with thinking visible below — avoids cutting off the user bubble
+    userMsg.scrollIntoView({ behavior: 'instant', block: 'start' });
 
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
