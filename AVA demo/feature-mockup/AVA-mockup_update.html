@@ -1909,6 +1909,21 @@
     .ava-body-row.files-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.files-mode .ava-footer-actions { max-width: none; }
 
+    /* xLarge pinned: no split layout — panels replace chat, files/sources col hidden */
+    @media (min-width: 1280px) and (max-width: 1471px) {
+      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode,
+      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode,
+      .ava-panel-wrap:not(.floating) .ava-body-row.history-mode {
+        flex-direction: column;
+      }
+      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col,
+      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col { display: none; }
+      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-msg-wrap,
+      .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-footer > *,
+      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-msg-wrap,
+      .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-footer > * { max-width: 992px; }
+    }
+
     /* Drag handle between chat col and secondary col */
     .ava-split-handle {
       display: none;
