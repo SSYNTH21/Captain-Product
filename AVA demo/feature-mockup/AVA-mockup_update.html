@@ -5759,15 +5759,16 @@
     // Thinking indicator
     const thinking = document.createElement('div');
     thinking.className = 'ava-msg-thinking';
-    thinking.id = 'ava-thinking';
     thinking.innerHTML = `
       <img class="ava-thinking-icon" src="AVA-Sparkle_NEW.gif" alt="" aria-hidden="true">
-      <span class="ava-thinking-text" id="ava-thinking-text">${(THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities)[0].label}...</span>
+      <span class="ava-thinking-text">${(THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities)[0].label}...</span>
     `;
     messages.appendChild(thinking);
 
     // Scroll so the user bubble + thinking indicator are visible
-    thinking.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Use instant (not smooth) — a concurrent smooth scroll causes reflow
+    // contention that breaks the opacity transition during step cycling
+    thinking.scrollIntoView({ behavior: 'instant', block: 'end' });
 
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
@@ -5915,7 +5916,7 @@
       messages.appendChild(avaMsg);
 
       // Scroll so the top of AVA's response is visible
-      avaMsg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      avaMsg.scrollIntoView({ behavior: 'instant', block: 'start' });
 
       // Stream in the response text (no auto-scroll — user controls)
       streamResponse(bodyEl, responseKey || 'capabilities', () => {
