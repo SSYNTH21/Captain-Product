@@ -6058,11 +6058,11 @@
     if (avaIsFloating() && _pipPreSplitW !== null) {
       const stillInSplit = bodyRow && (bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode'));
       if (!stillInSplit) {
-        const restoreW = _pipPreSplitW;
+        const { w: restoreW, h: restoreH } = _pipPreSplitW;
         _pipPreSplitW = null;
-        const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
         panelWrap.style.setProperty('--pip-w', restoreW + 'px');
-        avaPipSize = { width: restoreW, height: newH };
+        panelWrap.style.setProperty('--pip-h', restoreH + 'px');
+        avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
         document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
@@ -6100,11 +6100,11 @@
     if (avaIsFloating() && _pipPreSplitW !== null) {
       const stillInSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode'));
       if (!stillInSplit) {
-        const restoreW = _pipPreSplitW;
+        const { w: restoreW, h: restoreH } = _pipPreSplitW;
         _pipPreSplitW = null;
-        const newH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
         panelWrap.style.setProperty('--pip-w', restoreW + 'px');
-        avaPipSize = { width: restoreW, height: newH };
+        panelWrap.style.setProperty('--pip-h', restoreH + 'px');
+        avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
         document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(restoreW - 40, 672) + 'px');
@@ -6135,7 +6135,7 @@
   }
 
   let _splitAutoMaximized = false;
-  let _pipPreSplitW = null; // pip width saved before entering any split (floating only) — restored on exit
+  let _pipPreSplitW = null; // pip size {w,h} saved before entering any split (floating only) — restored on exit
   let _pipRestoreState = null; // saved layout before pip minimize: { filesOpen, sourcesOpen, historyOpen }
 
   function _resetSplitColumns() {
@@ -6259,7 +6259,7 @@
           _historyReplacedSplit = null;
         } else {
           // Not enough viewport room — close secondary, grow pip by 321px for history-only
-          if (_pipPreSplitW === null) _pipPreSplitW = currentW;
+          if (_pipPreSplitW === null) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
           if (bodyRow.classList.contains('files-mode')) {
             _exitFilesSplit();
             _historyReplacedSplit = 'files';
@@ -6276,8 +6276,8 @@
           _updatePipNarrow();
         }
       } else {
-        // No secondary — save pre-split width
-        _pipPreSplitW = currentW;
+        // No secondary — save pre-split size
+        _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
         if (!_pipManuallyResized) {
           // Default pip — jump to maximize
           if (!avaPipMaximized) _togglePipMaximize();
@@ -6364,11 +6364,11 @@
         _updatePipNarrow();
         _reflowSplitColumns();
       } else if (_pipPreSplitW !== null) {
-        // History-only split — restore pre-split pip width
-        const restoreW = _pipPreSplitW;
+        // History-only split — restore pre-split pip size (width + height)
+        const { w: restoreW, h: restoreH } = _pipPreSplitW;
         _pipPreSplitW = null;
-        const restoreH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
         panelWrap.style.setProperty('--pip-w', restoreW + 'px');
+        panelWrap.style.setProperty('--pip-h', restoreH + 'px');
         avaPipSize = { width: restoreW, height: restoreH };
         avaPipMaximized = restoreW >= Math.min(900, window.innerWidth - 48);
         _updatePipNarrow();
@@ -6434,7 +6434,7 @@
     if (avaIsFloating()) {
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplitS = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode');
-      if (!inAnySplitS) _pipPreSplitW = currentW;
+      if (!inAnySplitS) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
       if (!_pipManuallyResized) {
         if (!avaPipMaximized) _togglePipMaximize();
       } else {
@@ -6551,7 +6551,7 @@
     if (avaIsFloating()) {
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplit = bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode');
-      if (!inAnySplit) _pipPreSplitW = currentW;
+      if (!inAnySplit) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
       if (!_pipManuallyResized) {
         // Default pip — jump to maximize
         if (!avaPipMaximized) _togglePipMaximize();
