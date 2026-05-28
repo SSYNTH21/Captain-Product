@@ -5767,13 +5767,16 @@
     `;
     messages.appendChild(thinking);
 
-    // Scroll so user message sits at the top of the content area (16px gap)
+    // Defer scroll until after browser has painted, so the layout forced by
+    // getBoundingClientRect doesn't interrupt the thinking text CSS transition
     const contentEl = document.getElementById('ava-content');
-    if (contentEl) {
-      const msgTop = userMsg.getBoundingClientRect().top;
-      const containerTop = contentEl.getBoundingClientRect().top;
-      contentEl.scrollTop += msgTop - containerTop - 16;
-    }
+    requestAnimationFrame(() => {
+      if (contentEl) {
+        const msgTop = userMsg.getBoundingClientRect().top;
+        const containerTop = contentEl.getBoundingClientRect().top;
+        contentEl.scrollTop += msgTop - containerTop - 16;
+      }
+    });
 
     // Cycle through thinking steps at uniform interval; hold on last then show response
     const thinkingSteps = (THINKING_STEPS[responseKey] || THINKING_STEPS.capabilities).map(s => s.label + '...');
