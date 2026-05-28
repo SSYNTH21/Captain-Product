@@ -5775,29 +5775,41 @@
     let stepIndex = 0;
 
     let thinkingInterval;
+    let _thinkingBusy = false; // guard against overlapping transitions
+
     const startThinkingCycle = () => {
       thinkingInterval = setInterval(() => {
         const textEl = thinking.querySelector('.ava-thinking-text');
         if (!textEl) { clearInterval(thinkingInterval); return; }
+        if (_thinkingBusy) return; // previous swap not done — skip this tick
 
         const nextIndex = stepIndex + 1;
         if (nextIndex > LAST_STEP) return;
 
-        // Fade out, then swap text only after transition fully completes
+        _thinkingBusy = true;
+
+        // Fade out
         textEl.style.opacity = '0';
-        textEl.addEventListener('transitionend', function onFadeOut() {
-          textEl.removeEventListener('transitionend', onFadeOut);
+
+        // Wait slightly longer than the 300ms CSS transition to guarantee opacity is 0
+        setTimeout(() => {
+          // Disable transition so text swap happens at exact opacity 0 — no flash
+          textEl.style.transition = 'none';
           stepIndex = nextIndex;
           textEl.textContent = thinkingSteps[stepIndex];
-          // Force reflow so opacity transition restarts from 0
-          void textEl.offsetWidth;
+          void textEl.offsetWidth; // force reflow before re-enabling transition
+          textEl.style.transition = ''; // restore CSS transition
+          void textEl.offsetWidth; // force reflow so fade-in fires cleanly
           textEl.style.opacity = '1';
+
+          // Mark as done after fade-in completes (another 320ms)
+          setTimeout(() => { _thinkingBusy = false; }, 320);
 
           if (stepIndex === LAST_STEP) {
             clearInterval(thinkingInterval);
             setTimeout(() => showAvaResponse(thinking, messages, ts, avaContent, chatTitle, responseKey, promptText), 2000);
           }
-        }, { once: true });
+        }, 320); // 320ms > 300ms CSS transition — guaranteed to be fully faded out
       }, 1800);
     };
     // Small initial pause so the first step label is visible before cycling begins
