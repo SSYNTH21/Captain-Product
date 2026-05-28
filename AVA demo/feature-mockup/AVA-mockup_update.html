@@ -6554,12 +6554,19 @@
             width: parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 640
           };
         }
+        // Auto-collapse nav if needed to make room for 768px expand (mirrors toggleExpandAva logic)
+        const navWH = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
+        const spWH  = () => (currentSidePanel !== null) ? 384 : 0;
+        const hasRoomH = () => window.innerWidth - navWH() - 56 - spWH() - 544 >= 768;
+        if (!hasRoomH() && navIsOpen() && !isMedium() && !isSmall()) {
+          collapseNav();
+          avaAutoCollapsedNav = true;
+        }
         // Expand to 768px (maximized size) and show Minimize icon
         panelWrap.classList.add('expanded');
         panelWrap.style.setProperty('--ava-expanded-w', '768px');
         // Chat col = 768 - 320(history) - 1(border) = 447px; bubble max = 447 - 40 = 407px
         document.documentElement.style.setProperty('--ava-bubble-max-w', '407px');
-        syncNav();
       }
     }
 
@@ -6721,13 +6728,19 @@
     } else {
       // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
       if (!isXLarge()) {
-        // Force 768px split width — bypass hasRoom() guard
+        // Auto-collapse nav if needed to make room (mirrors toggleExpandAva logic)
+        const navWS = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
+        const spWS  = () => (currentSidePanel !== null) ? 384 : 0;
+        if (window.innerWidth - navWS() - 56 - spWS() - 544 < 768 && navIsOpen() && !isMedium() && !isSmall()) {
+          collapseNav();
+          avaAutoCollapsedNav = true;
+        }
+        // Force 768px split width
         panelWrap.classList.add('expanded');
         panelWrap.style.setProperty('--ava-expanded-w', '768px');
         document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
         const expandBtnSrc = document.getElementById('ava-expand-btn');
         if (expandBtnSrc) { expandBtnSrc.setAttribute('data-tooltip', 'Minimize'); expandBtnSrc.innerHTML = REDUCE_ICON_SVG; }
-        syncNav();
       }
     }
 
@@ -6853,13 +6866,19 @@
     } else {
       // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
       if (!isXLarge()) {
-        // Force 768px split width — bypass hasRoom() guard
+        // Auto-collapse nav if needed to make room (mirrors toggleExpandAva logic)
+        const navWF = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
+        const spWF  = () => (currentSidePanel !== null) ? 384 : 0;
+        if (window.innerWidth - navWF() - 56 - spWF() - 544 < 768 && navIsOpen() && !isMedium() && !isSmall()) {
+          collapseNav();
+          avaAutoCollapsedNav = true;
+        }
+        // Force 768px split width
         panelWrap.classList.add('expanded');
         panelWrap.style.setProperty('--ava-expanded-w', '768px');
         document.documentElement.style.setProperty('--ava-bubble-max-w', '344px');
         const expandBtnFiles = document.getElementById('ava-expand-btn');
         if (expandBtnFiles) { expandBtnFiles.setAttribute('data-tooltip', 'Minimize'); expandBtnFiles.innerHTML = REDUCE_ICON_SVG; }
-        syncNav();
       }
     }
 
