@@ -6388,6 +6388,9 @@
     if (avaIsFloating()) _resetSplitColumns();
     const bodyRow = document.getElementById('ava-body-row');
     if (bodyRow) bodyRow.classList.remove('files-mode');
+    // Reset last active panel — but only if no other split is still open
+    const stillInSplitCheck = bodyRow && (bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode'));
+    if (!stillInSplitCheck) _lastActivePanel = 'chat';
 
     if (avaIsFloating() && _pipPreSplitW !== null) {
       const stillInSplit = bodyRow && (bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode'));
@@ -6430,6 +6433,8 @@
     if (avaIsFloating()) _resetSplitColumns();
     const bodyRow = document.getElementById('ava-body-row');
     if (bodyRow) bodyRow.classList.remove('sources-mode');
+    const stillInSplitCheckS = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode'));
+    if (!stillInSplitCheckS) _lastActivePanel = 'chat';
 
     if (avaIsFloating() && _pipPreSplitW !== null) {
       const stillInSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode'));
