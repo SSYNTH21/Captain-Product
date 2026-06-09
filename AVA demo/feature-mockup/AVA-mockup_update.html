@@ -5404,9 +5404,9 @@
       if (!isMedium() && !isSmall() && !avaIsFloating()) {
         if (avaIsOpen() && currentSidePanel !== null) {
           lastOpened === 'ava' ? closeAva() : closeSidePanel();
-        } else if (avaIsOpen()) {
+        } else if (avaIsOpen() && wouldViolateDomain(true, false, true, false)) {
           closeAva();
-        } else if (currentSidePanel !== null) {
+        } else if (currentSidePanel !== null && wouldViolateDomain(true, true, false, false)) {
           closeSidePanel();
         }
       } else {
