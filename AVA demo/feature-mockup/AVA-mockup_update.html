@@ -5332,18 +5332,37 @@
       let newW = curW;
       let newH = curH;
 
+      // In 3-panel mode, pip needs at least 1100px to fit all columns
+      const bodyRowResize = document.getElementById('ava-body-row');
+      const in3Panel = bodyRowResize &&
+        bodyRowResize.classList.contains('history-mode') &&
+        (bodyRowResize.classList.contains('files-mode') || bodyRowResize.classList.contains('sources-mode'));
+      const minPipFor3Panel = in3Panel ? 1100 : 780;
+
       if (_pipManuallyResized) {
         // Case 1: user manually resized — keep exact size, only clamp if overflows
-        newW = Math.min(curW, maxW);
+        // But ensure minimum for current split mode
+        newW = Math.max(Math.min(curW, maxW), Math.min(minPipFor3Panel, maxW));
         newH = Math.min(curH, maxH);
       } else if (avaPipMaximized) {
         // Case 2: user clicked maximize — grow/shrink to default max size as viewport allows
-        newW = Math.min(900, maxW);
+        // In 3-panel, target is max(900, 1100) = 1100 if space allows
+        const targetW = in3Panel ? Math.max(900, minPipFor3Panel) : 900;
+        newW = Math.min(targetW, maxW);
         newH = Math.min(Math.round(window.innerHeight * 0.85), maxH);
       } else {
-        // Case 3: default size — clamp only if overflows, otherwise keep as-is
-        newW = Math.min(curW, maxW);
+        // Case 3: default size — clamp only if overflows, ensure split minimum
+        newW = Math.max(Math.min(curW, maxW), Math.min(minPipFor3Panel, maxW));
         newH = Math.min(curH, maxH);
+      }
+
+      // If pip shrank below 3-panel minimum while in 3-panel, collapse to 2-panel
+      if (in3Panel && newW < 1100) {
+        // Exit history — keep secondary (files/sources) as 2-panel
+        if (bodyRowResize.classList.contains('history-mode')) {
+          _exitHistorySplit();
+          _historyReplacedSplit = null;
+        }
       }
 
       if (newW !== curW) {
