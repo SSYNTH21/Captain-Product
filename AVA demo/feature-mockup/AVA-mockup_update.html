@@ -4766,24 +4766,10 @@
     if (panelToRestore === 'history') {
       _enterHistorySplit();
     } else if (panelToRestore === 'preview') {
-      // For pinned preview: enter files split first, then enter preview mode
-      // _enterFilesSplit sets up files-mode; enterPreviewMode adds preview-mode
-      // which overrides content display via CSS (shows ava-preview-panel, hides ava-content)
-      _enterFilesSplit();
-      if (_lastPreviewFilename) {
-        // Use requestAnimationFrame so _enterFilesSplit's DOM changes settle first
-        const fn = _lastPreviewFilename;
-        requestAnimationFrame(() => {
-          const avaPanel = document.querySelector('.ava-panel');
-          if (avaPanel) {
-            avaPanel.classList.add('preview-mode');
-            _lastActivePanel = 'preview';
-            _showFileBreadcrumb();
-            const crumbFilename = document.getElementById('ava-crumb-filename');
-            if (crumbFilename) crumbFilename.textContent = fn;
-          }
-        });
-      }
+      // Pinned preview: use enterPreviewMode directly — no files-mode needed.
+      // preview-mode on .ava-panel shows #ava-preview-panel and hides .ava-content via CSS.
+      // Adding files-mode would conflict (shows .ava-files-col full-width, hiding preview content).
+      if (_lastPreviewFilename) enterPreviewMode(_lastPreviewFilename);
     } else if (panelToRestore === 'files') {
       _enterFilesSplit();
     } else if (panelToRestore === 'sources') {
