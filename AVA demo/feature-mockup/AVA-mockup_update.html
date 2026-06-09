@@ -6975,7 +6975,30 @@
 
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplitS = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode');
+      const historyIsOpenS = bodyRow.classList.contains('history-mode');
       if (!inAnySplitS) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
+
+      // If history is open, check 3-panel possibility BEFORE resizing
+      if (historyIsOpenS) {
+        const target3WS = Math.min(currentW + 321, window.innerWidth - 48);
+        if (target3WS >= 1100) {
+          _resizePipForSplit(1100);
+          _closeCitationPopover();
+          const avaPanelS3 = document.querySelector('.ava-panel');
+          avaPanelS3.classList.remove('preview-mode');
+          bodyRow.classList.remove('files-mode');
+          bodyRow.classList.add('sources-mode');
+          _lastActivePanel = 'sources';
+          if (_sourcesHtml) document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
+          bodyRow.classList.remove('history-mode');
+          _enterHistorySplit();
+          return;
+        }
+        // Not enough room — sources replaces history silently
+        bodyRow.classList.remove('history-mode');
+        _historyReplacedSplit = null;
+      }
+
       // Sources needs at least 384(chat) + 12(handle) + 384(sources) = 780px
       _resizePipForSplit(780);
 
@@ -6994,20 +7017,7 @@
         document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
       }
 
-      // If history is open: check if pip is wide enough for 3-panel (≥1095px)
-      if (bodyRow.classList.contains('history-mode')) {
-        if (currentW >= 1100) {
-          bodyRow.classList.remove('history-mode');
-          _enterHistorySplit();
-        } else {
-          // Pip too narrow — sources replaces history silently, keep pip size unchanged
-          bodyRow.classList.remove('history-mode');
-          _historyReplacedSplit = null;
-          _initSplitColumns();
-        }
-      } else {
-        _initSplitColumns();
-      }
+      _initSplitColumns();
       return;
     } else {
       // At xLarge + large pinned: no split — panel replaces chat, AVA stays at default width
@@ -7122,7 +7132,44 @@
 
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplit = bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode');
+      const historyIsOpen = bodyRow.classList.contains('history-mode');
       if (!inAnySplit) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
+
+      // If history is open, check if we can achieve 3-panel BEFORE resizing for files
+      // 3-panel needs: currentPip + 321(history) fits in viewport AND result >= 1100
+      if (historyIsOpen) {
+        const target3W = Math.min(currentW + 321, window.innerWidth - 48);
+        if (target3W >= 1100) {
+          // Can fit 3-panel — resize pip for 3-panel width, then re-enter history to set it up
+          _resizePipForSplit(1100);
+          // Apply files-mode
+          const avaPanelF3 = document.querySelector('.ava-panel');
+          avaPanelF3.classList.remove('preview-mode');
+          bodyRow.classList.remove('sources-mode');
+          bodyRow.classList.add('files-mode');
+          _lastActivePanel = 'files';
+          // Populate files panel
+          const hasFl3 = avaPanelF3.dataset.hasFile === 'true';
+          const fnameFl3 = avaPanelF3.dataset.fileName || 'Lob-presentation_240116.pdf';
+          const panelFl3 = document.getElementById('ava-files-panel');
+          if (hasFl3) {
+            const today = new Date();
+            const dateStr = ('0'+today.getDate()).slice(-2)+'/'+('0'+(today.getMonth()+1)).slice(-2)+'/'+today.getFullYear();
+            panelFl3.innerHTML = `<div class="ava-files-date-group"><div class="ava-files-date-label">Today &middot; 1 file attached</div>${_makeFileRow(fnameFl3, dateStr)}</div>`;
+          } else {
+            panelFl3.innerHTML = `<div class="ava-files-empty"><p class="ava-files-empty-text">No files attached to this chat</p><button class="ava-files-attach-btn" onclick="document.getElementById('ava-attach-input').click()">Attach file</button></div>`;
+          }
+          // Re-enter history to set up 3-panel column sizing
+          const postW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || currentW;
+          bodyRow.classList.remove('history-mode');
+          _enterHistorySplit();
+          return;
+        }
+        // Not enough room for 3-panel — files replaces history silently
+        bodyRow.classList.remove('history-mode');
+        _historyReplacedSplit = null;
+      }
+
       // Files needs at least 384(chat) + 12(handle) + 384(files) = 780px
       _resizePipForSplit(780);
 
@@ -7151,20 +7198,7 @@
         </div>`;
       }
 
-      // If history is open: check if pip is wide enough for 3-panel (≥1095px)
-      if (bodyRow.classList.contains('history-mode')) {
-        if (currentW >= 1100) {
-          bodyRow.classList.remove('history-mode');
-          _enterHistorySplit();
-        } else {
-          // Pip too narrow — files replaces history silently, keep pip size unchanged
-          bodyRow.classList.remove('history-mode');
-          _historyReplacedSplit = null;
-          _initSplitColumns();
-        }
-      } else {
-        _initSplitColumns();
-      }
+      _initSplitColumns();
       return;
     } else {
       // At xLarge + large pinned: no split — panel replaces chat, AVA stays at default width
