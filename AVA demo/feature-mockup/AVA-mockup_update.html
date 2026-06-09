@@ -5318,21 +5318,35 @@
       const maxH = window.innerHeight - 48;
       const curW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const curH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
+      let didResizeW = false;
       if (curW > maxW) {
         panelWrap.style.setProperty('--pip-w', maxW + 'px');
         avaPipSize = { width: maxW, height: avaPipSize ? avaPipSize.height : curH };
         _updatePipNarrow();
-        _reflowSplitColumns();
+        didResizeW = true;
       }
       if (curH > maxH) {
         panelWrap.style.setProperty('--pip-h', maxH + 'px');
         avaPipSize = { width: avaPipSize ? avaPipSize.width : curW, height: maxH };
       }
+      // When entering swap mode, clear inline column widths so CSS takes over
+      if (_pipNeedsSwap()) {
+        const chatCol = document.querySelector('.ava-chat-col');
+        const filesCol = document.querySelector('.ava-files-col');
+        const sourcesCol = document.querySelector('.ava-sources-col');
+        const histCol = document.getElementById('ava-history-col');
+        if (chatCol)    { chatCol.style.width = '';    chatCol.style.flex = ''; }
+        if (filesCol)   filesCol.style.width   = '';
+        if (sourcesCol) sourcesCol.style.width = '';
+        if (histCol)    histCol.style.width    = '';
+      } else if (didResizeW) {
+        _reflowSplitColumns();
+      }
       // Clamp pip position so it stays within viewport
-      const curRight  = parseFloat(panelWrap.style.right)  || 24;
-      const curBottom = parseFloat(panelWrap.style.bottom) || 24;
       const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const pipH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || 400;
+      const curRight  = parseFloat(panelWrap.style.right)  || 24;
+      const curBottom = parseFloat(panelWrap.style.bottom) || 24;
       if (curRight + pipW > window.innerWidth - 24)   panelWrap.style.right  = Math.max(24, window.innerWidth  - pipW - 24) + 'px';
       if (curBottom + pipH > window.innerHeight - 24) panelWrap.style.bottom = Math.max(24, window.innerHeight - pipH - 24) + 'px';
     }
