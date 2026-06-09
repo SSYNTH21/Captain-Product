@@ -4435,6 +4435,9 @@
   let avaPipPos       = null;
   let avaPipMaximized = false;
   let avaLastWasFloating = false;
+  // Tracks the most recently interacted panel — used to restore state on pin/unpin
+  // Values: 'chat' | 'files' | 'sources' | 'history' | 'preview'
+  let _lastActivePanel = 'chat';
   let avaHasPendingNotification = false;
   let _avaNotifLoopTimer = null;
   let _avaToastTimer = null;
@@ -4618,15 +4621,27 @@
   function unpinAva() {
     const pinBtn = document.getElementById('ava-pin-btn');
     const bodyRow = document.getElementById('ava-body-row');
-    const historyWasOpen = bodyRow && bodyRow.classList.contains('history-mode');
 
-    // Exit history split — we'll re-enter it in floating mode after setup
-    if (historyWasOpen) {
-      _historyReplacedSplit = null;
-      _historyPreState = null; // discard pinned pre-state; floating has its own sizing
-      _exitHistorySplit();
-    }
+    // Capture active panel state before exiting splits
+    const panelToRestore = _lastActivePanel; // 'chat' | 'files' | 'sources' | 'history' | 'preview'
     const wasExpanded = avaIsExpanded();
+
+    // Exit all splits — we'll re-enter the right one after floating setup
+    if (bodyRow) {
+      if (bodyRow.classList.contains('history-mode')) {
+        _historyReplacedSplit = null;
+        _historyPreState = null;
+        _exitHistorySplit();
+      }
+      if (bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
+      if (bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
+    }
+
+    // Determine target size:
+    // - Chat only + not expanded → default floating (384×75vh)
+    // - Chat expanded OR any panel open → maximize (900×85vh)
+    const shouldMaximize = wasExpanded || panelToRestore !== 'chat';
+
     avaPipMaximized = false;
     avaPipSize = { width: 384, height: Math.round(window.innerHeight * 0.75) };
     panelWrap.style.setProperty('--pip-w', '384px');
@@ -4640,18 +4655,25 @@
     _initDrag();
     pinBtn.setAttribute('data-tooltip', 'Pin');
     pinBtn.innerHTML = PIN_ICON_SVG;
-    // Re-enable expand btn — may have been disabled by syncExpandBtn() in pinned mode
+
+    // Re-enable expand btn
     const expandBtnUnpin = document.getElementById('ava-expand-btn');
     if (expandBtnUnpin) {
       expandBtnUnpin.disabled = false;
       expandBtnUnpin.setAttribute('data-tooltip', 'Maximize');
       expandBtnUnpin.innerHTML = EXPAND_ICON_SVG;
     }
-    if (wasExpanded) _togglePipMaximize();
-    else document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
 
-    // Re-enter history panel if it was open before unpinning (not at xLarge — no splits)
-    if (historyWasOpen) _enterHistorySplit();
+    if (shouldMaximize) {
+      _togglePipMaximize(); // maximize to 900×85vh
+      // Re-enter the active panel in floating split
+      if (panelToRestore === 'history')  _enterHistorySplit();
+      else if (panelToRestore === 'files' || panelToRestore === 'preview') _enterFilesSplit();
+      else if (panelToRestore === 'sources') _enterSourcesSplit();
+      // Preview will be re-entered by _openFilePreview if needed — files split is sufficient
+    } else {
+      document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
+    }
   }
 
   function pinAva() {
@@ -4666,18 +4688,18 @@
     document.removeEventListener('mousemove', _onResizeMove);
     document.removeEventListener('mouseup',   _onResizeEnd);
 
-    // Track if history was open so we can re-enter it after pinning
-    const bodyRowPin = document.getElementById('ava-body-row');
-    const historyWasOpenPin = bodyRowPin && bodyRowPin.classList.contains('history-mode');
+    // Capture the most recently active panel before exiting splits
+    const panelToRestore = _lastActivePanel;
 
-    // Close all splits before leaving floating mode (we'll re-enter history after)
+    // Close all splits before leaving floating mode
+    const bodyRowPin = document.getElementById('ava-body-row');
     if (bodyRowPin) {
       if (bodyRowPin.classList.contains('history-mode')) {
         _historyReplacedSplit = null;
-        _historyPreState = null; // discard floating pre-state; pinned will set its own
+        _historyPreState = null;
         _exitHistorySplit();
       }
-      if (bodyRowPin.classList.contains('files-mode')) _exitFilesSplit();
+      if (bodyRowPin.classList.contains('files-mode'))   _exitFilesSplit();
       if (bodyRowPin.classList.contains('sources-mode')) _exitSourcesSplit();
     }
     _splitAutoMaximized = false;
@@ -4709,8 +4731,12 @@
     pinBtn.setAttribute('data-tooltip', 'Unpin');
     pinBtn.innerHTML = UNPIN_ICON_SVG;
 
-    // Re-enter history panel if it was open in floating mode (not at xLarge — no splits)
-    if (historyWasOpenPin) _enterHistorySplit();
+    // Restore the most recently active panel after pinning
+    // At xLarge: panels replace chat (full-width, no expand needed — CSS handles it)
+    // At 2xLarge+: splits are allowed, re-enter normally
+    if (panelToRestore === 'history')  _enterHistorySplit();
+    else if (panelToRestore === 'files' || panelToRestore === 'preview') _enterFilesSplit();
+    else if (panelToRestore === 'sources') _enterSourcesSplit();
   }
 
   function togglePinAva() {
@@ -6076,6 +6102,7 @@
   }
 
   function startNewConversation() {
+    _lastActivePanel = 'chat';
     _historyReplacedSplit = null;
     _exitHistorySplit();
     const avaPanel   = document.querySelector('.ava-panel');
@@ -6285,6 +6312,7 @@
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('sources-mode');
     avaPanel.classList.add('preview-mode');
+    _lastActivePanel = 'preview';
     _showFileBreadcrumb();
     const crumbFilename = document.getElementById('ava-crumb-filename');
     if (crumbFilename) crumbFilename.textContent = filename || 'Lob-presentation_240116.pdf';
@@ -6463,6 +6491,7 @@
   }
 
   function exitToChat() {
+    _lastActivePanel = 'chat';
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
     _splitAutoMaximized = false;
@@ -6571,6 +6600,7 @@
     }
 
     bodyRow.classList.add('history-mode');
+    _lastActivePanel = 'history';
 
     const historyBtn = document.getElementById('ava-history-btn');
     if (historyBtn) historyBtn.classList.add('active');
@@ -6660,6 +6690,12 @@
     } else if (_historyReplacedSplit === 'sources') {
       _historyReplacedSplit = null;
       _enterSourcesSplit();
+    } else {
+      // No secondary — revert last active panel to files/sources if still open, else chat
+      const bodyRow2 = document.getElementById('ava-body-row');
+      if (bodyRow2 && bodyRow2.classList.contains('files-mode')) _lastActivePanel = 'files';
+      else if (bodyRow2 && bodyRow2.classList.contains('sources-mode')) _lastActivePanel = 'sources';
+      else _lastActivePanel = 'chat';
     }
   }
 
@@ -6711,6 +6747,7 @@
       avaPanel.classList.remove('preview-mode');
       bodyRow.classList.remove('files-mode');
       bodyRow.classList.add('sources-mode');
+      _lastActivePanel = 'sources';
 
       // Populate sources panel
       if (_sourcesHtml) {
@@ -6836,6 +6873,7 @@
       avaPanelF.classList.remove('preview-mode');
       bodyRow.classList.remove('sources-mode');
       bodyRow.classList.add('files-mode');
+      _lastActivePanel = 'files';
 
       // Populate files panel
       const hasFl = avaPanelF.dataset.hasFile === 'true';
