@@ -4415,7 +4415,8 @@
 
   // Returns true when viewport is too narrow for split panels in floating mode.
   // Threshold: viewport - 48px (24px each side) < 840px (default pip max width).
-  function _pipNeedsSwap() { return window.innerWidth - 48 < 840; }
+  // Swap when viewport too narrow for minimum 2-panel split: 384+12+384 = 780px inside pip
+  function _pipNeedsSwap() { return window.innerWidth - 48 < 780; }
 
   function syncBreakpointClass() {
     document.body.classList.toggle('is-xlarge', isXLarge());
@@ -4902,9 +4903,8 @@
     const bodyRow = document.getElementById('ava-body-row');
     const inSecSplit = bodyRow && (bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode'));
     const inHistSplit = bodyRow && bodyRow.classList.contains('history-mode');
-    // 2-panel: 384 chat + 384 sec + 6 handle = 774; 3-panel: +321 hist = 1095
-    // history-only: 320 hist + 384 chat = 704
-    const MIN_W = (inSecSplit && inHistSplit) ? 1095 : inSecSplit ? 774 : inHistSplit ? 704 : 384;
+    // Floating: handle is 12px. 2-panel: 384+12+384=780; 3-panel: 320+384+12+384=1100; history-only: 320+384=704
+    const MIN_W = (inSecSplit && inHistSplit) ? 1100 : inSecSplit ? 780 : inHistSplit ? 704 : 384;
     const MAX_W = window.innerWidth  - 48;
     const MIN_H = Math.round(window.innerHeight * 0.5), MAX_H = window.innerHeight - 48;
     const dx = e.clientX - startMouseX;
@@ -6731,12 +6731,13 @@
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
 
       if (secondaryIsOpen) {
-        // 3-panel: history(320+1) + chat(384) + handle(6) + secondary(384) = 1095px minimum
-        // Check if current pip width can fit all 3 panels (not viewport — pip size is the constraint)
-        const pipFits3 = currentW >= 1095;
+        // 3-panel: 320(hist) + 384(chat) + 12(handle) + 384(sec) = 1100px minimum
+        // Allow 3-panel if growing pip by 321px still fits in viewport
+        const target3W = Math.min(currentW + 321, window.innerWidth - 48);
+        const pipFits3 = target3W >= 1100;
         if (pipFits3) {
-          // Pip wide enough — grow by 321px to add history col (pip already had room for secondary)
-          const targetW = Math.min(currentW + 321 + 1, window.innerWidth - 48);
+          // Grow pip to fit 3-panel
+          const targetW = target3W;
           const targetH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
           panelWrap.style.setProperty('--pip-w', targetW + 'px');
           avaPipSize = { width: targetW, height: targetH };
@@ -6837,7 +6838,7 @@
       if (stillInSplit) {
         // Was 3-panel — shrink pip back by 321px (history col width) to restore 2-panel size
         const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
-        const restoredW = Math.max(currentW - 321 - 1, 384 + 384 + 6); // keep enough for 2-panel min
+        const restoredW = Math.max(currentW - 321 - 1, 384 + 12 + 384); // keep enough for 2-panel min (handle=12px)
         const restoredH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
         panelWrap.style.setProperty('--pip-w', restoredW + 'px');
         avaPipSize = { width: restoredW, height: restoredH };
@@ -6936,8 +6937,8 @@
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplitS = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplitS) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
-      // Sources needs at least 384(chat) + 6(handle) + 384(sources) = 774px
-      _resizePipForSplit(774);
+      // Sources needs at least 384(chat) + 12(handle) + 384(sources) = 780px
+      _resizePipForSplit(780);
 
       // Close citation popover if open
       _closeCitationPopover();
@@ -6956,7 +6957,7 @@
 
       // If history is open: check if pip is wide enough for 3-panel (≥1095px)
       if (bodyRow.classList.contains('history-mode')) {
-        if (currentW >= 1095) {
+        if (currentW >= 1100) {
           bodyRow.classList.remove('history-mode');
           _enterHistorySplit();
         } else {
@@ -7083,8 +7084,8 @@
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplit = bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplit) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
-      // Files needs at least 384(chat) + 6(handle) + 384(files) = 774px
-      _resizePipForSplit(774);
+      // Files needs at least 384(chat) + 12(handle) + 384(files) = 780px
+      _resizePipForSplit(780);
 
       // Apply files-mode
       const avaPanelF = document.querySelector('.ava-panel');
@@ -7113,7 +7114,7 @@
 
       // If history is open: check if pip is wide enough for 3-panel (≥1095px)
       if (bodyRow.classList.contains('history-mode')) {
-        if (currentW >= 1095) {
+        if (currentW >= 1100) {
           bodyRow.classList.remove('history-mode');
           _enterHistorySplit();
         } else {
