@@ -4476,6 +4476,7 @@
   let _avaToastTimer = null;
   // True when the system auto-unpinned AVA due to breakpoint — cleared by manual user unpin
   let avaAutoUnpinned = false;
+  let avaAutoRepinnedFromMax = false; // true when auto-repinned due to maximize+viewport grow
 
   function _showToast() {
     const toast = document.getElementById('ava-toast');
@@ -4813,7 +4814,8 @@
     if (avaIsFloating()) {
       pinAva();
     } else {
-      avaAutoUnpinned = false; // user chose to unpin — don't auto-restore on scale-up
+      avaAutoUnpinned = false;       // user chose to unpin — don't auto-restore on scale-up
+      avaAutoRepinnedFromMax = false; // user manually unpinned — clear auto-repin state
       unpinAva();
     }
   }
@@ -5276,22 +5278,31 @@
       closeAllNavFlyouts();
     }
     // When expanded AVA no longer fits at 768px, recover space in priority order:
-    // 1. collapse nav, 2. minimize AVA, 3. close side panel
+    // 1. collapse nav, 2. check if we should unpin-to-maximize or just minimize, 3. close side panel
     if (avaIsExpanded() && !avaIsFloating()) {
       const fits = () => {
         const nW = (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
         const sW = currentSidePanel !== null ? 384 : 0;
         return window.innerWidth - nW - 56 - sW - 544 >= 768;
       };
-      // Step 1: collapse nav — do NOT set avaAutoCollapsedNav so it stays collapsed after minimize
+      // Step 1: collapse nav
       if (!fits() && navIsOpen() && !isMedium() && !isSmall()) {
         collapseNav();
       }
-      // Step 2: minimize AVA
       if (!fits()) {
-        minimizeAva();
+        // If this was an auto-repin from maximize and viewport no longer supports it,
+        // unpin back to floating maximized (reverse the auto-repin)
+        const canRestoreExpanded = !isXLarge() && !isLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
+        if (!canRestoreExpanded && avaAutoRepinnedFromMax) {
+          avaAutoRepinnedFromMax = false;
+          avaAutoUnpinned = true;
+          unpinAva(); // unpinAva checks wasExpanded=true → maximizes floating pip
+        } else {
+          // Standard minimize
+          minimizeAva();
+        }
       }
-      // Step 3: close side panel (minimizeAva restores avaAutoClosedSidePanel — re-close if needed)
+      // Step 3: close side panel if still doesn't fit
       if (!fits() && currentSidePanel !== null) {
         avaAutoClosedSidePanel = currentSidePanel;
         spWrap.classList.remove('open');
@@ -5451,6 +5462,7 @@
         const canRestoreExpanded = !isXLarge() && !isLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
         if (canRestoreExpanded) {
           avaAutoUnpinned = false;
+          avaAutoRepinnedFromMax = true;
           pinAva();
         }
       } else {
