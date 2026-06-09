@@ -4735,6 +4735,9 @@
     pinBtn.setAttribute('data-tooltip', 'Unpin');
     pinBtn.innerHTML = UNPIN_ICON_SVG;
 
+    // Sync expand button disabled state for the pinned breakpoint
+    syncExpandBtn();
+
     // Restore the most recently active panel after pinning
     // At xLarge: panels replace chat (full-width, no expand needed — CSS handles it)
     // At 2xLarge+: splits are allowed, re-enter normally
