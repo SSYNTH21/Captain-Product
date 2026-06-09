@@ -5445,9 +5445,19 @@
     if (!pinBtn) return;
     const forceFloat = isMedium() || isSmall();
     // Restore pin when scaling back up — only if the unpin was system-forced
-    if (!forceFloat && avaIsOpen() && avaIsFloating() && avaAutoUnpinned) {
-      avaAutoUnpinned = false;
-      pinAva();
+    if (!forceFloat && avaIsOpen() && avaIsFloating() && avaAutoUnpinned && !_pipManuallyResized) {
+      if (avaPipMaximized) {
+        // User had maximized — only repin when viewport is large enough for pinned expanded AVA
+        const canRestoreExpanded = !isXLarge() && !isLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
+        if (canRestoreExpanded) {
+          avaAutoUnpinned = false;
+          pinAva();
+        }
+      } else {
+        // Default size — repin as soon as viewport allows (existing behaviour)
+        avaAutoUnpinned = false;
+        pinAva();
+      }
     }
     // Force unpinned at medium/small when AVA is open and currently pinned
     if (forceFloat && avaIsOpen() && !avaIsFloating()) {
