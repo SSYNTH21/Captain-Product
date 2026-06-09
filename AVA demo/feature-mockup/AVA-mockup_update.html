@@ -6804,6 +6804,7 @@
     avaPanel.classList.remove('preview-mode');
     bodyRow.classList.remove('files-mode');
     bodyRow.classList.add('sources-mode');
+    _lastActivePanel = 'sources';
 
     // Populate sources panel
     if (_sourcesHtml) {
@@ -6940,6 +6941,7 @@
     avaPanel.classList.remove('preview-mode');
     bodyRow.classList.remove('sources-mode');
     bodyRow.classList.add('files-mode');
+    _lastActivePanel = 'files';
 
     // Populate files panel — empty state if no file attached, single file row otherwise
     const hasFile = avaPanel.dataset.hasFile === 'true';
