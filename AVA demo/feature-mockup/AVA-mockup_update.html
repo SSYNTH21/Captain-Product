@@ -1919,7 +1919,7 @@
     /* Drag handle between chat col and secondary col */
     .ava-split-handle {
       display: none;
-      width: 6px;
+      width: 12px;
       flex-shrink: 0;
       background: #f5f5f5;
       border-left: 1px solid #d9d9d9;
@@ -4985,7 +4985,7 @@
     // Total draggable space = bodyRow width minus history col (if open) minus drag handle
     const histOffset = inHistSplit ? 321 : 0; // 320px col + 1px border
     const rowW = bodyRow.getBoundingClientRect().width;
-    const totalWidth = rowW - histOffset - 6; // 6px drag handle
+    const totalWidth = rowW - histOffset - 12; // 12px drag handle
     const prevTotal  = _splitLastTotal || totalWidth;
     const prevChatW  = parseFloat(chatCol.style.width) || totalWidth / 2;
     const ratio      = prevChatW / prevTotal;
@@ -6665,7 +6665,7 @@
 
     const bodyRow    = document.getElementById('ava-body-row');
     const histOffset = (bodyRow && bodyRow.classList.contains('history-mode')) ? 321 : 0;
-    const totalWidth = bodyRow.getBoundingClientRect().width - histOffset - 6; // 6px handle
+    const totalWidth = bodyRow.getBoundingClientRect().width - histOffset - 12; // 12px handle
 
     const half  = Math.floor(totalWidth / 2);
     const chatW = Math.max(384, Math.min(totalWidth - 384, half));
@@ -6697,7 +6697,7 @@
       startX:     e.clientX,
       chatW0:     chatCol.getBoundingClientRect().width,
       secW0:      secCol.getBoundingClientRect().width,
-      totalWidth: bodyRow.getBoundingClientRect().width - histOffset - 6
+      totalWidth: bodyRow.getBoundingClientRect().width - histOffset - 12
     };
 
     document.addEventListener('mousemove', _onSplitDragMove);
