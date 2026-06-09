@@ -4626,11 +4626,15 @@
     const panelToRestore = _lastActivePanel; // 'chat' | 'files' | 'sources' | 'history' | 'preview'
     const wasExpanded = avaIsExpanded();
 
+    // Clear pre-states so exits don't restore stale expanded widths
+    _filesPreState   = null;
+    _sourcesPreState = null;
+    _historyPreState = null;
+
     // Exit all splits — we'll re-enter the right one after floating setup
     if (bodyRow) {
       if (bodyRow.classList.contains('history-mode')) {
         _historyReplacedSplit = null;
-        _historyPreState = null;
         _exitHistorySplit();
       }
       if (bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
@@ -4691,12 +4695,16 @@
     // Capture the most recently active panel before exiting splits
     const panelToRestore = _lastActivePanel;
 
+    // Clear pre-states so exits don't restore stale expanded widths during pinning
+    _filesPreState   = null;
+    _sourcesPreState = null;
+    _historyPreState = null;
+
     // Close all splits before leaving floating mode
     const bodyRowPin = document.getElementById('ava-body-row');
     if (bodyRowPin) {
       if (bodyRowPin.classList.contains('history-mode')) {
         _historyReplacedSplit = null;
-        _historyPreState = null;
         _exitHistorySplit();
       }
       if (bodyRowPin.classList.contains('files-mode'))   _exitFilesSplit();
