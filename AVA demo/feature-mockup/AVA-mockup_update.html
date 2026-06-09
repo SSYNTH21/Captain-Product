@@ -6654,7 +6654,6 @@
   function _enterHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
@@ -6703,8 +6702,8 @@
         _historyReplacedSplit = null;
       }
 
-      // At xLarge pinned: no split — history replaces chat, AVA stays at default width
-      if (!isXLarge()) {
+      // At xLarge + large pinned: no split — history replaces chat, AVA stays at default width
+      if (!isXLarge() && !isLarge()) {
         if (!_historyPreState) {
           _historyPreState = {
             wasExpanded: panelWrap.classList.contains('expanded'),
@@ -6833,7 +6832,6 @@
   function _enterSourcesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
@@ -6887,8 +6885,8 @@
       }
       return;
     } else {
-      // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
-      if (!isXLarge()) {
+      // At xLarge + large pinned: no split — panel replaces chat, AVA stays at default width
+      if (!isXLarge() && !isLarge()) {
         // Auto-collapse nav if needed to make room (mirrors toggleExpandAva logic)
         const navWS = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
         const spWS  = () => (currentSidePanel !== null) ? 384 : 0;
@@ -6958,7 +6956,6 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
-    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
@@ -7022,8 +7019,8 @@
       }
       return;
     } else {
-      // At xLarge pinned: no split — panel replaces chat, AVA stays at default width
-      if (!isXLarge()) {
+      // At xLarge + large pinned: no split — panel replaces chat, AVA stays at default width
+      if (!isXLarge() && !isLarge()) {
         // Auto-collapse nav if needed to make room (mirrors toggleExpandAva logic)
         const navWF = () => (navIsOpen() && !isMedium() && !isSmall()) ? 288 : 56;
         const spWF  = () => (currentSidePanel !== null) ? 384 : 0;
