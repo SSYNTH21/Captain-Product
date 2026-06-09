@@ -4714,7 +4714,11 @@
     panelWrap.style.removeProperty('--pip-w');
     panelWrap.style.removeProperty('--pip-h');
     const expandBtn = document.getElementById('ava-expand-btn');
-    if (avaPipMaximized) {
+    // At xLarge pinned, expansion is never allowed (domain only 552px).
+    // At larger viewports, only restore expanded if domain would remain ≥ 544px.
+    // Expanded pinned AVA = 768px; check: viewport - nav(best-case 56) - tab(56) - 768 ≥ 544
+    const canRestoreExpanded = !isXLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
+    if (avaPipMaximized && canRestoreExpanded) {
       panelWrap.classList.add('expanded');
       document.documentElement.style.setProperty('--ava-bubble-max-w', '600px');
       expandBtn.setAttribute('data-tooltip', 'Minimize');
