@@ -4958,6 +4958,7 @@
   }
 
   let _splitLastTotal = 0;
+  let _splitChatRatio = 0.5; // preserved chat/total ratio across resizes
   let _pipManuallyResized  = false; // true after any resize drag (kept for compatibility)
   let _pipManuallyResizedW = false; // true after user drags a horizontal edge/corner
   let _pipManuallyResizedH = false; // true after user drags a vertical edge/corner
@@ -4982,16 +4983,15 @@
       return;
     }
     // Secondary split (files/sources) — possibly also with history (3-panel)
-    // Total draggable space = bodyRow width minus history col (if open) minus drag handle
+    // Total draggable space = pip width minus history col (if open) minus drag handle
     const histOffset = inHistSplit ? 321 : 0; // 320px col + 1px border
-    const rowW = bodyRow.getBoundingClientRect().width;
-    const totalWidth = rowW - histOffset - 12; // 12px drag handle
-    const prevTotal  = _splitLastTotal || totalWidth;
-    const prevChatW  = parseFloat(chatCol.style.width) || totalWidth / 2;
-    const ratio      = prevChatW / prevTotal;
-    const chatW = Math.max(384, Math.min(totalWidth - 384, Math.round(ratio * totalWidth)));
+    const pipW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 900;
+    const totalWidth = pipW - histOffset - 12; // 12px drag handle
+    // Use saved ratio (persists across resizes when inline width is cleared)
+    const chatW = Math.max(384, Math.min(totalWidth - 384, Math.round(_splitChatRatio * totalWidth)));
     const secW  = totalWidth - chatW;
     chatCol.style.width = chatW + 'px';
+    chatCol.style.flex  = 'none';
     const secCol = document.querySelector('.ava-body-row.files-mode .ava-files-col') ||
                    document.querySelector('.ava-body-row.sources-mode .ava-sources-col');
     if (secCol) secCol.style.width = secW + 'px';
@@ -6680,6 +6680,7 @@
 
     document.documentElement.style.setProperty('--ava-bubble-max-w', Math.min(chatW - 40, 992) + 'px');
     _splitLastTotal = totalWidth;
+    _splitChatRatio = chatW / totalWidth;
   }
 
   let _splitDragState = null;
@@ -6723,7 +6724,15 @@
   }
 
   function _onSplitDragEnd() {
-    if (_splitDragState) _splitLastTotal = _splitDragState.totalWidth;
+    if (_splitDragState) {
+      _splitLastTotal = _splitDragState.totalWidth;
+      // Save final chat ratio after drag so reflowSplitColumns preserves it on resize
+      const chatCol = document.querySelector('.ava-chat-col');
+      if (chatCol && _splitDragState.totalWidth > 0) {
+        const chatW = parseFloat(chatCol.style.width) || _splitDragState.totalWidth / 2;
+        _splitChatRatio = chatW / _splitDragState.totalWidth;
+      }
+    }
     _splitDragState = null;
     document.removeEventListener('mousemove', _onSplitDragMove);
     document.removeEventListener('mouseup',   _onSplitDragEnd);
