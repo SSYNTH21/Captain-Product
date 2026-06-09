@@ -4675,8 +4675,11 @@
       if (panelToRestore === 'history') {
         _enterHistorySplit();
       } else if (panelToRestore === 'preview') {
+        // Enter file split first, then overwrite panel with preview in next frame
+        // to ensure _initSplitColumns layout settles before preview injection
         _enterFilesSplit();
-        if (_lastPreviewFilename) _enterFilesPreview(_lastPreviewFilename);
+        const previewFile = _lastPreviewFilename;
+        if (previewFile) requestAnimationFrame(() => _enterFilesPreview(previewFile));
       } else if (panelToRestore === 'files') {
         _enterFilesSplit();
       } else if (panelToRestore === 'sources') {
