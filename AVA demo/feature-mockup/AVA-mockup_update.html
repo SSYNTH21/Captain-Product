@@ -5312,21 +5312,38 @@
         if (bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
       }
     }
-    // Floating pip: cap width/height to viewport bounds on resize
+    // Floating pip: adjust size based on viewport change
     if (avaIsFloating() && avaIsOpen()) {
       const maxW = window.innerWidth - 48;
       const maxH = window.innerHeight - 48;
       const curW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const curH = parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75);
-      if (curW > maxW) {
-        panelWrap.style.setProperty('--pip-w', maxW + 'px');
-        avaPipSize = { width: maxW, height: avaPipSize ? avaPipSize.height : curH };
+      let newW = curW;
+      let newH = curH;
+
+      if (_pipManuallyResized) {
+        // Case 1: user manually resized — keep exact size, only clamp if overflows
+        newW = Math.min(curW, maxW);
+        newH = Math.min(curH, maxH);
+      } else if (avaPipMaximized) {
+        // Case 2: user clicked maximize — grow/shrink to default max size as viewport allows
+        newW = Math.min(900, maxW);
+        newH = Math.min(Math.round(window.innerHeight * 0.85), maxH);
+      } else {
+        // Case 3: default size — clamp only if overflows, otherwise keep as-is
+        newW = Math.min(curW, maxW);
+        newH = Math.min(curH, maxH);
+      }
+
+      if (newW !== curW) {
+        panelWrap.style.setProperty('--pip-w', newW + 'px');
+        avaPipSize = { width: newW, height: newH };
         _updatePipNarrow();
         _syncExpandBtnFloating();
       }
-      if (curH > maxH) {
-        panelWrap.style.setProperty('--pip-h', maxH + 'px');
-        avaPipSize = { width: avaPipSize ? avaPipSize.width : curW, height: maxH };
+      if (newH !== curH) {
+        panelWrap.style.setProperty('--pip-h', newH + 'px');
+        avaPipSize = { width: newW, height: newH };
       }
       // Always clear inline column widths so they reflow to match new pip width
       const chatCol = document.querySelector('.ava-chat-col');
