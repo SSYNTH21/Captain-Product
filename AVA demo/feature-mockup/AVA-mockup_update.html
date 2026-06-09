@@ -5156,9 +5156,16 @@
     // At small: handled via overlay, not collapsed class
     if (isSmall()) return;
 
+    // At large pinned: nav must always stay collapsed when AVA is open
+    // (nav is part of body; restoring it would overflow the layout)
+    if (isLarge() && !avaIsFloating() && avaIsOpen()) {
+      if (navIsOpen()) { collapseNav(); navAutoCollapsed = true; }
+      return;
+    }
+
     const bothOpen = avaIsOpen() && currentSidePanel !== null;
     if (bothOpen) {
-      // Rule 1: both panels open → collapse nav only if domain would fall below 544px
+      // Rule 1: both panels open → collapse nav only if body would fall below 544px
       if (navIsOpen() && wouldViolateDomain(true, true, true, avaIsExpanded())) {
         collapseNav();
         navAutoCollapsed = true;
@@ -5231,8 +5238,9 @@
         document.getElementById('sp-expand-icon').classList.remove('flipped');
       }
     }
-    // At xLarge pinned: clear any active split state — panels should not be visible
-    if (isXLarge() && !avaIsFloating()) {
+    // At xLarge + large pinned: collapse nav if open, clear any active split state
+    if ((isXLarge() || isLarge()) && !avaIsFloating() && avaIsOpen()) {
+      if (navIsOpen()) { collapseNav(); navAutoCollapsed = true; }
       const bodyRow = document.getElementById('ava-body-row');
       if (bodyRow) {
         if (bodyRow.classList.contains('history-mode')) _exitHistorySplit();
