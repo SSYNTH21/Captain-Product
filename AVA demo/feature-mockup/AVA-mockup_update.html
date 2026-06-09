@@ -1982,6 +1982,18 @@
     body.is-xlarge .ava-panel-wrap:not(.floating) .ava-split-handle,
     body.is-large  .ava-panel-wrap:not(.floating) .ava-split-handle { display: none; }
 
+    /* Swap mode (viewport < 888px): floating pip panels replace chat full-width, no split columns */
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.history-mode,
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.files-mode,
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.sources-mode { flex-direction: column; }
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.history-mode .ava-chat-col,
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.files-mode .ava-chat-col,
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.sources-mode .ava-chat-col { display: none; }
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.history-mode .ava-history-col { display: flex; width: 100%; height: 100%; border-right: none; }
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.files-mode .ava-files-col { display: flex; width: 100%; height: 100%; border-left: none; }
+    body.is-swap .ava-panel-wrap.floating .ava-body-row.sources-mode .ava-sources-col { display: flex; width: 100%; height: 100%; border-left: none; }
+    body.is-swap .ava-panel-wrap.floating .ava-split-handle { display: none; }
+
     /* 3-panel floating: history + secondary panel both visible simultaneously */
     .ava-panel-wrap.floating .ava-body-row.history-mode.files-mode .ava-files-col,
     .ava-panel-wrap.floating .ava-body-row.history-mode.sources-mode .ava-sources-col {
@@ -4401,9 +4413,14 @@
   function isLarge()   { return window.innerWidth >= 992 && window.innerWidth <= 1279; }
   function isXLarge()  { return window.innerWidth >= 1280 && window.innerWidth <= 1471; }
 
+  // Returns true when viewport is too narrow for split panels in floating mode.
+  // Threshold: viewport - 48px (24px each side) < 840px (default pip max width).
+  function _pipNeedsSwap() { return window.innerWidth - 48 < 840; }
+
   function syncBreakpointClass() {
     document.body.classList.toggle('is-xlarge', isXLarge());
-    document.body.classList.toggle('is-large', isLarge());
+    document.body.classList.toggle('is-large',  isLarge());
+    document.body.classList.toggle('is-swap',   _pipNeedsSwap());
   }
   syncBreakpointClass();
   window.addEventListener('resize', syncBreakpointClass);
@@ -5386,6 +5403,11 @@
       unpinAva();
     }
     pinBtn.disabled = forceFloat;
+    if (forceFloat) {
+      pinBtn.setAttribute('data-tooltip', 'Not enough space to pin');
+    } else {
+      pinBtn.setAttribute('data-tooltip', avaIsFloating() ? 'Pin' : 'Unpin');
+    }
   }
 
   /* ── AVA open / close ── */
@@ -6656,6 +6678,20 @@
     if (!bodyRow) return;
 
     if (avaIsFloating()) {
+      // Swap mode: viewport too narrow for split — panels replace chat full-width, no resize
+      if (_pipNeedsSwap()) {
+        if (bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
+        if (bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
+        bodyRow.classList.add('history-mode');
+        _lastActivePanel = 'history';
+        const historyBtn = document.getElementById('ava-history-btn');
+        if (historyBtn) historyBtn.classList.add('active');
+        if (!avaIsExpanded()) { const eb = document.getElementById('ava-expand-btn'); if (eb) { eb.setAttribute('data-tooltip','Minimize'); eb.innerHTML=REDUCE_ICON_SVG; } }
+        const histCol = document.getElementById('ava-history-col');
+        if (histCol) histCol.style.width = '';
+        return;
+      }
+
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
 
@@ -6848,6 +6884,20 @@
     }
 
     if (avaIsFloating()) {
+      // Swap mode: viewport too narrow for split — sources replaces chat full-width, no resize
+      if (_pipNeedsSwap()) {
+        if (bodyRow.classList.contains('history-mode')) _exitHistorySplit();
+        if (bodyRow.classList.contains('files-mode'))   _exitFilesSplit();
+        _closeCitationPopover();
+        const avaPanelSw = document.querySelector('.ava-panel');
+        avaPanelSw.classList.remove('preview-mode');
+        bodyRow.classList.remove('files-mode');
+        bodyRow.classList.add('sources-mode');
+        _lastActivePanel = 'sources';
+        if (_sourcesHtml) document.getElementById('ava-sources-panel').innerHTML = _sourcesHtml;
+        return;
+      }
+
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplitS = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplitS) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
@@ -6972,6 +7022,29 @@
     }
 
     if (avaIsFloating()) {
+      // Swap mode: viewport too narrow for split — files replaces chat full-width, no resize
+      if (_pipNeedsSwap()) {
+        if (bodyRow.classList.contains('history-mode')) _exitHistorySplit();
+        if (bodyRow.classList.contains('sources-mode')) _exitSourcesSplit();
+        const avaPanelFsw = document.querySelector('.ava-panel');
+        avaPanelFsw.classList.remove('preview-mode');
+        bodyRow.classList.remove('sources-mode');
+        bodyRow.classList.add('files-mode');
+        _lastActivePanel = 'files';
+        // Populate files panel
+        const hasFsw = avaPanelFsw.dataset.hasFile === 'true';
+        const fnameFsw = avaPanelFsw.dataset.fileName || 'Lob-presentation_240116.pdf';
+        const panelFsw = document.getElementById('ava-files-panel');
+        if (hasFsw) {
+          const today = new Date();
+          const dateStr = ('0'+today.getDate()).slice(-2)+'/'+('0'+(today.getMonth()+1)).slice(-2)+'/'+today.getFullYear();
+          panelFsw.innerHTML = `<div class="ava-files-date-group"><div class="ava-files-date-label">Today &middot; 1 file attached</div>${_makeFileRow(fnameFsw, dateStr)}</div>`;
+        } else {
+          panelFsw.innerHTML = `<div class="ava-files-empty"><p class="ava-files-empty-text">No files attached to this chat</p><button class="ava-files-attach-btn" onclick="document.getElementById('ava-attach-input').click()">Attach file</button></div>`;
+        }
+        return;
+      }
+
       const currentW = parseFloat(panelWrap.style.getPropertyValue('--pip-w')) || 384;
       const inAnySplit = bodyRow.classList.contains('sources-mode') || bodyRow.classList.contains('history-mode');
       if (!inAnySplit) _pipPreSplitW = { w: currentW, h: parseFloat(panelWrap.style.getPropertyValue('--pip-h')) || Math.round(window.innerHeight * 0.75) };
