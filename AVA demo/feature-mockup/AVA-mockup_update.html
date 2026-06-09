@@ -4438,6 +4438,7 @@
   // Tracks the most recently interacted panel — used to restore state on pin/unpin
   // Values: 'chat' | 'files' | 'sources' | 'history' | 'preview'
   let _lastActivePanel = 'chat';
+  let _lastPreviewFilename = null; // filename of the last opened preview
   let avaHasPendingNotification = false;
   let _avaNotifLoopTimer = null;
   let _avaToastTimer = null;
@@ -4671,10 +4672,16 @@
     if (shouldMaximize) {
       _togglePipMaximize(); // maximize to 900×85vh
       // Re-enter the active panel in floating split
-      if (panelToRestore === 'history')  _enterHistorySplit();
-      else if (panelToRestore === 'files' || panelToRestore === 'preview') _enterFilesSplit();
-      else if (panelToRestore === 'sources') _enterSourcesSplit();
-      // Preview will be re-entered by _openFilePreview if needed — files split is sufficient
+      if (panelToRestore === 'history') {
+        _enterHistorySplit();
+      } else if (panelToRestore === 'preview') {
+        _enterFilesSplit();
+        if (_lastPreviewFilename) _enterFilesPreview(_lastPreviewFilename);
+      } else if (panelToRestore === 'files') {
+        _enterFilesSplit();
+      } else if (panelToRestore === 'sources') {
+        _enterSourcesSplit();
+      }
     } else {
       document.documentElement.style.setProperty('--ava-bubble-max-w', (384 - 40) + 'px');
     }
@@ -6277,6 +6284,8 @@
     const panel = document.getElementById('ava-files-panel');
     const footer = document.getElementById('ava-files-preview-footer');
     if (!toolbar || !panel) return;
+    _lastActivePanel = 'preview';
+    _lastPreviewFilename = filename || 'Lob-presentation_240116.pdf';
     const truncated = filename.length > 22 ? filename.slice(0, 20) + '…' : filename;
 
     toolbar.innerHTML = `
@@ -6328,6 +6337,7 @@
     avaPanel.classList.remove('sources-mode');
     avaPanel.classList.add('preview-mode');
     _lastActivePanel = 'preview';
+    _lastPreviewFilename = filename || 'Lob-presentation_240116.pdf';
     _showFileBreadcrumb();
     const crumbFilename = document.getElementById('ava-crumb-filename');
     if (crumbFilename) crumbFilename.textContent = filename || 'Lob-presentation_240116.pdf';
@@ -6511,6 +6521,7 @@
 
   function exitToChat() {
     _lastActivePanel = 'chat';
+    _lastPreviewFilename = null;
     const avaPanel = document.querySelector('.ava-panel');
     avaPanel.classList.remove('file-mode', 'sources-mode', 'preview-mode');
     _splitAutoMaximized = false;
