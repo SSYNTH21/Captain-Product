@@ -4763,9 +4763,32 @@
     // Restore the most recently active panel after pinning
     // At xLarge: panels replace chat (full-width, no expand needed — CSS handles it)
     // At 2xLarge+: splits are allowed, re-enter normally
-    if (panelToRestore === 'history')  _enterHistorySplit();
-    else if (panelToRestore === 'files' || panelToRestore === 'preview') _enterFilesSplit();
-    else if (panelToRestore === 'sources') _enterSourcesSplit();
+    if (panelToRestore === 'history') {
+      _enterHistorySplit();
+    } else if (panelToRestore === 'preview') {
+      // For pinned preview: enter files split first, then enter preview mode
+      // _enterFilesSplit sets up files-mode; enterPreviewMode adds preview-mode
+      // which overrides content display via CSS (shows ava-preview-panel, hides ava-content)
+      _enterFilesSplit();
+      if (_lastPreviewFilename) {
+        // Use requestAnimationFrame so _enterFilesSplit's DOM changes settle first
+        const fn = _lastPreviewFilename;
+        requestAnimationFrame(() => {
+          const avaPanel = document.querySelector('.ava-panel');
+          if (avaPanel) {
+            avaPanel.classList.add('preview-mode');
+            _lastActivePanel = 'preview';
+            _showFileBreadcrumb();
+            const crumbFilename = document.getElementById('ava-crumb-filename');
+            if (crumbFilename) crumbFilename.textContent = fn;
+          }
+        });
+      }
+    } else if (panelToRestore === 'files') {
+      _enterFilesSplit();
+    } else if (panelToRestore === 'sources') {
+      _enterSourcesSplit();
+    }
   }
 
   function togglePinAva() {
