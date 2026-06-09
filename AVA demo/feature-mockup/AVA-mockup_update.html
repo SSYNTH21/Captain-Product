@@ -4766,10 +4766,11 @@
     if (panelToRestore === 'history') {
       _enterHistorySplit();
     } else if (panelToRestore === 'preview') {
-      // Pinned preview: use enterPreviewMode directly — no files-mode needed.
-      // preview-mode on .ava-panel shows #ava-preview-panel and hides .ava-content via CSS.
-      // Adding files-mode would conflict (shows .ava-files-col full-width, hiding preview content).
-      if (_lastPreviewFilename) enterPreviewMode(_lastPreviewFilename);
+      // Pinned preview: enter files split (activates files-mode + populates file list),
+      // then immediately overwrite with preview content. Both calls are synchronous here
+      // so _enterFilesPreview reliably overwrites after _enterFilesSplit.
+      _enterFilesSplit();
+      if (_lastPreviewFilename) _enterFilesPreview(_lastPreviewFilename);
     } else if (panelToRestore === 'files') {
       _enterFilesSplit();
     } else if (panelToRestore === 'sources') {
@@ -6327,17 +6328,39 @@
   }
 
   function _exitFilesPreview() {
+    // Reset toolbar back to Files list header
     const toolbar = document.getElementById('ava-files-toolbar');
     const footer = document.getElementById('ava-files-preview-footer');
     if (toolbar) toolbar.innerHTML = `
       <span class="ava-files-toolbar-title">Files</span>
       <div class="ava-files-toolbar-actions">
-        <button class="ava-plain-btn" onclick="_exitFilesSplit()" aria-label="Close files">${_CLOSE_ICON}</button>
+        <button class="ava-tertiary-btn" onclick="_exitFilesSplit()" aria-label="Close files">${_CLOSE_ICON}</button>
       </div>`;
     if (footer) footer.style.display = 'none';
+
+    // Repopulate file list inline — avoids calling _enterFilesSplit() which
+    // triggers split setup and overwrites state during pin/unpin transitions
     const panel = document.getElementById('ava-files-panel');
-    if (panel) panel.style.padding = '';
-    _enterFilesSplit();
+    if (panel) {
+      panel.style.padding = '';
+      const avaPanel = document.querySelector('.ava-panel');
+      const hasFile = avaPanel && avaPanel.dataset.hasFile === 'true';
+      const fname = (avaPanel && avaPanel.dataset.fileName) || 'Lob-presentation_240116.pdf';
+      if (hasFile) {
+        const today = new Date();
+        const dateStr = ('0'+today.getDate()).slice(-2)+'/'+('0'+(today.getMonth()+1)).slice(-2)+'/'+today.getFullYear();
+        panel.innerHTML = `<div class="ava-files-date-group">
+          <div class="ava-files-date-label">Today &middot; 1 file attached</div>
+          ${_makeFileRow(fname, dateStr)}
+        </div>`;
+      } else {
+        panel.innerHTML = `<div class="ava-files-empty">
+          <p class="ava-files-empty-text">No files attached to this chat</p>
+          <button class="ava-files-attach-btn" onclick="document.getElementById('ava-attach-input').click()">Attach file</button>
+        </div>`;
+      }
+    }
+    _lastActivePanel = 'files';
   }
 
   function _openFilePreview(filename) {
