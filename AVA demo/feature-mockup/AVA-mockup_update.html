@@ -1960,17 +1960,27 @@
     .ava-body-row.history-mode .ava-footer > * { max-width: 344px; }
     .ava-body-row.history-mode .ava-footer-actions { max-width: none; }
 
-    /* xLarge pinned: panels replace chat full-width inside the 384px panel (old mockup behaviour) */
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode { flex-direction: column; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-chat-col { display: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-history-col { display: flex; width: 100%; height: 100%; border-right: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode { flex-direction: column; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col { display: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col { display: flex; width: 100%; height: 100%; border-left: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode { flex-direction: column; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col { display: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col { display: flex; width: 100%; height: 100%; border-left: none; }
-    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-split-handle { display: none; }
+    /* xLarge + large pinned: panels replace chat full-width inside the 384px panel (old mockup behaviour) */
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.history-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-chat-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-history-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.history-mode .ava-history-col { display: flex; width: 100%; height: 100%; border-right: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.files-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.files-mode .ava-files-col { display: flex; width: 100%; height: 100%; border-left: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode { flex-direction: column; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-chat-col { display: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-body-row.sources-mode .ava-sources-col { display: flex; width: 100%; height: 100%; border-left: none; }
+    body.is-xlarge .ava-panel-wrap:not(.floating) .ava-split-handle,
+    body.is-large  .ava-panel-wrap:not(.floating) .ava-split-handle { display: none; }
 
     /* 3-panel floating: history + secondary panel both visible simultaneously */
     .ava-panel-wrap.floating .ava-body-row.history-mode.files-mode .ava-files-col,
@@ -4393,19 +4403,17 @@
 
   function syncBreakpointClass() {
     document.body.classList.toggle('is-xlarge', isXLarge());
+    document.body.classList.toggle('is-large', isLarge());
   }
   syncBreakpointClass();
   window.addEventListener('resize', syncBreakpointClass);
 
 
-  /* Returns the domain content width given hypothetical panel states.
-     Uses window.innerWidth (always current) with CSS-aware panel widths.
-     At ≤991px CSS forces nav to 56px regardless of the collapsed class,
-     and the side panel floats (doesn't consume layout space). */
+  /* Returns the available "body" width (nav + domain) given hypothetical panel states.
+     The 544px minimum applies to body (nav + domain combined), not domain alone.
+     At ≤991px the side panel floats and doesn't consume layout space. */
   function computeDomain(navOpen, spContentOpen, avaOpen, avaExpanded) {
     const atMediumOrSmall = isMedium() || isSmall();
-    // Nav: CSS forces 56px at ≤991px even without the collapsed class
-    const navW = (navOpen && !atMediumOrSmall) ? 288 : 56;
     const spTabW = 56;
     // Side panel floats at ≤991px — doesn't consume layout space
     const spW = (spContentOpen && !atMediumOrSmall) ? 384 : 0;
@@ -4413,10 +4421,12 @@
     const avaW = avaOpen
       ? (avaExpanded ? (parseFloat(panelWrap.style.getPropertyValue('--ava-expanded-w')) || 768) : 384)
       : 0;
-    return window.innerWidth - navW - spTabW - spW - avaW;
+    // Body = viewport - side panel tab - side panel content - AVA
+    // Nav is part of body so not subtracted — threshold is body ≥ 544px
+    return window.innerWidth - spTabW - spW - avaW;
   }
 
-  /* Returns true if the given configuration would shrink the domain below 544px */
+  /* Returns true if the given configuration would shrink the body below 544px */
   function wouldViolateDomain(navOpen, spContentOpen, avaOpen, avaExpanded) {
     return computeDomain(navOpen, spContentOpen, avaOpen, avaExpanded) < 544;
   }
@@ -4602,8 +4612,8 @@
       }
       return;
     }
-    // At xLarge (1280–1471px) pinned AVA never has room to expand — domain is only 552px
-    if (isXLarge()) {
+    // At xLarge (1280–1471px) and large (992–1279px) pinned AVA never has room to expand
+    if (isXLarge() || isLarge()) {
       expandBtn.disabled = true;
       expandBtn.setAttribute('data-tooltip', 'Not enough space to expand');
       return;
@@ -4739,7 +4749,7 @@
     // At xLarge pinned, expansion is never allowed (domain only 552px).
     // At larger viewports, only restore expanded if domain would remain ≥ 544px.
     // Expanded pinned AVA = 768px; check: viewport - nav(best-case 56) - tab(56) - 768 ≥ 544
-    const canRestoreExpanded = !isXLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
+    const canRestoreExpanded = !isXLarge() && !isLarge() && (window.innerWidth - 56 - 56 - 768 >= 544);
     if (avaPipMaximized && canRestoreExpanded) {
       panelWrap.classList.add('expanded');
       document.documentElement.style.setProperty('--ava-bubble-max-w', '600px');
@@ -5246,8 +5256,8 @@
   }
 
   function openSidePanel(panel) {
-    // xLarge pinned: AVA and side panel share the same slot — opening side panel closes AVA
-    if (isXLarge() && !avaIsFloating() && avaIsOpen()) {
+    // xLarge + large pinned: AVA and side panel share the same slot — opening side panel closes AVA
+    if ((isXLarge() || isLarge()) && !avaIsFloating() && avaIsOpen()) {
       autoClosedAva = true;
       closeAva();
     }
@@ -5266,7 +5276,7 @@
         wouldViolateDomain(navIsOpen(), true, true, false)) {
       autoClosedAva = true;
       closeAva();
-    } else if (!isXLarge()) {
+    } else if (!isXLarge() && !isLarge()) {
       autoClosedAva = false;
     }
     document.getElementById('sp-panel-errorlog').style.display = 'none';
@@ -5334,23 +5344,28 @@
       btn.classList.remove('has-response', 'pulse-ring');
       _hideToast();
     }
-    // xLarge pinned: AVA and side panel share the same slot — opening AVA closes side panel
-    if (isXLarge() && !avaIsFloating() && currentSidePanel !== null) {
+    // xLarge + large pinned: AVA and side panel share the same slot — opening AVA closes side panel
+    if ((isXLarge() || isLarge()) && !avaIsFloating() && currentSidePanel !== null) {
       autoClosedSidePanel = currentSidePanel;
       closeSidePanel();
     }
-    // large+ pinned: rule 1 — auto-collapse nav when AVA opens only if domain would fall below 544px
-    if (!isMedium() && !isSmall() && !avaIsFloating() && navIsOpen() &&
+    // large pinned: nav always collapses when AVA opens (nav is part of body, must make room)
+    if (isLarge() && !avaIsFloating() && navIsOpen()) {
+      collapseNav();
+      navAutoCollapsed = true;
+    }
+    // large+ pinned: rule 1 — auto-collapse nav when AVA opens only if body would fall below 544px
+    if (!isMedium() && !isSmall() && !isLarge() && !avaIsFloating() && navIsOpen() &&
         wouldViolateDomain(true, currentSidePanel !== null, true, false)) {
       collapseNav();
       navAutoCollapsed = true;
     }
-    // 544px domain guard: if opening AVA would shrink domain below 544px, auto-close side panel
+    // 544px body guard: if opening AVA would shrink body below 544px, auto-close side panel
     if (!avaIsFloating() && currentSidePanel !== null &&
         wouldViolateDomain(navIsOpen(), true, true, false)) {
       autoClosedSidePanel = currentSidePanel;
       closeSidePanel();
-    } else if (!isXLarge()) {
+    } else if (!isXLarge() && !isLarge()) {
       autoClosedSidePanel = null;
     }
     panelWrap.classList.add('open');
@@ -6584,6 +6599,7 @@
   function _enterHistorySplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     if (avaIsFloating()) {
       const secondaryIsOpen = bodyRow.classList.contains('files-mode') || bodyRow.classList.contains('sources-mode');
@@ -6779,6 +6795,7 @@
   function _enterSourcesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
@@ -6908,6 +6925,7 @@
   function _enterFilesSplit() {
     const bodyRow = document.getElementById('ava-body-row');
     if (!bodyRow) return;
+    if ((isXLarge() || isLarge()) && !avaIsFloating()) return;
 
     // If history is open (pinned), close it — secondary panel takes priority; no restore needed
     if (!avaIsFloating() && bodyRow.classList.contains('history-mode')) {
