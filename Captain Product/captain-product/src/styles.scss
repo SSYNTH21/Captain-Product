@@ -1,0 +1,51 @@
+@import '@allianz/ng-aquila/themes/aquila.css';
+@import '@allianz/ng-aquila/css/normalize.css';
+
+@font-face {
+  font-family: 'Allianz Neo';
+  font-weight: 300;
+  font-style: normal;
+  src: local('Allianz Neo Light');
+}
+@font-face {
+  font-family: 'Allianz Neo';
+  font-weight: 400;
+  font-style: normal;
+  src: local('Allianz Neo Regular');
+}
+@font-face {
+  font-family: 'Allianz Neo';
+  font-weight: 600;
+  font-style: normal;
+  src: local('Allianz Neo SemiBold');
+}
+@font-face {
+  font-family: 'Allianz Neo';
+  font-weight: 700;
+  font-style: normal;
+  src: local('Allianz Neo Bold');
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Allianz Neo', 'Allianz Neo Fallback', Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: #414141;
+  background: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Utility: visually hidden
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}

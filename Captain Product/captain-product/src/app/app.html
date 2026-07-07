@@ -1,0 +1,80 @@
+<!-- Page background — trigger modal via "Update template" link -->
+<div class="page-bg">
+  <div class="page-content">
+    <div class="breadcrumb">
+      <span>Product catalogue</span>
+      <span class="sep">›</span>
+      <span>Property Global Master Product</span>
+      <span class="sep">›</span>
+      <span class="current">GMP Details</span>
+    </div>
+    <h1 class="page-headline">GMP Details — Derived Products</h1>
+    <p class="page-sub">Manage and review derived product configurations synced from the global master.</p>
+    <button nxButton="primary" (click)="openModal()">Update template</button>
+  </div>
+</div>
+
+<!-- Modal overlay -->
+@if (modalOpen()) {
+  <div class="cu-overlay open" (click)="onOverlayClick($event)">
+    <div class="cu-modal" id="cu-modal">
+      <!-- Close button -->
+      <button class="cu-close-btn" (click)="closeAndReset()" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M8.414 7L13.707 1.707a1 1 0 00-1.414-1.414L7 5.586 1.707.293A1 1 0 00.293 1.707L5.586 7 .293 12.293a1 1 0 001.414 1.414L7 8.414l5.293 5.293a1 1 0 001.414-1.414L8.414 7z" fill="#006192"/>
+        </svg>
+      </button>
+
+      <!-- Header -->
+      <div class="cu-modal-header">
+        <h2 class="cu-headline">Sync GMP: Property Global Master Product</h2>
+      </div>
+
+      <div class="cu-content">
+        <!-- Banner -->
+        @if (bannerVisible()) {
+          <div class="cu-banner">
+            <div class="cu-banner-inner">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="color:#006192;flex-shrink:0">
+                <g stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
+                  <path d="M12,2 C17.5228,2 22,6.47715 22,12 C22,17.5228 17.5228,22 12,22 C6.47715,22 2,17.5228 2,12 C2,6.47715 6.47715,2 12,2 Z M11.9976048,9.90419162 C11.3361677,9.90419162 10.8,10.3532604 10.8,10.907212 L10.8,16.9251535 C10.8,17.479105 11.3361677,17.9281437 11.9976048,17.9281437 C12.6590419,17.9281437 13.1952096,17.479105 13.1952096,16.9251535 L13.1952096,10.907212 C13.1952096,10.3532604 12.6590419,9.90419162 11.9976048,9.90419162 Z M11.9976048,6.07185629 C11.3361677,6.07185629 10.8,6.60803593 10.8,7.26946108 C10.8,7.93087425 11.3361677,8.46706587 11.9976048,8.46706587 C12.6590419,8.46706587 13.1952096,7.93087425 13.1952096,7.26946108 C13.1952096,6.60803593 12.6590419,6.07185629 11.9976048,6.07185629 Z" fill-rule="nonzero"/>
+                </g>
+              </svg>
+              <span class="cu-banner-text">Select action for the updated information.</span>
+            </div>
+            <button class="cu-banner-close" aria-label="Dismiss" (click)="dismissBanner()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.414 7L13.707 1.707a1 1 0 00-1.414-1.414L7 5.586 1.707.293A1 1 0 00.293 1.707L5.586 7 .293 12.293a1 1 0 001.414 1.414L7 8.414l5.293 5.293a1 1 0 001.414-1.414L8.414 7z" fill="#006192"/>
+              </svg>
+            </button>
+          </div>
+        }
+
+        <!-- Toggle row -->
+        <div class="cu-toggle-row">
+          <nx-switcher [(ngModel)]="changesOnly">Show changes only</nx-switcher>
+        </div>
+
+        <!-- Comparison table -->
+        <div class="cu-table-wrap">
+          <app-version-header [versions]="versions" />
+          @for (section of sections; track section.title) {
+            <app-section [section]="section" />
+          }
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="cu-footer">
+        <div class="discard-anchor">
+          <app-discard-popover
+            [visible]="showDiscard()"
+            (discard)="onDiscard()"
+            (keep)="onKeep()" />
+        </div>
+        <button nxButton="secondary" (click)="onCancel()">Cancel</button>
+        <button nxButton="primary" (click)="onUpdate()">Update</button>
+      </div>
+    </div>
+  </div>
+}

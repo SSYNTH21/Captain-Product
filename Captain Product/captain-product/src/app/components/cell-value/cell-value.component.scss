@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  font-size: 16px;
+  color: #414141;
+  line-height: 24px;
+}
+
+.dash { color: #414141; }
+
+.list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #006192;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 4px 0 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s;
+    &.rotated { transform: rotate(180deg); }
+  }
+}
+
+.longtext-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  span {
+    display: -webkit-box;
+    overflow: hidden;
+    &.clamped {
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+  }
+}
+
+.change-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #414141;
+  margin-bottom: 4px;
+}
+
+.warn-icon { flex-shrink: 0; }
+
+.dropdown-wrap {
+  margin-top: 8px;
+
+  nx-formfield { width: 100%; }
+
+  &.has-error {
+    nx-formfield { --nx-formfield-border-color: #DC3149; }
+  }
+}
+
+.dropdown-error-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #DC3149;
+  font-size: 14px;
+  margin-top: 4px;
+}
