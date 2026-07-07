@@ -20,25 +20,28 @@
 
 .cu-row-nested {
   display: flex;
-  align-items: stretch;
   border-bottom: 1px solid #ECECEC;
   background: #fff;
 }
 
 .cu-cell {
-  padding: 12px 16px;
+  padding: 16px;
+  font-size: 16px;
+  color: #414141;
   border-right: 1px solid #ECECEC;
-  min-width: 0;
+  min-height: 56px;
+  box-sizing: border-box;
   word-break: break-word;
+  overflow-wrap: break-word;
 
   &:last-child { border-right: none; }
 }
 
 .cu-cell-label {
-  flex: 0 0 calc(33.333% - 40px);
+  flex: 1;
+  max-width: 400px;
+  min-width: 0;
   font-weight: 400;
-  font-size: 14px;
-  color: #414141;
 }
 
 .cu-cell-value,

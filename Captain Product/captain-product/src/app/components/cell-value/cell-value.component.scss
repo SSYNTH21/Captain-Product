@@ -16,18 +16,19 @@
 .show-more-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   background: none;
   border: none;
   cursor: pointer;
   color: #006192;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   font-family: inherit;
   padding: 4px 0 0;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     transition: transform 0.2s;
     &.rotated { transform: rotate(180deg); }
   }
@@ -42,7 +43,7 @@
     display: -webkit-box;
     overflow: hidden;
     &.clamped {
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
     }
   }
@@ -50,11 +51,12 @@
 
 .change-badge {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #414141;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: italic;
+  color: #767676;
   margin-bottom: 4px;
 }
 
@@ -75,6 +77,6 @@
   align-items: center;
   gap: 6px;
   color: #DC3149;
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 4px;
 }
