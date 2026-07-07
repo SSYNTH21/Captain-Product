@@ -32,7 +32,7 @@ export class AppComponent {
   versions = VERSION_INFO;
   sections = SECTIONS;
 
-  modalOpen = signal(false);
+  modalOpen = signal(true);
   isDirty = signal(false);
   showDiscard = signal(false);
   bannerVisible = signal(true);

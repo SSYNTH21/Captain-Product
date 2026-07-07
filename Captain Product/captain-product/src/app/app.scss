@@ -1,50 +1,12 @@
-// Page background
-.page-bg {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-}
-
-.page-content {
-  max-width: 600px;
-  text-align: center;
-}
-
-.breadcrumb {
-  font-size: 13px;
-  color: #696969;
-  margin-bottom: 16px;
-  .sep { margin: 0 6px; }
-  .current { color: #414141; font-weight: 600; }
-}
-
-.page-headline {
-  font-size: 32px;
-  font-weight: 700;
-  color: #003781;
-  margin: 0 0 12px;
-}
-
-.page-sub {
-  font-size: 16px;
-  color: #696969;
-  margin: 0 0 24px;
-}
-
-// Modal overlay
+// Full-page layout — always visible, no overlay
 .cu-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 1000;
   align-items: center;
   justify-content: center;
-
-  &.open { display: flex; }
 }
 
 .cu-modal {
