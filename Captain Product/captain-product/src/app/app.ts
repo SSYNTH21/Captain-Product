@@ -3,7 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NxSwitcherModule } from '@allianz/ng-aquila/switcher';
 import { NxMessageModule } from '@allianz/ng-aquila/message';
+import { NxIconModule } from '@allianz/ng-aquila/icon';
+import { NxLinkModule } from '@allianz/ng-aquila/link';
 import { NxButtonModule } from '@allianz/ng-aquila/button';
+import { NxHeadlineModule } from '@allianz/ng-aquila/headline';
+import { NxCopytextModule } from '@allianz/ng-aquila/copytext';
+import { NxTabsModule } from '@allianz/ng-aquila/tabs';
+import { NxRadioToggleModule } from '@allianz/ng-aquila/radio-toggle';
+import { NxSignalButtonModule } from '@allianz/ng-aquila/signal-button';
+import { HeaderComponent } from './components/header/header.component';
 import { VersionHeaderComponent } from './components/version-header/version-header.component';
 import { SectionComponent } from './components/section/section.component';
 import { DiscardPopoverComponent } from './components/discard-popover/discard-popover.component';
@@ -18,7 +26,15 @@ import { SECTIONS, VERSION_INFO } from './data/comparison.data';
     FormsModule,
     NxSwitcherModule,
     NxMessageModule,
+    NxIconModule,
+    NxLinkModule,
     NxButtonModule,
+    NxHeadlineModule,
+    NxCopytextModule,
+    NxTabsModule,
+    NxRadioToggleModule,
+    NxSignalButtonModule,
+    HeaderComponent,
     VersionHeaderComponent,
     SectionComponent,
     DiscardPopoverComponent
@@ -32,10 +48,11 @@ export class AppComponent {
   versions = VERSION_INFO;
   sections = SECTIONS;
 
-  modalOpen = signal(true);
+  modalOpen = signal(false);
   isDirty = signal(false);
   showDiscard = signal(false);
   bannerVisible = signal(true);
+  selectedStatus = signal('published');
 
   get changesOnly() { return this.filter.changesOnly(); }
   set changesOnly(val: boolean) { this.filter.changesOnly.set(val); }
@@ -81,4 +98,5 @@ export class AppComponent {
   dismissBanner() {
     this.bannerVisible.set(false);
   }
+
 }

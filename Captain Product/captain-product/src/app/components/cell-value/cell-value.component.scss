@@ -60,23 +60,8 @@
   margin-bottom: 4px;
 }
 
-.warn-icon { flex-shrink: 0; }
-
 .dropdown-wrap {
   margin-top: 8px;
 
   nx-formfield { width: 100%; }
-
-  &.has-error {
-    nx-formfield { --nx-formfield-border-color: #DC3149; }
-  }
-}
-
-.dropdown-error-msg {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #DC3149;
-  font-size: 16px;
-  margin-top: 4px;
 }

@@ -48,29 +48,3 @@
   display: flex;
   gap: 12px;
 }
-
-.btn-discard {
-  background: #006192;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 20px;
-  font-size: 16px;
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover { background: #004f78; }
-}
-
-.btn-keep {
-  background: #fff;
-  color: #006192;
-  border: 1.5px solid #007AB3;
-  border-radius: 4px;
-  padding: 8px 20px;
-  font-size: 16px;
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover { background: #f0f8ff; }
-}

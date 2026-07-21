@@ -1,0 +1,71 @@
+// Allianz logo sizing inside nx-header-brand
+.allianz-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+// Icon buttons in actions area
+.header-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #006192;
+  transition: color 0.1s;
+
+  &:hover { color: #008ED6; }
+  svg { display: block; flex-shrink: 0; }
+}
+
+.header-icon-btn--tertiary {
+  &:hover { background: #ECECEC; color: #006192; }
+  &:active { background: #D9D9D9; }
+}
+
+// 8px gap between icon buttons inside nx-header-actions (NDBX sets gap: 0 by default)
+:host ::ng-deep .nx-header__actions {
+  gap: 8px;
+}
+
+// User avatar
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #5A3982;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  span {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #DAD0E1;
+    letter-spacing: 0.2px;
+  }
+}
+
+// Toolbar spacer pushes sidebar icon to the right
+.toolbar-spacer {
+  flex: 1;
+}
+
+// Active (current page) breadcrumb item — font-weight 600
+:host ::ng-deep .active-crumb .nx-breadcrumb-item__text {
+  font-weight: 600;
+  cursor: default;
+}
+
+// Hide chevron on the last breadcrumb item
+:host ::ng-deep li:last-child .nx-breadcrumb-item__chevron {
+  display: none;
+}

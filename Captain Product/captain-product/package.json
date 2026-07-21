@@ -12,6 +12,8 @@
   "packageManager": "npm@11.12.1",
   "dependencies": {
     "@allianz/ng-aquila": "^21.10.0",
+    "@allianz/ngx-brand-kit": "^21.10.0",
+    "@angular/cdk": "^21.0.0",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",

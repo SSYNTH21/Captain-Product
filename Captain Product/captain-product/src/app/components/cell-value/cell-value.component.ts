@@ -1,14 +1,15 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, Input, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NxDropdownModule } from '@allianz/ng-aquila/dropdown';
+import { NxDropdownComponent, NxDropdownModule } from '@allianz/ng-aquila/dropdown';
 import { NxFormfieldModule } from '@allianz/ng-aquila/formfield';
+import { NxIconModule } from '@allianz/ng-aquila/icon';
 import { CellValue } from '../../data/comparison.model';
 
 @Component({
   selector: 'app-cell-value',
   standalone: true,
-  imports: [CommonModule, FormsModule, NxDropdownModule, NxFormfieldModule],
+  imports: [CommonModule, FormsModule, NxDropdownModule, NxFormfieldModule, NxIconModule],
   template: `
     @if (cell.type === 'text') {
       <span>{{ cell.text }}</span>
@@ -48,11 +49,7 @@ import { CellValue } from '../../data/comparison.model';
     @if (cell.type === 'change' || (cell.change && cell.type !== 'longtext')) {
       @if (cell.change) {
         <div class="change-badge">
-          <svg class="warn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="#EFBE25"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 6C11.3372 6 10.8 6.44772 10.8 7V13C10.8 13.5523 11.3372 14 12 14C12.6628 14 13.2 13.5523 13.2 13V7C13.2 6.44772 12.6628 6 12 6Z" fill="#414141"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.8 17.2C10.8 16.5372 11.3372 16 12 16C12.6628 16 13.2 16.5372 13.2 17.2C13.2 17.8628 12.6628 18.4 12 18.4C11.3372 18.4 10.8 17.8628 10.8 17.2Z" fill="#414141"/>
-          </svg>
+          <nx-status-icon type="warning"></nx-status-icon>
           <span>{{ changeLabel }}</span>
         </div>
       }
@@ -62,19 +59,18 @@ import { CellValue } from '../../data/comparison.model';
         }
       }
       @if (cell.hasDropdown) {
-        <div class="dropdown-wrap" [class.has-error]="dropdownError()">
+        <div class="dropdown-wrap">
           <nx-formfield appearance="outline" nxFloatLabel="never">
-            <nx-dropdown [placeholder]="'Select'" [(ngModel)]="selectedAction" (ngModelChange)="onSelect($event)">
+            <nx-dropdown
+              #dropdown
+              [placeholder]="'Select'"
+              [(ngModel)]="selectedAction"
+              (ngModelChange)="onSelect($event)">
               <nx-dropdown-item value="apply">Apply change</nx-dropdown-item>
               <nx-dropdown-item value="ignore">Ignore change</nx-dropdown-item>
             </nx-dropdown>
+            <span nxFormfieldError>Select an option</span>
           </nx-formfield>
-          @if (dropdownError()) {
-            <div class="dropdown-error-msg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#DC3149"><path fill-rule="evenodd" d="M12,2C12.3955786,2 12.7611083,2.21813636 12.9588976,2.57223923L22.851658,20.2832823C23.0494473,20.6373852 23.0494473,21.0736579 22.851658,21.4277608C22.6538687,21.7818636 22.288339,22 21.8927604,22L2.10723959,22C1.71166099,22 1.34613128,21.7818636 1.14834198,21.4277608C0.950552674,21.0736579 0.950552674,20.6373852 1.14834198,20.2832823L11.0411024,2.57223923C11.2388917,2.21813636 11.6044214,2 12,2Z"/></svg>
-              <span>Select an option</span>
-            </div>
-          }
         </div>
       }
     }
@@ -84,6 +80,7 @@ import { CellValue } from '../../data/comparison.model';
 export class CellValueComponent {
   @Input({ required: true }) cell!: CellValue;
   @Input() showError = false;
+  @ViewChild('dropdown') dropdown?: NxDropdownComponent;
 
   expanded = signal(false);
   textExpanded = signal(false);
@@ -111,12 +108,19 @@ export class CellValueComponent {
   toggleTextExpanded() { this.textExpanded.update(v => !v); }
 
   onSelect(_val: string) {
-    this.dropdownError.set(false);
+    this.setDropdownError(false);
   }
 
   markError() {
     if (!this.selectedAction) {
-      this.dropdownError.set(true);
+      this.setDropdownError(true);
+    }
+  }
+
+  private setDropdownError(hasError: boolean) {
+    this.dropdownError.set(hasError);
+    if (this.dropdown) {
+      this.dropdown.errorState = hasError;
     }
   }
 }
