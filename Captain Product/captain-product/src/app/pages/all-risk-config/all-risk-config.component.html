@@ -29,8 +29,8 @@
     <div class="product-header">
       <h1 nxHeadline="subsection-large" class="product-title">{{ templateInfo()?.name }}</h1>
       <div class="product-header-actions">
-        <button class="btn-ghost" type="button">Duplicate</button>
-        <button class="btn-primary" type="button">Publish</button>
+        <button class="btn-ghost" type="button" [disabled]="hasInteracted()">Duplicate</button>
+        <button class="btn-primary" type="button" [disabled]="hasInteracted()">Publish</button>
         <div class="header-actions-divider"></div>
         <button nxButton="icon" class="btn-close" type="button" title="Close" aria-label="close details page" disabled>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18.707 5.293a1 1 0 010 1.414L13.414 12l5.293 5.293a1 1 0 01-1.414 1.414L12 13.414l-5.293 5.293a1 1 0 01-1.414-1.414L10.586 12 5.293 6.707a1 1 0 011.414-1.414L12 10.586l5.293-5.293a1 1 0 011.414 0z" fill="currentColor"/></svg>
@@ -97,8 +97,8 @@
               <div class="content">
 
                 <div class="edit-actions">
-                  <button nxButton="secondary small-medium" type="button" disabled (click)="cancelGeneralInfo()">Cancel</button>
-                  <button nxButton="primary small-medium" type="button" disabled (click)="saveGeneralInfo()">Save</button>
+                  <button nxButton="secondary small-medium" type="button" [disabled]="!hasInteracted()" (click)="cancelGeneralInfo()">Cancel</button>
+                  <button nxButton="primary small-medium" type="button" [disabled]="!hasInteracted()" (click)="saveGeneralInfo()">Save</button>
                 </div>
 
                 <h2 nxHeadline="subsection-small" class="overview-heading">Overview</h2>
@@ -108,7 +108,7 @@
                     <div nxRow>
                       <div nxCol="12,12,12,12,12,12,12">
                         <nx-formfield label="Product description">
-                          <textarea nxInput type="text" class="field-description" rows="4" formControlName="templateDescription"></textarea>
+                          <textarea nxInput type="text" class="field-description" rows="4" formControlName="templateDescription" (click)="markInteracted()" (focus)="markInteracted()"></textarea>
                         </nx-formfield>
                       </div>
 
@@ -120,7 +120,8 @@
                             filterPlaceholder="Type to filter"
                             [options]="operationalEntities"
                             selectValue="id"
-                            selectLabel="name">
+                            selectLabel="name"
+                            (click)="markInteracted()">
                           </nx-multi-select>
                           <nx-error nxFormfieldError>Mandatory field</nx-error>
                         </nx-formfield>
