@@ -1,0 +1,387 @@
+<div class="app">
+
+  <!-- STICKY HEADER GROUP -->
+  <div class="sticky-header-group">
+    <!-- BACK TO DIRECTORY BAR -->
+    <div class="back-to-directory-bar">
+      <nx-link size="small">
+        <a routerLink="/">
+          <nx-icon name="chevron-left" aria-hidden="true"></nx-icon>
+          Back to directory
+        </a>
+      </nx-link>
+      <h2 nxHeadline="subsection-small" class="flow-title">All-risk configuration flow demo</h2>
+    </div>
+
+    <!-- HEADER COMPONENT -->
+    <app-header
+      [breadcrumbs]="[
+        { label: 'Administration' },
+        { label: 'Product templates' },
+        { label: templateInfo()?.name ?? 'New product template', active: true }
+      ]"></app-header>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- Product Header -->
+    <div class="product-header">
+      <h1 nxHeadline="subsection-large" class="product-title">{{ templateInfo()?.name }}</h1>
+      <div class="product-header-actions">
+        <button class="btn-ghost" type="button">Duplicate</button>
+        <button class="btn-primary" type="button">Publish</button>
+        <div class="header-actions-divider"></div>
+        <button nxButton="icon" class="btn-close" type="button" title="Close" aria-label="close details page" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18.707 5.293a1 1 0 010 1.414L13.414 12l5.293 5.293a1 1 0 01-1.414 1.414L12 13.414l-5.293 5.293a1 1 0 01-1.414-1.414L10.586 12 5.293 6.707a1 1 0 011.414-1.414L12 10.586l5.293-5.293a1 1 0 011.414 0z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Last updated -->
+    <div class="last-updated">
+      <nx-data-display orientation="horizontal" size="medium" label="Last updated on">{{ lastUpdatedDisplay() }}</nx-data-display>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="metadata-grid">
+      <div class="metadata-col">
+        <span class="metadata-label">Status</span>
+        <span class="metadata-value"><nx-badge type="negative">Draft</nx-badge></span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Published date</span>
+        <span class="metadata-value">—</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Version</span>
+        <span class="metadata-value">1.0</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Created date</span>
+        <span class="metadata-value">{{ today }}</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Effective period</span>
+        <span class="metadata-value">—</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Type</span>
+        <span class="metadata-value">{{ templateInfo()?.templateTypeName }}</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Line of business</span>
+        <span class="metadata-value">{{ templateInfo()?.lineOfBusinessName }}</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Sub-line of business</span>
+        <span class="metadata-value">{{ templateInfo()?.subLineOfBusinessName }}</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">All-risk</span>
+        <span class="metadata-value">{{ templateInfo()?.isAllRiskProduct ? 'Yes' : 'No' }}</span>
+      </div>
+      <div class="metadata-col">
+        <span class="metadata-label">Owner</span>
+        <span class="metadata-value">{{ ownerName() }}</span>
+      </div>
+      <div class="metadata-col metadata-col-wide">
+        <span class="metadata-label">Base product</span>
+        <span class="metadata-value"><nx-link size="small"><a href="#" onclick="return false;">{{ templateInfo()?.baseProductName }}</a></nx-link></span>
+      </div>
+    </div>
+
+    <!-- TABS -->
+          <nx-tab-group appearance="expert">
+            <nx-tab label="General">
+              <div class="content">
+
+                <div class="edit-actions">
+                  <button nxButton="secondary small-medium" type="button" disabled (click)="cancelGeneralInfo()">Cancel</button>
+                  <button nxButton="primary small-medium" type="button" disabled (click)="saveGeneralInfo()">Save</button>
+                </div>
+
+                <h2 nxHeadline="subsection-small" class="overview-heading">Overview</h2>
+
+                <form [formGroup]="generalInfoForm">
+                  <div nxLayout="grid nopadding">
+                    <div nxRow>
+                      <div nxCol="12,12,12,12,12,12,12">
+                        <nx-formfield label="Product description">
+                          <textarea nxInput type="text" class="field-description" rows="4" formControlName="templateDescription"></textarea>
+                        </nx-formfield>
+                      </div>
+
+                      <div nxCol="12,8,6,6,4,4,4" class="operational-entities-col">
+                        <nx-formfield label="Operational entities">
+                          <nx-multi-select
+                            filter
+                            formControlName="operationalEntities"
+                            filterPlaceholder="Type to filter"
+                            [options]="operationalEntities"
+                            selectValue="id"
+                            selectLabel="name">
+                          </nx-multi-select>
+                          <nx-error nxFormfieldError>Mandatory field</nx-error>
+                        </nx-formfield>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Team -->
+                <div class="nx-margin-top-xl team-member-table-main-contents">
+                  <h2 nxHeadline="subsection-small" class="nx-margin-bottom-s">Team</h2>
+                  <div nxLayout="grid nopadding">
+                    <div nxRow>
+                      <div nxCol="12,12,9,9,6,6,6">
+
+                        @if (teamMembers().length > 0) {
+                          <div class="team-members-exists-area">
+                            <div class="add-btn-right">
+                              <button nxButton="secondary small" type="button" (click)="showAddMemberCard()">
+                                Add member
+                              </button>
+                            </div>
+                            <div class="table-container">
+                              <table nxTable>
+                                <thead>
+                                  <tr nxTableRow>
+                                    <th nxHeaderCell>Name</th>
+                                    <th nxHeaderCell>Role</th>
+                                    <th nxHeaderCell>Email</th>
+                                    <th nxHeaderCell></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @for (member of teamMembers(); track member.email) {
+                                    <tr nxTableRow>
+                                      <td nxTableCell>{{ member.name }}</td>
+                                      <td nxTableCell>{{ member.role }}</td>
+                                      <td nxTableCell>{{ member.email }}</td>
+                                      <td nxTableCell class="td-actions">
+                                        <button
+                                          nxIconButton="tertiary"
+                                          size="small"
+                                          type="button"
+                                          aria-label="Edit member"
+                                          [disabled]="showAddMember()"
+                                          (click)="editMember(member)">
+                                          <nx-icon name="pen" aria-hidden="true"></nx-icon>
+                                        </button>
+                                        <button
+                                          nxIconButton="tertiary"
+                                          size="small"
+                                          type="button"
+                                          aria-label="Delete member"
+                                          [disabled]="showAddMember() || (member.role === 'Owner' && ownerCount === 1)"
+                                          (click)="deleteMember(member)">
+                                          <nx-icon name="trash" aria-hidden="true"></nx-icon>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        } @else {
+                          <div class="empty-state-area">
+                            <p nxCopytext="normal" class="nx-margin-top-3xs">
+                              No team members have been added to this product.
+                            </p>
+                            <button nxButton="tertiary small-medium" class="nx-margin-top-2xs" (click)="showAddMemberCard()" type="button">
+                              Add member
+                            </button>
+                          </div>
+                        }
+
+                        @if (showAddMember()) {
+                          <nx-card class="add-member-card" [ngClass]="{ 'has-error': showTeamError() }">
+                            <div class="heading-container">
+                              <h2 nxHeadline size="m">
+                                {{ isEditingTeamMember ? 'Edit member' : 'Add member' }}
+                              </h2>
+                              <button nxPlainButton type="button" aria-label="Close add team member card" (click)="closeAddMemberPanel()">
+                                <nx-icon name="close" aria-hidden="true"></nx-icon>
+                              </button>
+                            </div>
+
+                            <form [formGroup]="addMemberForm" (ngSubmit)="saveMember()">
+                              <div nxLayout="grid nopadding">
+                                <div nxRow>
+                                  <div nxCol="12,6,6,6,4,3,2">
+                                    <nx-formfield label="Name">
+                                      <input nxInput formControlName="name" />
+                                      @if (addMemberForm.get('name')?.errors?.['required']) {
+                                        <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                      }
+                                    </nx-formfield>
+                                  </div>
+                                  <div nxCol="12,6,6,6,4,3,2">
+                                    <nx-formfield label="Role">
+                                      <nx-dropdown formControlName="role" placeholder="Select">
+                                        @for (role of roles; track role) {
+                                          <nx-dropdown-item [value]="role">{{ role }}</nx-dropdown-item>
+                                        }
+                                      </nx-dropdown>
+                                      @if (addMemberForm.get('role')?.errors?.['required']) {
+                                        <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                      }
+                                    </nx-formfield>
+                                  </div>
+                                  <div nxCol="12,6,6,6,4,3,2">
+                                    <nx-formfield label="Email address">
+                                      <input nxInput type="email" formControlName="email" />
+                                      @if (addMemberForm.get('email')?.errors?.['email']) {
+                                        <nx-error nxFormfieldError>Please enter a valid email address.</nx-error>
+                                      }
+                                      @if (addMemberForm.get('email')?.errors?.['required']) {
+                                        <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                      }
+                                    </nx-formfield>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="add-btn-right">
+                                <button nxButton="secondary small-medium" type="submit">
+                                  {{ isEditingTeamMember ? 'Save' : 'Add' }}
+                                </button>
+                              </div>
+                            </form>
+                          </nx-card>
+                        }
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </nx-tab>
+
+            <nx-tab label="Overall limits &amp; deductibles"></nx-tab>
+
+            <nx-tab label="Components overview">
+              <div class="content">
+
+                <nx-radio-toggle [ngModel]="activeComponentToggle()" (ngModelChange)="setActiveComponentToggle($event)" ariaLabel="Component type">
+                  <nx-radio-toggle-button value="coverages">Coverages</nx-radio-toggle-button>
+                  <nx-radio-toggle-button value="exclusions">Exclusions</nx-radio-toggle-button>
+                  <nx-radio-toggle-button value="extensions">Extensions</nx-radio-toggle-button>
+                  <nx-radio-toggle-button value="writebacks">Writebacks</nx-radio-toggle-button>
+                </nx-radio-toggle>
+
+                @switch (activeComponentToggle()) {
+                  @case ('coverages') {
+                    <div class="table-container nx-margin-top-m">
+                      <table nxTable class="coverages-table">
+                        <thead>
+                          <tr nxTableRow>
+                            <th nxHeaderCell>Name</th>
+                            <th nxHeaderCell>ID</th>
+                            <th nxHeaderCell>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (coverage of selectedCoverages(); track coverage.id) {
+                            <tr nxTableRow>
+                              <td nxTableCell>{{ coverage.name }}</td>
+                              <td nxTableCell>{{ coverage.id }}</td>
+                              <td nxTableCell>{{ coverage.description }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                  @case ('exclusions') {
+                    <div class="table-container nx-margin-top-m">
+                      <table nxTable class="coverages-table exclusions-table">
+                        <thead>
+                          <tr nxTableRow>
+                            <th nxHeaderCell>Name</th>
+                            <th nxHeaderCell>ID</th>
+                            <th nxHeaderCell>Type</th>
+                            <th nxHeaderCell>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (exclusion of selectedExclusions(); track exclusion.id) {
+                            <tr nxTableRow>
+                              <td nxTableCell>{{ exclusion.name }}</td>
+                              <td nxTableCell>{{ exclusion.id }}</td>
+                              <td nxTableCell>{{ exclusion.type }}</td>
+                              <td nxTableCell>{{ exclusion.description }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                  @case ('extensions') {
+                    <div class="table-container nx-margin-top-m">
+                      <table nxTable class="coverages-table extensions-table">
+                        <thead>
+                          <tr nxTableRow>
+                            <th nxHeaderCell>Name</th>
+                            <th nxHeaderCell>ID</th>
+                            <th nxHeaderCell>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (extension of selectedExtensions(); track extension.id) {
+                            <tr nxTableRow>
+                              <td nxTableCell>{{ extension.name }}</td>
+                              <td nxTableCell>{{ extension.id }}</td>
+                              <td nxTableCell>{{ extension.description }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                  @case ('writebacks') {
+                    <div class="table-container nx-margin-top-m">
+                      <table nxTable class="coverages-table writebacks-table">
+                        <thead>
+                          <tr nxTableRow>
+                            <th nxHeaderCell>Name</th>
+                            <th nxHeaderCell>ID</th>
+                            <th nxHeaderCell>Linked exclusions</th>
+                            <th nxHeaderCell>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (writeback of selectedWritebacks(); track writeback.id) {
+                            <tr nxTableRow>
+                              <td nxTableCell>{{ writeback.name }}</td>
+                              <td nxTableCell>{{ writeback.id }}</td>
+                              <td nxTableCell>
+                                <ul class="linked-exclusions-list">
+                                  @for (linked of writeback.linkedExclusions; track linked) {
+                                    <li>{{ linked }}</li>
+                                  }
+                                </ul>
+                              </td>
+                              <td nxTableCell>{{ writeback.description }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                }
+
+              </div>
+            </nx-tab>
+
+            <nx-tab label="Localisations"></nx-tab>
+
+            <nx-tab label="UW view"></nx-tab>
+          </nx-tab-group>
+
+  </div>
+
+</div>
