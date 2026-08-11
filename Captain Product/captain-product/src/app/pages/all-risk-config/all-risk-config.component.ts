@@ -121,6 +121,12 @@ export class AllRiskConfigComponent {
     this.activeComponentToggle.set(toggle);
   }
 
+  hasInteracted = signal(false);
+
+  markInteracted(): void {
+    this.hasInteracted.set(true);
+  }
+
   selectedCoverages = computed(() => this.coverages().filter(c => c.selected));
   selectedExclusions = computed(() => this.exclusions().filter(e => e.selected));
   selectedExtensions = computed(() => this.extensions().filter(e => e.selected));
@@ -156,10 +162,12 @@ export class AllRiskConfigComponent {
       templateDescription: value.templateDescription,
       operationalEntityNames: selectedNames,
     });
+    this.hasInteracted.set(false);
   }
 
   cancelGeneralInfo(): void {
     this.resetGeneralInfoForm();
+    this.hasInteracted.set(false);
   }
 
   // ── Team member table ──────────────────────────────────────
@@ -185,6 +193,7 @@ export class AllRiskConfigComponent {
     this.isEditingTeamMember = false;
     this.editingMember = null;
     this.showTeamError.set(false);
+    this.markInteracted();
   }
 
   closeAddMemberPanel(): void {
@@ -196,10 +205,12 @@ export class AllRiskConfigComponent {
     this.showAddMember.set(true);
     this.isEditingTeamMember = true;
     this.editingMember = member;
+    this.markInteracted();
   }
 
   deleteMember(member: ProductTemplateTeamMember): void {
     this.productTemplateService.deleteTeamMember(member);
+    this.markInteracted();
   }
 
   saveMember(): void {
@@ -219,5 +230,6 @@ export class AllRiskConfigComponent {
     this.isEditingTeamMember = false;
     this.editingMember = null;
     this.closeAddMemberPanel();
+    this.markInteracted();
   }
 }
