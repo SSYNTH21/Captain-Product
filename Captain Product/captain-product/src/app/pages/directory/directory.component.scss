@@ -1,0 +1,97 @@
+// ── APP SHELL (same pattern as all-risk-config.component.scss) ──
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.directory-title {
+  margin: 0 0 32px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.3px;
+  color: #414141;
+}
+
+.page-body {
+  flex: 1;
+  padding: 48px 32px;
+}
+
+.stats-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.stat-card {
+  flex: 1;
+  --card-border-radius: 8px;
+  --card-inner-padding: 24px;
+}
+
+.stat-card--validated {
+  --card-background-color: #e8f3e9;
+  --card-border-color: #407d71;
+}
+
+.stat-card--pending {
+  --card-background-color: #fdf8e9;
+  --card-border-color: #e08d05;
+}
+
+.stat-card--in-progress {
+  --card-background-color: #f1f9fa;
+  --card-border-color: #49648c;
+}
+
+.stat-card--total {
+  --card-background-color: #f5f5f5;
+  --card-border-color: #5a536f;
+}
+
+// Figma node 22561:140522: number 54/700/60 (0.3px letter-spacing) displayed above label 16/400/24, no gap between them
+.stat-value {
+  flex-direction: column-reverse;
+}
+
+.stat-value ::ng-deep .nx-data-display__label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #5b5b5b;
+}
+
+.stat-value ::ng-deep .nx-data-display__value {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0.3px;
+  color: #414141;
+}
+
+.directory-table-container {
+  ::ng-deep .ag-cell.col-applicability {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  ::ng-deep .col-section-group {
+    text-align: center;
+  }
+
+  ::ng-deep .ag-cell.col-actions {
+    text-overflow: unset;
+    overflow: visible;
+  }
+
+  ::ng-deep .ag-pinned-right-cols-container,
+  ::ng-deep .ag-pinned-right-header {
+    position: relative;
+    z-index: 2;
+    box-shadow: -2px 0 4px rgba(65, 65, 65, 0.5);
+  }
+}

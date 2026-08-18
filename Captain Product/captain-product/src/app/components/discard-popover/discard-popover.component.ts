@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { NxIconModule } from '@allianz/ng-aquila/icon';
 import { NxButtonModule } from '@allianz/ng-aquila/button';
 
 @Component({
   selector: 'app-discard-popover',
   standalone: true,
-  imports: [CommonModule, NxIconModule, NxButtonModule],
+  imports: [CommonModule, NxExpertModule, NxIconModule, NxButtonModule],
   template: `
     @if (visible) {
       <div class="discard-popover">

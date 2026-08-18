@@ -187,6 +187,10 @@
   margin-bottom: 16px;
 }
 
+.components-overview-actions {
+  margin-bottom: 24px;
+}
+
 .operational-entities-col {
   margin-top: 16px;
 }
@@ -251,7 +255,14 @@
   td {
     vertical-align: top;
   }
+}
 
+.description-cell {
+  font-style: italic !important;
+  color: #767676 !important;
+}
+
+.extensions-table {
   th:nth-child(1),
   td:nth-child(1) {
     width: 240px;
@@ -273,22 +284,21 @@
   }
 }
 
-.exclusions-table {
-  th:nth-child(3),
-  td:nth-child(3) {
-    width: 120px;
-    min-width: 100px;
-    max-width: 140px;
-  }
-
-  th:nth-child(4),
-  td:nth-child(4) {
-    width: auto;
-    min-width: 400px;
-  }
-}
-
 .writebacks-table {
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 240px;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 240px;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
   th:nth-child(3),
   td:nth-child(3) {
     width: 240px;
@@ -303,6 +313,87 @@
   }
 }
 
+.coverages-ag-grid-container,
+.exclusions-ag-grid-container {
+  .coverages-toolbar-row,
+  .exclusions-toolbar-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--ui-04, #d9d9d9);
+  }
+
+  ::ng-deep .ag-pinned-left-cols-container,
+  ::ng-deep .ag-pinned-left-header {
+    position: relative;
+    z-index: 2;
+    box-shadow: 2px 0 4px rgba(65, 65, 65, 0.5);
+  }
+
+  ::ng-deep .ag-cell[col-id='description'] {
+    padding-top: var(--table-cell-vertical-padding, 16px);
+    padding-bottom: var(--table-cell-vertical-padding, 16px);
+    box-sizing: border-box;
+  }
+
+  ::ng-deep .ag-cell[col-id='description'] .ag-cell-value {
+    line-height: var(--table-cell-line-height, 24px);
+    font-style: italic;
+    color: #767676;
+  }
+
+  .col-section-group {
+    text-align: center;
+  }
+
+  ::ng-deep .ag-cell.col-applicability {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  ::ng-deep .ag-cell.col-applicability nx-checkbox {
+    display: flex;
+    align-items: center;
+    height: 53px;
+  }
+
+  ::ng-deep .ag-header-cell.ag-header-span-height .ag-header-cell-comp-wrapper {
+    align-items: center;
+    height: 100%;
+  }
+
+  .header-info-icon {
+    margin-left: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  ::ng-deep nx-formfield {
+    display: block;
+    width: 100%;
+  }
+}
+
+// Exclusions' Name column shows plain uneditable text (no link), styled
+// the same as the Description column — unlike Coverages, where Name is
+// the only clickable-link column in the "Components overview" tables.
+.exclusions-ag-grid-container {
+  ::ng-deep .ag-cell[col-id='name'] {
+    padding-top: var(--table-cell-vertical-padding, 16px);
+    padding-bottom: var(--table-cell-vertical-padding, 16px);
+    box-sizing: border-box;
+  }
+
+  ::ng-deep .ag-cell[col-id='name'] .ag-cell-value {
+    line-height: var(--table-cell-line-height, 24px);
+    font-style: italic;
+    color: #767676;
+  }
+}
+
 .linked-exclusions-list {
   margin: 0;
   padding-left: 16px;
@@ -311,4 +402,46 @@
   li {
     padding-left: 4px;
   }
+}
+
+// ── Discard changes dialog (ported from all-risk-flow.component.scss) ──
+.modal-action-container {
+  height: auto !important;
+  border-top-width: 0px !important;
+  padding-top: 24px !important;
+  padding-bottom: 40px !important;
+}
+
+.modal-body {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+// ── Add coverages component (always-empty) fullscreen dialog ──
+.add-coverage-component-content {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-grow: 1;
+}
+
+.add-coverage-component-table {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  border-top: 2px solid #414141;
+  border-bottom: 2px solid #414141;
+}
+
+.add-coverage-component-empty-text {
+  margin: 0;
+  color: #767676;
+}
+
+.add-coverage-component-actions {
+  display: flex !important;
+  justify-content: space-between !important;
 }

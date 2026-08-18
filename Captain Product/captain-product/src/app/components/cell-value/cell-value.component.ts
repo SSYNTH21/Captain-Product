@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { NxDropdownComponent, NxDropdownModule } from '@allianz/ng-aquila/dropdown';
 import { NxFormfieldModule } from '@allianz/ng-aquila/formfield';
 import { NxIconModule } from '@allianz/ng-aquila/icon';
@@ -9,7 +10,7 @@ import { CellValue } from '../../data/comparison.model';
 @Component({
   selector: 'app-cell-value',
   standalone: true,
-  imports: [CommonModule, FormsModule, NxDropdownModule, NxFormfieldModule, NxIconModule],
+  imports: [CommonModule, NxExpertModule, FormsModule, NxDropdownModule, NxFormfieldModule, NxIconModule],
   template: `
     @if (cell.type === 'text') {
       <span>{{ cell.text }}</span>

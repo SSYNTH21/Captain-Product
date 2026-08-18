@@ -1,33 +1,45 @@
-@import '@allianz/ng-aquila/themes/aquila.css';
+@import '@angular/cdk/overlay-prebuilt.css';
+@import '@angular/cdk/a11y-prebuilt.css';
+@import '@allianz/ng-aquila/styles/theming';
 @import '@allianz/ng-aquila/css/normalize.css';
+@import '@allianz/ngx-brand-kit/css/themes/ndbx-expert.css';
+@import '@allianz/ngx-brand-kit/css/allianz-base.css';
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+@import '@allianz/ng-aquila/themes/ag-theme-aquila.css';
+@import './styles/ag-grid-checkbox';
 
 @font-face {
   font-family: 'Allianz Neo';
   font-weight: 300;
   font-style: normal;
-  src: url('assets/fonts/AllianzNeo-Light.otf') format('opentype'),
-       local('Allianz Neo Light');
+  font-display: swap;
+  src: url('assets/fonts/allianz-neo/AllianzNeo-Light.woff2') format('woff2'),
+       url('assets/fonts/allianz-neo/AllianzNeo-Light.woff') format('woff');
 }
 @font-face {
   font-family: 'Allianz Neo';
   font-weight: 400;
   font-style: normal;
-  src: url('assets/fonts/AllianzNeo-Regular.otf') format('opentype'),
-       local('Allianz Neo Regular');
+  font-display: swap;
+  src: url('assets/fonts/allianz-neo/AllianzNeo-Regular.woff2') format('woff2'),
+       url('assets/fonts/allianz-neo/AllianzNeo-Regular.woff') format('woff');
 }
 @font-face {
   font-family: 'Allianz Neo';
   font-weight: 600;
   font-style: normal;
-  src: url('assets/fonts/AllianzNeo-Bold.otf') format('opentype'),
-       local('Allianz Neo SemiBold');
+  font-display: swap;
+  src: url('assets/fonts/allianz-neo/AllianzNeo-SemiBold.woff2') format('woff2'),
+       url('assets/fonts/allianz-neo/AllianzNeo-SemiBold.woff') format('woff');
 }
 @font-face {
   font-family: 'Allianz Neo';
   font-weight: 700;
   font-style: normal;
-  src: url('assets/fonts/AllianzNeo-Bold.otf') format('opentype'),
-       local('Allianz Neo Bold');
+  font-display: swap;
+  src: url('assets/fonts/allianz-neo/AllianzNeo-Bold.woff2') format('woff2'),
+       url('assets/fonts/allianz-neo/AllianzNeo-Bold.woff') format('woff');
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -50,6 +62,12 @@
   --popover-close-icon-color: #006192;
   --ui-06: #414141;
   --signal-button-warning-icon-background-color: var(--ui-06);
+  // ndbx-expert.css ships `nx-border-radius(s)` (uncompiled Sass) for this token,
+  // which resolves to invalid CSS / 0px in the browser. 4px confirmed via sibling
+  // tokens on the same scale (--popover-border-radius, --context-menu-border-radius).
+  --dropdown-panel-border-radius: 4px;
+  // Figma spec (node 22062:464962) specifies 372px; ng-aquila default token is 352px.
+  --message-toast-max-width: 372px;
 }
 
 html, body {
@@ -60,6 +78,41 @@ html, body {
   color: #414141;
   background: #ffffff;
   -webkit-font-smoothing: antialiased;
+}
+
+// AG-Grid filter-panel buttons (Clear/Apply) — style to match Allianz secondary button
+.ag-root-wrapper {
+  border-radius: 0 !important;
+
+  .ag-theme-alpine.ag-theme-aquila.ag-theme-allianz-icons.ag-popup {
+    .ag-button.ag-standard-button {
+      border-width: 2px;
+      border-color: #007ab3;
+      background-color: transparent;
+      color: #006192;
+      width: 70px;
+
+      &:hover {
+        background-color: #006192;
+        color: #ffffff;
+        border-color: transparent;
+      }
+      &:active {
+        background-color: #003781;
+        color: #ffffff;
+        border-color: transparent;
+      }
+    }
+  }
+}
+
+// nx-message-toast: NDBX only exposes a max-width token, but Figma (node
+// 22062:464962) specifies a fixed 372px toast — short messages otherwise
+// shrink-to-fit well below that. Force the width explicitly; !important is
+// needed because nx-message's own :host style sets width:100% with higher
+// specificity (attribute selector) than a plain descendant selector.
+nx-message-toast nx-message {
+  width: var(--message-toast-max-width) !important;
 }
 
 // Utility: visually hidden

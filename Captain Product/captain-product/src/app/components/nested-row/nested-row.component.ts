@@ -1,5 +1,6 @@
 import { Component, Input, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { ComparisonRow } from '../../data/comparison.model';
 import { CellValueComponent } from '../cell-value/cell-value.component';
 import { FilterService } from '../../services/filter.service';
@@ -7,7 +8,7 @@ import { FilterService } from '../../services/filter.service';
 @Component({
   selector: 'app-nested-row',
   standalone: true,
-  imports: [CommonModule, CellValueComponent],
+  imports: [CommonModule, NxExpertModule, CellValueComponent],
   template: `
     @if (visible()) {
       <div class="cu-nested-head">

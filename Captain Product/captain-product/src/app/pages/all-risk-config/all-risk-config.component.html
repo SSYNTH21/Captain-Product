@@ -4,12 +4,14 @@
   <div class="sticky-header-group">
     <!-- BACK TO DIRECTORY BAR -->
     <div class="back-to-directory-bar">
-      <nx-link size="small">
-        <a routerLink="/">
-          <nx-icon name="chevron-left" aria-hidden="true"></nx-icon>
-          Back to directory
-        </a>
-      </nx-link>
+      @if (!isDemoMode()) {
+        <nx-link size="small">
+          <a routerLink="/">
+            <nx-icon name="chevron-left" aria-hidden="true"></nx-icon>
+            Back to directory
+          </a>
+        </nx-link>
+      }
       <h2 nxHeadline="subsection-small" class="flow-title">All-risk configuration flow demo</h2>
     </div>
 
@@ -23,7 +25,7 @@
   </div>
 
   <!-- PAGE BODY -->
-  <div class="page-body">
+  <div class="page-body" (scroll)="onPageBodyScroll($event)">
 
     <!-- Product Header -->
     <div class="product-header">
@@ -47,7 +49,7 @@
     <div class="metadata-grid">
       <div class="metadata-col">
         <span class="metadata-label">Status</span>
-        <span class="metadata-value"><nx-badge type="negative">Draft</nx-badge></span>
+        <span class="metadata-value"><nx-badge type="negative">{{ templateInfo()?.status }}</nx-badge></span>
       </div>
       <div class="metadata-col">
         <span class="metadata-label">Published date</span>
@@ -267,7 +269,13 @@
             <nx-tab label="Components overview">
               <div class="content">
 
-                <nx-radio-toggle [ngModel]="activeComponentToggle()" (ngModelChange)="setActiveComponentToggle($event)" ariaLabel="Component type">
+                <div class="edit-actions components-overview-actions">
+                  <button nxButton="secondary small-medium" type="button" [disabled]="!hasInteracted()" (click)="cancelGeneralInfo()">Cancel</button>
+                  <button nxButton="primary small-medium" type="button" [disabled]="!hasInteracted()" (click)="saveComponentsOverview()">Save</button>
+                </div>
+
+                <nx-radio-toggle variant="small" [ngModel]="activeComponentToggle()" (ngModelChange)="setActiveComponentToggle($event)" ariaLabel="Component type">
+                  <nx-radio-toggle-button value="sections">Sections</nx-radio-toggle-button>
                   <nx-radio-toggle-button value="coverages">Coverages</nx-radio-toggle-button>
                   <nx-radio-toggle-button value="exclusions">Exclusions</nx-radio-toggle-button>
                   <nx-radio-toggle-button value="extensions">Extensions</nx-radio-toggle-button>
@@ -275,50 +283,87 @@
                 </nx-radio-toggle>
 
                 @switch (activeComponentToggle()) {
+                  @case ('sections') {
+                    <div nxLayout="grid nopadding" class="nx-margin-top-m">
+                      <div nxRow>
+                        <div nxCol="12,8,6,6,4,4,4" [nxTooltip]="sectionsTooltip()">
+                          <nx-formfield label="Sections">
+                            <nx-multi-select
+                              readonly
+                              [ngModel]="sectionIds()"
+                              [options]="sections()"
+                              selectValue="id"
+                              selectLabel="name">
+                            </nx-multi-select>
+                          </nx-formfield>
+                        </div>
+                      </div>
+                    </div>
+                  }
                   @case ('coverages') {
-                    <div class="table-container nx-margin-top-m">
-                      <table nxTable class="coverages-table">
-                        <thead>
-                          <tr nxTableRow>
-                            <th nxHeaderCell>Name</th>
-                            <th nxHeaderCell>ID</th>
-                            <th nxHeaderCell>Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @for (coverage of selectedCoverages(); track coverage.id) {
-                            <tr nxTableRow>
-                              <td nxTableCell>{{ coverage.name }}</td>
-                              <td nxTableCell>{{ coverage.id }}</td>
-                              <td nxTableCell>{{ coverage.description }}</td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
+                    <div class="table-container nx-margin-top-m coverages-ag-grid-container">
+                      <div class="coverages-toolbar-row">
+                        <button
+                          nxIconButton="tertiary"
+                          size="small"
+                          type="button"
+                          aria-label="Delete coverage"
+                          [disabled]="coveragesGridSelectionCount() === 0"
+                          (click)="deleteCoverageRow()">
+                          <nx-icon name="trash-o" aria-hidden="true"></nx-icon>
+                        </button>
+                        <button nxButton="secondary small" type="button" [disabled]="!coverageCellEdited()">Apply to all</button>
+                        <button nxButton="primary small" type="button" (click)="openAddCoverageComponentModal()">Add component</button>
+                      </div>
+                      <ag-grid-angular
+                        class="ag-theme-alpine ag-theme-aquila ag-theme-allianz-icons"
+                        style="width: 100%; height: 600px;"
+                        [rowData]="coverages()"
+                        [columnDefs]="coveragesColumnDefs"
+                        [domLayout]="'normal'"
+                        [singleClickEdit]="true"
+                        [getRowId]="getCoverageRowId"
+                        [rowSelection]="coveragesRowSelection"
+                        [selectionColumnDef]="coveragesSelectionColumnDef"
+                        [sideBar]="coveragesSideBar"
+                        (selectionChanged)="onCoverageSelectionChanged($event)"
+                        (cellEditingStarted)="onCoverageCellEditingStarted()"
+                        (cellEditingStopped)="onCoverageCellEditingStopped()"
+                        (cellFocused)="onCoverageCellFocused($event)">
+                      </ag-grid-angular>
                     </div>
                   }
                   @case ('exclusions') {
-                    <div class="table-container nx-margin-top-m">
-                      <table nxTable class="coverages-table exclusions-table">
-                        <thead>
-                          <tr nxTableRow>
-                            <th nxHeaderCell>Name</th>
-                            <th nxHeaderCell>ID</th>
-                            <th nxHeaderCell>Type</th>
-                            <th nxHeaderCell>Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @for (exclusion of selectedExclusions(); track exclusion.id) {
-                            <tr nxTableRow>
-                              <td nxTableCell>{{ exclusion.name }}</td>
-                              <td nxTableCell>{{ exclusion.id }}</td>
-                              <td nxTableCell>{{ exclusion.type }}</td>
-                              <td nxTableCell>{{ exclusion.description }}</td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
+                    <div class="table-container nx-margin-top-m exclusions-ag-grid-container">
+                      <div class="exclusions-toolbar-row">
+                        <button
+                          nxIconButton="tertiary"
+                          size="small"
+                          type="button"
+                          aria-label="Delete exclusion"
+                          [disabled]="exclusionsGridSelectionCount() === 0"
+                          (click)="deleteExclusionRow()">
+                          <nx-icon name="trash-o" aria-hidden="true"></nx-icon>
+                        </button>
+                        <button nxButton="secondary small" type="button" [disabled]="!exclusionCellEdited()">Apply to all</button>
+                        <button nxButton="primary small" type="button">Add component</button>
+                      </div>
+                      <ag-grid-angular
+                        class="ag-theme-alpine ag-theme-aquila ag-theme-allianz-icons"
+                        style="width: 100%; height: 600px;"
+                        [rowData]="exclusions()"
+                        [columnDefs]="exclusionsColumnDefs"
+                        [domLayout]="'normal'"
+                        [singleClickEdit]="true"
+                        [getRowId]="getExclusionRowId"
+                        [rowSelection]="exclusionsRowSelection"
+                        [selectionColumnDef]="exclusionsSelectionColumnDef"
+                        [sideBar]="exclusionsSideBar"
+                        (selectionChanged)="onExclusionSelectionChanged($event)"
+                        (cellEditingStarted)="onExclusionCellEditingStarted()"
+                        (cellEditingStopped)="onExclusionCellEditingStopped()"
+                        (cellFocused)="onExclusionCellFocused($event)">
+                      </ag-grid-angular>
                     </div>
                   }
                   @case ('extensions') {
@@ -336,7 +381,7 @@
                             <tr nxTableRow>
                               <td nxTableCell>{{ extension.name }}</td>
                               <td nxTableCell>{{ extension.id }}</td>
-                              <td nxTableCell>{{ extension.description }}</td>
+                              <td nxTableCell class="description-cell">{{ extension.description }}</td>
                             </tr>
                           }
                         </tbody>
@@ -366,7 +411,7 @@
                                   }
                                 </ul>
                               </td>
-                              <td nxTableCell>{{ writeback.description }}</td>
+                              <td nxTableCell class="description-cell">{{ writeback.description }}</td>
                             </tr>
                           }
                         </tbody>
@@ -386,3 +431,105 @@
   </div>
 
 </div>
+
+<!-- Discard changes confirmation dialog -->
+<ng-template #discardChangesDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      Unsaved changes
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">
+      Are you sure you want to discard your changes?
+    </p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" critical class="nx-margin-right-s nx-margin-bottom-0" (click)="onConfirmDiscard()">
+          Discard
+        </button>
+        <button nxButton="secondary small-medium" class="nx-margin-bottom-0" (click)="onCancelDiscard()">
+          Keep editing
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Coverage default-selection confirmation dialog -->
+<ng-template #defaultSelectionConfirmDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      Adding coverage exclusion
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">
+      All-risk products require this coverage to remain either excluded or defaulted. Setting this coverage's default selection to 'Not defaulted' will add it to the exclusions list.
+    </p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" class="nx-margin-right-s nx-margin-bottom-0" (click)="onCancelDefaultSelectionChange()">
+          Cancel
+        </button>
+        <button nxButton="primary small-medium" class="nx-margin-bottom-0" (click)="onConfirmDefaultSelectionChange()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Coverage default-selection revert confirmation dialog -->
+<ng-template #revertDefaultSelectionConfirmDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      Restoring coverage default selection
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">
+      All-risk products require this coverage to remain either excluded or defaulted. Setting this coverage back to 'Defaulted' will automatically remove its exclusion.
+    </p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" class="nx-margin-right-s nx-margin-bottom-0" (click)="onCancelRevertDefaultSelectionChange()">
+          Cancel
+        </button>
+        <button nxButton="primary small-medium" class="nx-margin-bottom-0" (click)="onConfirmRevertDefaultSelectionChange()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Add coverages component (always-empty) dialog -->
+<ng-template #addCoverageComponentDialogTemplate>
+  <h1 nxModalTitle>Add coverages component</h1>
+  <div nxModalContent class="add-coverage-component-content">
+    <div class="add-coverage-component-table">
+      <p class="add-coverage-component-empty-text">There are no components available.</p>
+    </div>
+  </div>
+  <div nxModalActions class="add-coverage-component-actions">
+    <button nxPlainButton type="button" (click)="closeAddCoverageComponentModal()">Cancel</button>
+    <button nxButton="primary small-medium" disabled>Add</button>
+  </div>
+</ng-template>
+
+<!-- Delete coverage-linked exclusion confirmation dialog -->
+<ng-template #deleteLinkedExclusionDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      Restoring coverage default selection
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">
+      All-risk products require this coverage to remain either excluded or defaulted. Removing this exclusion will reset the coverage's selection configuration to Defaulted.
+    </p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" class="nx-margin-right-s nx-margin-bottom-0" (click)="onCancelDeleteLinkedExclusion()">
+          Cancel
+        </button>
+        <button nxButton="primary small-medium" class="nx-margin-bottom-0" (click)="onConfirmDeleteLinkedExclusion()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

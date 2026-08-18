@@ -1,0 +1,89 @@
+// AG Grid — checkbox styling for selection/applicability columns.
+// Ported from agcs-service-product's shared ag-grid-checkbox partial so
+// AG-Grid's default checkbox rendering matches NDBX's checkbox look.
+
+.ag-header-cell[col-id='ag-Grid-SelectionColumn'],
+.ag-cell[col-id='ag-Grid-SelectionColumn'] {
+  width: 56px !important;
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper,
+.ag-header-select-all .ag-checkbox-input-wrapper {
+  width: 24px;
+  height: 24px;
+  --ag-checkbox-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper::after,
+.ag-header-select-all .ag-checkbox-input-wrapper::after {
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper:not(.ag-checked):not(.ag-indeterminate)::after,
+.ag-header-select-all .ag-checkbox-input-wrapper:not(.ag-checked):not(.ag-indeterminate)::after {
+  display: none;
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper:not(.ag-checked):not(.ag-indeterminate),
+.ag-header-select-all .ag-checkbox-input-wrapper:not(.ag-checked):not(.ag-indeterminate) {
+  border: 2px solid var(--ag-checkbox-unchecked-color, #767676);
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper.ag-checked,
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-checked {
+  background-color: var(--ag-checkbox-checked-color) !important;
+}
+
+.ag-selection-checkbox .ag-checkbox-input-wrapper.ag-checked::after,
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-checked::after {
+  font-family: 'Allianz-Icons', sans-serif !important;
+  content: '\e911' !important;
+  color: #fff !important;
+  font-size: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-indeterminate {
+  background-color: var(--ag-checkbox-checked-color) !important;
+  border: none !important;
+  position: relative !important;
+}
+
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-indeterminate::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 12px !important;
+  height: 2px !important;
+  background-color: #fff !important;
+}
+
+.ag-row .ag-checkbox-input-wrapper.ag-checked:has(.ag-checkbox-input[disabled]),
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-checked:has(.ag-checkbox-input[disabled]) {
+  background-color: #767676 !important;
+}
+
+.ag-row .ag-checkbox-input-wrapper.ag-checked:has(.ag-checkbox-input[disabled])::after,
+.ag-header-select-all .ag-checkbox-input-wrapper.ag-checked:has(.ag-checkbox-input[disabled])::after {
+  font-family: 'Allianz-Icons', sans-serif !important;
+  content: '\e911' !important;
+  color: #fff !important;
+}
+
+.ag-theme-alpine.ag-theme-aquila.ag-theme-allianz-icons {
+  .ag-checkbox-input-wrapper.ag-disabled {
+    background-color: var(--disabled-01) !important;
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+
+    .ag-checkbox-input {
+      cursor: not-allowed !important;
+      opacity: 0.5 !important;
+    }
+  }
+}

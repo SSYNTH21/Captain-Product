@@ -19,11 +19,58 @@
 }
 
 // ── APP SHELL ────────────────────────────────────────────────
+// height (not min-height) constrains .app to the viewport so .page-body's
+// overflow-y:auto becomes the real scroll container — this is what lets
+// nx-tab-header's `position: sticky; top: 0` land directly under the
+// breadcrumb toolbar instead of colliding with it at the document top.
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: #ffffff;
+}
+
+// ── STICKY HEADER GROUP (back-to-directory bar + top nav) ─────
+.sticky-header-group {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+// ── BACK TO DIRECTORY BAR ─────────────────────────────────────
+.back-to-directory-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: #CAD4DE;
+  flex-shrink: 0;
+
+  nx-link {
+    display: flex;
+    align-items: center;
+  }
+
+  // Override NDBX default `align-items: flex-start` on the inner <a>
+  // (higher specificity :host::ng-deep rule) so the icon + text sit on
+  // the same vertical center as the H2 title
+  nx-link ::ng-deep a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px;
+    font-weight: 600;
+  }
+}
+
+.flow-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600 !important; // NDBX heading-05 token sets weight 300; Expert theme H2 spec is 600
+  line-height: 32px;
+  letter-spacing: 0.15px;
+  color: var(--text-01);
 }
 
 // ── HEADER ───────────────────────────────────────────────────
@@ -195,10 +242,15 @@
 }
 
 // ── PAGE BODY ────────────────────────────────────────────────
+// No top padding here: .page-body is the nearest scrolling ancestor for
+// the sticky tab header below, and position:sticky offsets are computed
+// from the scroll container's *padding* edge — a top padding here would
+// bake in a permanent gap above the stuck tab header even once scrolled
+// past. Top spacing is applied to the first child instead.
 .page-body {
   flex: 1;
   background: var(--semantic-color-surface-default-resting);
-  padding: 32px 32px 64px;
+  padding: 0 32px 64px;
   overflow-y: auto;
 }
 
@@ -395,6 +447,16 @@
 .product-tabs {
   margin-top: 48px;
 
+  // Pin the tab header to the top of .page-body's scroll area once it
+  // reaches the bottom of the sticky-header-group, so users keep their
+  // place while scrolling through tab content.
+  ::ng-deep nx-tab-header {
+    position: sticky !important;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+  }
+
   // tab panel padding
   .nx-tab-body__content {
     padding-top: 0;
@@ -428,6 +490,7 @@
   --message-warning-background-color: #FDF8E9;
   --message-warning-border-color: #efbe25;
   --message-padding: 16px 23px 23px 23px;
+  margin-top: 32px; // replaces .page-body's old top padding (see .page-body comment)
   margin-bottom: 24px;
 }
 .inline-notification-link {

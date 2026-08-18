@@ -1,0 +1,909 @@
+<div class="app">
+
+  <!-- STICKY HEADER GROUP -->
+  <div class="sticky-header-group">
+    <!-- BACK TO DIRECTORY BAR -->
+    <div class="back-to-directory-bar">
+      @if (!isDemoMode()) {
+        <nx-link size="small">
+          <a routerLink="/">
+            <nx-icon name="chevron-left" aria-hidden="true"></nx-icon>
+            Back to directory
+          </a>
+        </nx-link>
+      }
+      <h2 nxHeadline="subsection-small" class="flow-title">All-risk creation flow demo</h2>
+    </div>
+
+    <!-- HEADER COMPONENT (no toolbar) -->
+    <app-header [showToolbar]="false"></app-header>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body" #pageBody>
+    <div class="wizard-shell">
+
+      <!-- LEFT SIDEBAR: STEP INDICATOR -->
+      <aside class="sidebar">
+        <nx-multi-stepper currentStepLabel="Step" direction="vertical" linear [selectedIndex]="currentStep()" (selectedIndexChange)="onStepSelected($event)">
+          @for (label of stepLabels; track label; let i = $index) {
+            <nx-step [label]="label" [completed]="completedSteps().has(i)"></nx-step>
+          }
+        </nx-multi-stepper>
+      </aside>
+
+      <!-- RIGHT CONTENT -->
+      <main class="content" nxLayout="grid maxwidth">
+
+        <!-- STICKY STEP TITLE (shared across all steps) -->
+        <div class="title">
+          <p nxCopytext="normal" class="nx-margin-bottom-s">Create new product template</p>
+          <h1 nxHeadline="subsection-large" class="nx-font-weight-semibold">{{ stepLabels[currentStep()] }}</h1>
+        </div>
+
+        <div nxRow>
+          <div nxCol="12">
+
+            @switch (currentStep()) {
+              @case (0) {
+
+                <div class="step-product-info">
+                  <form [formGroup]="templateInfoForm">
+                    <div class="content">
+
+                      <h2 nxHeadline="subsection-small" class="nx-margin-bottom-s overview-heading">Overview</h2>
+
+                      <div nxLayout="grid nopadding">
+                        <div nxRow>
+
+                          <!-- Type -->
+                          <div nxCol="12,12,12,12,12,12,12">
+                            <nx-radio-group formControlName="templateType">
+                              <nx-label class="nx-margin-bottom-xs">Type</nx-label>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                              <div class="horizontal-radio-group">
+                                @for (templateType of templateTypes; track templateType.templateId) {
+                                  <nx-radio
+                                    [value]="templateType.templateId"
+                                    labelSize="small"
+                                    class="radio-item nx-margin-bottom-xs nx-margin-right-m"
+                                    [disabled]="isTemplateTypeDisabled(templateType.templateId)">
+                                    {{ templateType.templateName }}
+                                  </nx-radio>
+                                }
+                              </div>
+                            </nx-radio-group>
+                          </div>
+
+                          <!-- Base product -->
+                          <div nxCol="12,12,8,8,6,6,6">
+                            <nx-formfield label="Base product">
+                              <nx-dropdown formControlName="baseProduct" [panelGrow]="true" [panelMaxWidth]="328">
+                                <nx-dropdown-item value="property-global-master-product">Property Global Master Product</nx-dropdown-item>
+                              </nx-dropdown>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                            </nx-formfield>
+                          </div>
+
+                          <!-- Name of product template -->
+                          <div nxCol="12,12,8,8,6,6,6">
+                            <nx-formfield label="Name of Product template">
+                              <input class="textboxes" nxInput formControlName="name" [required]="true" />
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                            </nx-formfield>
+                          </div>
+
+                          <!-- Line of business -->
+                          <div nxCol="6,6,4,4,3,3,2">
+                            <nx-formfield label="Line of business">
+                              <nx-dropdown formControlName="lineOfBusiness" readonly="true">
+                                <nx-dropdown-item value="property">Property</nx-dropdown-item>
+                              </nx-dropdown>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                            </nx-formfield>
+                          </div>
+
+                          <!-- Sub-line of business -->
+                          <div nxCol="6,6,4,4,3,3,2">
+                            <nx-formfield label="Sub-line of business">
+                              <nx-dropdown formControlName="subLineOfBusiness">
+                                <nx-dropdown-item value="industry-property">Industry property</nx-dropdown-item>
+                              </nx-dropdown>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                            </nx-formfield>
+                          </div>
+
+                          <!-- All-risk product? -->
+                          <div nxCol="6,6,4,4,3,3,2">
+                            <nx-radio-group formControlName="isAllRiskProduct">
+                              <nx-label class="nx-margin-bottom-xs">All-risk product?</nx-label>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                              <div class="horizontal-radio-group">
+                                <nx-radio [value]="true" labelSize="small" class="radio-item nx-margin-bottom-xs nx-margin-right-m">
+                                  Yes
+                                </nx-radio>
+                                <nx-radio [value]="false" labelSize="small" class="radio-item nx-margin-bottom-xs">
+                                  No
+                                </nx-radio>
+                              </div>
+                            </nx-radio-group>
+                          </div>
+
+                          <!-- Operational entities -->
+                          <div nxCol="12,12,8,8,6,6,6">
+                            <nx-formfield label="Operational entities">
+                              <nx-multi-select
+                                filter
+                                formControlName="operationalEntities"
+                                filterPlaceholder="Type to filter"
+                                [options]="operationalEntities"
+                                selectValue="id"
+                                selectLabel="name">
+                              </nx-multi-select>
+                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                            </nx-formfield>
+                          </div>
+
+                          <!-- Product description -->
+                          <div nxCol="12,12,12,12,12,12,12">
+                            <nx-formfield label="Product description">
+                              <textarea nxInput type="text" class="field-description" formControlName="templateDescription"></textarea>
+                            </nx-formfield>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- Team -->
+                      <div class="nx-margin-top-xl team-member-table-main-contents">
+                        <h2 nxHeadline="subsection-small" class="nx-margin-bottom-s">Team</h2>
+                        <div nxLayout="grid nopadding">
+                          <div nxRow>
+                            <div nxCol="12,12,12,9,9,9,6">
+
+                              @if (teamMembers().length > 0) {
+                                <div class="team-members-exists-area">
+                                  <div class="add-btn-right">
+                                    <button nxButton="secondary small" type="button" (click)="showAddMemberCard()">
+                                      Add member
+                                    </button>
+                                  </div>
+                                  <div class="table-container">
+                                    <table nxTable>
+                                      <thead>
+                                        <tr nxTableRow>
+                                          <th nxHeaderCell>Name</th>
+                                          <th nxHeaderCell>Role</th>
+                                          <th nxHeaderCell>Email</th>
+                                          <th nxHeaderCell></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @for (member of teamMembers(); track member.email) {
+                                          <tr nxTableRow>
+                                            <td nxTableCell>{{ member.name }}</td>
+                                            <td nxTableCell>{{ member.role }}</td>
+                                            <td nxTableCell>{{ member.email }}</td>
+                                            <td nxTableCell class="td-actions">
+                                              <button
+                                                nxIconButton="tertiary"
+                                                size="small"
+                                                type="button"
+                                                aria-label="Edit member"
+                                                [disabled]="showAddMember()"
+                                                (click)="editMember(member)">
+                                                <nx-icon name="pen" aria-hidden="true"></nx-icon>
+                                              </button>
+                                              <button
+                                                nxIconButton="tertiary"
+                                                size="small"
+                                                type="button"
+                                                aria-label="Delete member"
+                                                [disabled]="showAddMember() || (member.role === 'Owner' && ownerCount === 1)"
+                                                (click)="deleteMember(member)">
+                                                <nx-icon name="trash" aria-hidden="true"></nx-icon>
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              } @else {
+                                <div class="empty-state-area">
+                                  <p nxCopytext="normal" class="nx-margin-top-3xs">
+                                    No team members have been added to this product.
+                                  </p>
+                                  <button nxButton="tertiary small-medium" class="nx-margin-top-2xs" (click)="showAddMemberCard()" type="button">
+                                    Add member
+                                  </button>
+                                </div>
+                              }
+
+                              @if (showAddMember()) {
+                                <nx-card class="add-member-card" [ngClass]="{ 'has-error': showTeamError() }">
+                                  <div class="heading-container">
+                                    <h2 nxHeadline size="m">
+                                      {{ isEditingTeamMember ? 'Edit member' : 'Add member' }}
+                                    </h2>
+                                    <button nxPlainButton type="button" aria-label="Close add team member card" (click)="closeAddMemberPanel()">
+                                      <nx-icon name="close" aria-hidden="true"></nx-icon>
+                                    </button>
+                                  </div>
+
+                                  <form [formGroup]="addMemberForm" (ngSubmit)="saveMember()">
+                                    <div nxLayout="grid nopadding">
+                                      <div nxRow>
+                                        <div nxCol="12,6,6,6,4,3,2">
+                                          <nx-formfield label="Name">
+                                            <input nxInput formControlName="name" />
+                                            @if (addMemberForm.get('name')?.errors?.['required']) {
+                                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                            }
+                                          </nx-formfield>
+                                        </div>
+                                        <div nxCol="12,6,6,6,4,3,2">
+                                          <nx-formfield label="Role">
+                                            <nx-dropdown formControlName="role" placeholder="Select">
+                                              @for (role of roles; track role) {
+                                                <nx-dropdown-item [value]="role">{{ role }}</nx-dropdown-item>
+                                              }
+                                            </nx-dropdown>
+                                            @if (addMemberForm.get('role')?.errors?.['required']) {
+                                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                            }
+                                          </nx-formfield>
+                                        </div>
+                                        <div nxCol="12,6,6,6,4,3,2">
+                                          <nx-formfield label="Email address">
+                                            <input nxInput type="email" formControlName="email" />
+                                            @if (addMemberForm.get('email')?.errors?.['email']) {
+                                              <nx-error nxFormfieldError>Please enter a valid email address.</nx-error>
+                                            }
+                                            @if (addMemberForm.get('email')?.errors?.['required']) {
+                                              <nx-error nxFormfieldError>Mandatory field</nx-error>
+                                            }
+                                          </nx-formfield>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="add-btn-right">
+                                      <button nxButton="secondary small-medium" type="submit">
+                                        {{ isEditingTeamMember ? 'Save' : 'Add' }}
+                                      </button>
+                                    </div>
+                                  </form>
+                                </nx-card>
+                              }
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!-- Footer actions -->
+                    <div class="footer-actions">
+                      <div class="left-actions">
+                        <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                      </div>
+                      <div class="right-actions">
+                        <button nxButton="primary small-medium" (click)="onNext()" type="button">Next</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+              }
+              @case (1) {
+
+                <div class="step-coverages">
+
+                  <div class="coverages-toolbar">
+                    <p nxCopytext="normal" class="selected-items-label">Selected items: {{ selectedCount() }}</p>
+                    <div class="toolbar-divider"></div>
+                    <nx-switcher
+                      [labelPosition]="'left'"
+                      labelSize="small"
+                      [checked]="showSelectedOnly()"
+                      (checkedChange)="showSelectedOnly.set($event)">
+                      Show selected items
+                    </nx-switcher>
+                  </div>
+
+                  <div class="table-container">
+                    <table nxTable class="coverages-table">
+                      <thead>
+                        <tr nxTableRow>
+                          <th nxHeaderCell>
+                            <nx-checkbox
+                              [checked]="allCoveragesSelected()"
+                              [indeterminate]="someCoveragesSelected()"
+                              [readonly]="isAllRisk"
+                              aria-label="Select all coverages"
+                              (checkedChange)="toggleAllCoverages($event)">
+                            </nx-checkbox>
+                          </th>
+                          <th nxHeaderCell>Name</th>
+                          <th nxHeaderCell>ID</th>
+                          <th nxHeaderCell>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (coverage of filteredCoverages(); track coverage.id) {
+                          <tr nxTableRow [selected]="coverage.selected">
+                            <td nxTableCell>
+                              <nx-checkbox
+                                [checked]="coverage.selected"
+                                [readonly]="isAllRisk"
+                                [aria-label]="'Select ' + coverage.name"
+                                (checkedChange)="toggleCoverage(coverage)">
+                              </nx-checkbox>
+                            </td>
+                            <td nxTableCell>
+                              <nx-link size="small"><a href="#" onclick="return false;">{{ coverage.name }}</a></nx-link>
+                            </td>
+                            <td nxTableCell>{{ coverage.id }}</td>
+                            <td nxTableCell>{{ coverage.description }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="pagination-footer">
+                    <div class="pagination-scrollbar">
+                      <div class="pagination-scrollbar-thumb"></div>
+                    </div>
+                    <div class="pagination-content">
+                      <div class="pagination-left">
+                        <span class="pagination-ipp-label">Items per page:</span>
+                        <select class="pagination-select">
+                          <option>10</option>
+                          <option>25</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                      </div>
+                      <div class="pagination-right">
+                        <span class="pagination-count"><b>1</b>&nbsp;to&nbsp;<b>{{ filteredCoverages().length }}</b>&nbsp;of&nbsp;<b>{{ filteredCoverages().length }}</b></span>
+                        <div class="page-nav">
+                          <button class="page-btn" disabled title="First page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 0 0.667 C 0 0.298 0.298 0 0.667 0 C 1.035 0 1.333 0.298 1.333 0.667 L 1.333 10 C 1.333 10.369 1.035 10.667 0.667 10.667 C 0.298 10.667 0 10.369 0 10 L 0 0.667 Z" fill="#414141"/><path d="M 4.276 4.667 L 12.667 4.667 C 13.035 4.667 13.333 4.965 13.333 5.333 C 13.333 5.702 13.035 6 12.667 6 L 4.276 6 L 5.805 7.529 C 6.065 7.789 6.065 8.211 5.805 8.471 C 5.675 8.601 5.504 8.667 5.333 8.667 C 5.163 8.667 4.992 8.601 4.862 8.471 L 2.196 5.805 C 2.134 5.744 2.085 5.67 2.051 5.588 C 1.985 5.425 1.985 5.241 2.051 5.079 C 2.085 4.997 2.134 4.923 2.196 4.861 L 4.862 2.195 C 5.123 1.935 5.544 1.935 5.805 2.195 C 6.065 2.456 6.065 2.877 5.805 3.138 L 4.276 4.667 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Previous page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 1.609 5.333 L 5.805 1.138 C 6.065 0.877 6.065 0.456 5.805 0.195 C 5.544 -0.065 5.123 -0.065 4.862 0.195 L 0.196 4.862 C -0.065 5.123 -0.065 5.544 0.196 5.805 L 4.862 10.471 C 4.992 10.601 5.163 10.667 5.334 10.667 C 5.504 10.667 5.675 10.601 5.805 10.471 C 6.065 10.211 6.065 9.789 5.805 9.529 L 1.609 5.333 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <span class="page-info">Page&nbsp;<b>1</b>&nbsp;of&nbsp;<b>1</b></span>
+                          <button class="page-btn" disabled title="Next page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 5.805 4.862 L 1.138 0.195 C 0.878 -0.065 0.456 -0.065 0.196 0.195 C -0.065 0.456 -0.065 0.877 0.196 1.138 L 4.391 5.333 L 0.196 9.529 C -0.065 9.789 -0.065 10.211 0.196 10.471 C 0.326 10.601 0.496 10.667 0.667 10.667 C 0.838 10.667 1.008 10.601 1.138 10.471 L 5.805 5.805 C 6.065 5.544 6.065 5.123 5.805 4.862 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Last page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 12 0.667 C 12 0.298 12.298 0 12.667 0 C 13.035 0 13.333 0.298 13.333 0.667 L 13.333 10 C 13.333 10.369 13.035 10.667 12.667 10.667 C 12.298 10.667 12 10.369 12 10 L 12 0.667 Z" fill="#414141"/><path d="M 11.137 4.861 C 11.199 4.923 11.248 4.997 11.282 5.079 C 11.349 5.241 11.349 5.425 11.282 5.588 C 11.248 5.67 11.199 5.744 11.137 5.805 L 8.471 8.471 C 8.341 8.601 8.171 8.667 8 8.667 C 7.829 8.667 7.659 8.601 7.529 8.471 C 7.268 8.211 7.268 7.789 7.529 7.529 L 9.057 6 L 0.667 6 C 0.298 6 0 5.702 0 5.333 C 0 4.965 0.298 4.667 0.667 4.667 L 9.057 4.667 L 7.529 3.138 C 7.268 2.877 7.268 2.456 7.529 2.195 C 7.789 1.935 8.211 1.935 8.471 2.195 L 11.137 4.861 Z" fill="#414141"/></g></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pagination-bottom-border"></div>
+                  </div>
+
+                  <!-- Footer actions -->
+                  <div class="footer-actions">
+                    <div class="left-actions">
+                      <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                    </div>
+                    <div class="right-actions">
+                      <button nxButton="secondary small-medium" class="nx-margin-right-s" (click)="onPrevious()" type="button">Back</button>
+                      <button nxButton="primary small-medium" (click)="onNext()" type="button">Next</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              }
+              @case (2) {
+
+                <div class="step-exclusions">
+
+                  @if (exclusionsBannerVisible()) {
+                    <nx-message context="info" [closable]="true" (close)="exclusionsBannerVisible.set(false)" class="step-banner">
+                      Exclusions are optional.
+                    </nx-message>
+                  }
+
+                  <div class="coverages-toolbar">
+                    <p nxCopytext="normal" class="selected-items-label">Selected items: {{ selectedExclusionsCount() }}</p>
+                    <div class="toolbar-divider"></div>
+                    <nx-switcher
+                      [labelPosition]="'left'"
+                      labelSize="small"
+                      [checked]="showSelectedExclusionsOnly()"
+                      (checkedChange)="showSelectedExclusionsOnly.set($event)">
+                      Show selected items
+                    </nx-switcher>
+                  </div>
+
+                  <div class="table-container">
+                    <table nxTable class="coverages-table exclusions-table">
+                      <thead>
+                        <tr nxTableRow>
+                          <th nxHeaderCell>
+                            <nx-checkbox
+                              [checked]="allExclusionsSelected()"
+                              [indeterminate]="someExclusionsSelected()"
+                              aria-label="Select all exclusions"
+                              (checkedChange)="toggleAllExclusions($event)">
+                            </nx-checkbox>
+                          </th>
+                          <th nxHeaderCell>Name</th>
+                          <th nxHeaderCell>ID</th>
+                          <th nxHeaderCell>Type</th>
+                          <th nxHeaderCell>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (exclusion of filteredExclusions(); track exclusion.id) {
+                          <tr nxTableRow [selected]="exclusion.selected">
+                            <td nxTableCell>
+                              <nx-checkbox
+                                [checked]="exclusion.selected"
+                                [readonly]="exclusion.type === 'Mandatory'"
+                                [aria-label]="'Select ' + exclusion.name"
+                                (checkedChange)="toggleExclusion(exclusion)">
+                              </nx-checkbox>
+                            </td>
+                            <td nxTableCell>{{ exclusion.name }}</td>
+                            <td nxTableCell>{{ exclusion.id }}</td>
+                            <td nxTableCell>{{ exclusion.type }}</td>
+                            <td nxTableCell>{{ exclusion.description }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="pagination-footer">
+                    <div class="pagination-scrollbar">
+                      <div class="pagination-scrollbar-thumb"></div>
+                    </div>
+                    <div class="pagination-content">
+                      <div class="pagination-left">
+                        <span class="pagination-ipp-label">Items per page:</span>
+                        <select class="pagination-select">
+                          <option>10</option>
+                          <option>25</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                      </div>
+                      <div class="pagination-right">
+                        <span class="pagination-count"><b>1</b>&nbsp;to&nbsp;<b>{{ filteredExclusions().length }}</b>&nbsp;of&nbsp;<b>{{ filteredExclusions().length }}</b></span>
+                        <div class="page-nav">
+                          <button class="page-btn" disabled title="First page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 0 0.667 C 0 0.298 0.298 0 0.667 0 C 1.035 0 1.333 0.298 1.333 0.667 L 1.333 10 C 1.333 10.369 1.035 10.667 0.667 10.667 C 0.298 10.667 0 10.369 0 10 L 0 0.667 Z" fill="#414141"/><path d="M 4.276 4.667 L 12.667 4.667 C 13.035 4.667 13.333 4.965 13.333 5.333 C 13.333 5.702 13.035 6 12.667 6 L 4.276 6 L 5.805 7.529 C 6.065 7.789 6.065 8.211 5.805 8.471 C 5.675 8.601 5.504 8.667 5.333 8.667 C 5.163 8.667 4.992 8.601 4.862 8.471 L 2.196 5.805 C 2.134 5.744 2.085 5.67 2.051 5.588 C 1.985 5.425 1.985 5.241 2.051 5.079 C 2.085 4.997 2.134 4.923 2.196 4.861 L 4.862 2.195 C 5.123 1.935 5.544 1.935 5.805 2.195 C 6.065 2.456 6.065 2.877 5.805 3.138 L 4.276 4.667 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Previous page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 1.609 5.333 L 5.805 1.138 C 6.065 0.877 6.065 0.456 5.805 0.195 C 5.544 -0.065 5.123 -0.065 4.862 0.195 L 0.196 4.862 C -0.065 5.123 -0.065 5.544 0.196 5.805 L 4.862 10.471 C 4.992 10.601 5.163 10.667 5.334 10.667 C 5.504 10.667 5.675 10.601 5.805 10.471 C 6.065 10.211 6.065 9.789 5.805 9.529 L 1.609 5.333 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <span class="page-info">Page&nbsp;<b>1</b>&nbsp;of&nbsp;<b>1</b></span>
+                          <button class="page-btn" disabled title="Next page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 5.805 4.862 L 1.138 0.195 C 0.878 -0.065 0.456 -0.065 0.196 0.195 C -0.065 0.456 -0.065 0.877 0.196 1.138 L 4.391 5.333 L 0.196 9.529 C -0.065 9.789 -0.065 10.211 0.196 10.471 C 0.326 10.601 0.496 10.667 0.667 10.667 C 0.838 10.667 1.008 10.601 1.138 10.471 L 5.805 5.805 C 6.065 5.544 6.065 5.123 5.805 4.862 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Last page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 12 0.667 C 12 0.298 12.298 0 12.667 0 C 13.035 0 13.333 0.298 13.333 0.667 L 13.333 10 C 13.333 10.369 13.035 10.667 12.667 10.667 C 12.298 10.667 12 10.369 12 10 L 12 0.667 Z" fill="#414141"/><path d="M 11.137 4.861 C 11.199 4.923 11.248 4.997 11.282 5.079 C 11.349 5.241 11.349 5.425 11.282 5.588 C 11.248 5.67 11.199 5.744 11.137 5.805 L 8.471 8.471 C 8.341 8.601 8.171 8.667 8 8.667 C 7.829 8.667 7.659 8.601 7.529 8.471 C 7.268 8.211 7.268 7.789 7.529 7.529 L 9.057 6 L 0.667 6 C 0.298 6 0 5.702 0 5.333 C 0 4.965 0.298 4.667 0.667 4.667 L 9.057 4.667 L 7.529 3.138 C 7.268 2.877 7.268 2.456 7.529 2.195 C 7.789 1.935 8.211 1.935 8.471 2.195 L 11.137 4.861 Z" fill="#414141"/></g></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pagination-bottom-border"></div>
+                  </div>
+
+                  <!-- Footer actions -->
+                  <div class="footer-actions">
+                    <div class="left-actions">
+                      <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                    </div>
+                    <div class="right-actions">
+                      <button nxButton="secondary small-medium" class="nx-margin-right-s" (click)="onPrevious()" type="button">Back</button>
+                      <button nxButton="primary small-medium" (click)="onNext()" type="button">Next</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              }
+              @case (3) {
+
+                <div class="step-extensions">
+
+                  <div class="coverages-toolbar">
+                    <p nxCopytext="normal" class="selected-items-label">Selected items: {{ selectedExtensionsCount() }}</p>
+                    <div class="toolbar-divider"></div>
+                    <nx-switcher
+                      [labelPosition]="'left'"
+                      labelSize="small"
+                      [checked]="showSelectedExtensionsOnly()"
+                      (checkedChange)="showSelectedExtensionsOnly.set($event)">
+                      Show selected items
+                    </nx-switcher>
+                  </div>
+
+                  <div class="table-container">
+                    <table nxTable class="coverages-table extensions-table">
+                      <thead>
+                        <tr nxTableRow>
+                          <th nxHeaderCell>
+                            <nx-checkbox
+                              [checked]="allExtensionsSelected()"
+                              [indeterminate]="someExtensionsSelected()"
+                              aria-label="Select all extensions"
+                              (checkedChange)="toggleAllExtensions($event)">
+                            </nx-checkbox>
+                          </th>
+                          <th nxHeaderCell>Name</th>
+                          <th nxHeaderCell>ID</th>
+                          <th nxHeaderCell>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (extension of filteredExtensions(); track extension.id) {
+                          <tr nxTableRow [selected]="extension.selected">
+                            <td nxTableCell>
+                              <nx-checkbox
+                                [checked]="extension.selected"
+                                [aria-label]="'Select ' + extension.name"
+                                (checkedChange)="toggleExtension(extension)">
+                              </nx-checkbox>
+                            </td>
+                            <td nxTableCell>{{ extension.name }}</td>
+                            <td nxTableCell>{{ extension.id }}</td>
+                            <td nxTableCell>{{ extension.description }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="pagination-footer">
+                    <div class="pagination-scrollbar">
+                      <div class="pagination-scrollbar-thumb"></div>
+                    </div>
+                    <div class="pagination-content">
+                      <div class="pagination-left">
+                        <span class="pagination-ipp-label">Items per page:</span>
+                        <select class="pagination-select">
+                          <option>10</option>
+                          <option>25</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                      </div>
+                      <div class="pagination-right">
+                        <span class="pagination-count"><b>1</b>&nbsp;to&nbsp;<b>{{ filteredExtensions().length }}</b>&nbsp;of&nbsp;<b>{{ filteredExtensions().length }}</b></span>
+                        <div class="page-nav">
+                          <button class="page-btn" disabled title="First page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 0 0.667 C 0 0.298 0.298 0 0.667 0 C 1.035 0 1.333 0.298 1.333 0.667 L 1.333 10 C 1.333 10.369 1.035 10.667 0.667 10.667 C 0.298 10.667 0 10.369 0 10 L 0 0.667 Z" fill="#414141"/><path d="M 4.276 4.667 L 12.667 4.667 C 13.035 4.667 13.333 4.965 13.333 5.333 C 13.333 5.702 13.035 6 12.667 6 L 4.276 6 L 5.805 7.529 C 6.065 7.789 6.065 8.211 5.805 8.471 C 5.675 8.601 5.504 8.667 5.333 8.667 C 5.163 8.667 4.992 8.601 4.862 8.471 L 2.196 5.805 C 2.134 5.744 2.085 5.67 2.051 5.588 C 1.985 5.425 1.985 5.241 2.051 5.079 C 2.085 4.997 2.134 4.923 2.196 4.861 L 4.862 2.195 C 5.123 1.935 5.544 1.935 5.805 2.195 C 6.065 2.456 6.065 2.877 5.805 3.138 L 4.276 4.667 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Previous page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 1.609 5.333 L 5.805 1.138 C 6.065 0.877 6.065 0.456 5.805 0.195 C 5.544 -0.065 5.123 -0.065 4.862 0.195 L 0.196 4.862 C -0.065 5.123 -0.065 5.544 0.196 5.805 L 4.862 10.471 C 4.992 10.601 5.163 10.667 5.334 10.667 C 5.504 10.667 5.675 10.601 5.805 10.471 C 6.065 10.211 6.065 9.789 5.805 9.529 L 1.609 5.333 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <span class="page-info">Page&nbsp;<b>1</b>&nbsp;of&nbsp;<b>1</b></span>
+                          <button class="page-btn" disabled title="Next page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 5.805 4.862 L 1.138 0.195 C 0.878 -0.065 0.456 -0.065 0.196 0.195 C -0.065 0.456 -0.065 0.877 0.196 1.138 L 4.391 5.333 L 0.196 9.529 C -0.065 9.789 -0.065 10.211 0.196 10.471 C 0.326 10.601 0.496 10.667 0.667 10.667 C 0.838 10.667 1.008 10.601 1.138 10.471 L 5.805 5.805 C 6.065 5.544 6.065 5.123 5.805 4.862 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Last page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 12 0.667 C 12 0.298 12.298 0 12.667 0 C 13.035 0 13.333 0.298 13.333 0.667 L 13.333 10 C 13.333 10.369 13.035 10.667 12.667 10.667 C 12.298 10.667 12 10.369 12 10 L 12 0.667 Z" fill="#414141"/><path d="M 11.137 4.861 C 11.199 4.923 11.248 4.997 11.282 5.079 C 11.349 5.241 11.349 5.425 11.282 5.588 C 11.248 5.67 11.199 5.744 11.137 5.805 L 8.471 8.471 C 8.341 8.601 8.171 8.667 8 8.667 C 7.829 8.667 7.659 8.601 7.529 8.471 C 7.268 8.211 7.268 7.789 7.529 7.529 L 9.057 6 L 0.667 6 C 0.298 6 0 5.702 0 5.333 C 0 4.965 0.298 4.667 0.667 4.667 L 9.057 4.667 L 7.529 3.138 C 7.268 2.877 7.268 2.456 7.529 2.195 C 7.789 1.935 8.211 1.935 8.471 2.195 L 11.137 4.861 Z" fill="#414141"/></g></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pagination-bottom-border"></div>
+                  </div>
+
+                  <!-- Footer actions -->
+                  <div class="footer-actions">
+                    <div class="left-actions">
+                      <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                    </div>
+                    <div class="right-actions">
+                      <button nxButton="secondary small-medium" class="nx-margin-right-s" (click)="onPrevious()" type="button">Back</button>
+                      <button nxButton="primary small-medium" (click)="onNext()" type="button">Next</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              }
+              @case (4) {
+
+                <div class="step-writebacks">
+
+                  @if (writebacksBannerVisible()) {
+                    <nx-message context="info" [closable]="true" (close)="writebacksBannerVisible.set(false)" class="step-banner">
+                      Writebacks are optional.
+                    </nx-message>
+                  }
+
+                  <div class="coverages-toolbar">
+                    <p nxCopytext="normal" class="selected-items-label">Selected items: {{ selectedWritebacksCount() }}</p>
+                    <div class="toolbar-divider"></div>
+                    <nx-switcher
+                      [labelPosition]="'left'"
+                      labelSize="small"
+                      [checked]="showSelectedWritebacksOnly()"
+                      (checkedChange)="showSelectedWritebacksOnly.set($event)">
+                      Show selected items
+                    </nx-switcher>
+                  </div>
+
+                  <div class="table-container">
+                    <table nxTable class="coverages-table writebacks-table">
+                      <thead>
+                        <tr nxTableRow>
+                          <th nxHeaderCell>
+                            <nx-checkbox
+                              [checked]="allWritebacksSelected()"
+                              [indeterminate]="someWritebacksSelected()"
+                              aria-label="Select all writebacks"
+                              (checkedChange)="toggleAllWritebacks($event)">
+                            </nx-checkbox>
+                          </th>
+                          <th nxHeaderCell>Name</th>
+                          <th nxHeaderCell>ID</th>
+                          <th nxHeaderCell>Linked exclusions</th>
+                          <th nxHeaderCell>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (writeback of filteredWritebacks(); track writeback.id) {
+                          <tr nxTableRow [selected]="writeback.selected">
+                            <td nxTableCell>
+                              <nx-checkbox
+                                [checked]="writeback.selected"
+                                [aria-label]="'Select ' + writeback.name"
+                                (checkedChange)="toggleWriteback(writeback)">
+                              </nx-checkbox>
+                            </td>
+                            <td nxTableCell>{{ writeback.name }}</td>
+                            <td nxTableCell>{{ writeback.id }}</td>
+                            <td nxTableCell>
+                              <ul class="linked-exclusions-list">
+                                @for (linked of writeback.linkedExclusions; track linked) {
+                                  <li>{{ linked }}</li>
+                                }
+                              </ul>
+                            </td>
+                            <td nxTableCell>{{ writeback.description }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="pagination-footer">
+                    <div class="pagination-scrollbar">
+                      <div class="pagination-scrollbar-thumb"></div>
+                    </div>
+                    <div class="pagination-content">
+                      <div class="pagination-left">
+                        <span class="pagination-ipp-label">Items per page:</span>
+                        <select class="pagination-select">
+                          <option>10</option>
+                          <option>25</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                      </div>
+                      <div class="pagination-right">
+                        <span class="pagination-count"><b>1</b>&nbsp;to&nbsp;<b>{{ filteredWritebacks().length }}</b>&nbsp;of&nbsp;<b>{{ filteredWritebacks().length }}</b></span>
+                        <div class="page-nav">
+                          <button class="page-btn" disabled title="First page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 0 0.667 C 0 0.298 0.298 0 0.667 0 C 1.035 0 1.333 0.298 1.333 0.667 L 1.333 10 C 1.333 10.369 1.035 10.667 0.667 10.667 C 0.298 10.667 0 10.369 0 10 L 0 0.667 Z" fill="#414141"/><path d="M 4.276 4.667 L 12.667 4.667 C 13.035 4.667 13.333 4.965 13.333 5.333 C 13.333 5.702 13.035 6 12.667 6 L 4.276 6 L 5.805 7.529 C 6.065 7.789 6.065 8.211 5.805 8.471 C 5.675 8.601 5.504 8.667 5.333 8.667 C 5.163 8.667 4.992 8.601 4.862 8.471 L 2.196 5.805 C 2.134 5.744 2.085 5.67 2.051 5.588 C 1.985 5.425 1.985 5.241 2.051 5.079 C 2.085 4.997 2.134 4.923 2.196 4.861 L 4.862 2.195 C 5.123 1.935 5.544 1.935 5.805 2.195 C 6.065 2.456 6.065 2.877 5.805 3.138 L 4.276 4.667 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Previous page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 1.609 5.333 L 5.805 1.138 C 6.065 0.877 6.065 0.456 5.805 0.195 C 5.544 -0.065 5.123 -0.065 4.862 0.195 L 0.196 4.862 C -0.065 5.123 -0.065 5.544 0.196 5.805 L 4.862 10.471 C 4.992 10.601 5.163 10.667 5.334 10.667 C 5.504 10.667 5.675 10.601 5.805 10.471 C 6.065 10.211 6.065 9.789 5.805 9.529 L 1.609 5.333 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <span class="page-info">Page&nbsp;<b>1</b>&nbsp;of&nbsp;<b>1</b></span>
+                          <button class="page-btn" disabled title="Next page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(4.999, 2.666)"><path fill-rule="evenodd" clip-rule="evenodd" d="M 5.805 4.862 L 1.138 0.195 C 0.878 -0.065 0.456 -0.065 0.196 0.195 C -0.065 0.456 -0.065 0.877 0.196 1.138 L 4.391 5.333 L 0.196 9.529 C -0.065 9.789 -0.065 10.211 0.196 10.471 C 0.326 10.601 0.496 10.667 0.667 10.667 C 0.838 10.667 1.008 10.601 1.138 10.471 L 5.805 5.805 C 6.065 5.544 6.065 5.123 5.805 4.862 Z" fill="#414141"/></g></svg>
+                          </button>
+                          <button class="page-btn" disabled title="Last page">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g transform="translate(1.333, 2.667)"><path d="M 12 0.667 C 12 0.298 12.298 0 12.667 0 C 13.035 0 13.333 0.298 13.333 0.667 L 13.333 10 C 13.333 10.369 13.035 10.667 12.667 10.667 C 12.298 10.667 12 10.369 12 10 L 12 0.667 Z" fill="#414141"/><path d="M 11.137 4.861 C 11.199 4.923 11.248 4.997 11.282 5.079 C 11.349 5.241 11.349 5.425 11.282 5.588 C 11.248 5.67 11.199 5.744 11.137 5.805 L 8.471 8.471 C 8.341 8.601 8.171 8.667 8 8.667 C 7.829 8.667 7.659 8.601 7.529 8.471 C 7.268 8.211 7.268 7.789 7.529 7.529 L 9.057 6 L 0.667 6 C 0.298 6 0 5.702 0 5.333 C 0 4.965 0.298 4.667 0.667 4.667 L 9.057 4.667 L 7.529 3.138 C 7.268 2.877 7.268 2.456 7.529 2.195 C 7.789 1.935 8.211 1.935 8.471 2.195 L 11.137 4.861 Z" fill="#414141"/></g></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pagination-bottom-border"></div>
+                  </div>
+
+                  <!-- Footer actions -->
+                  <div class="footer-actions">
+                    <div class="left-actions">
+                      <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                    </div>
+                    <div class="right-actions">
+                      <button nxButton="secondary small-medium" class="nx-margin-right-s" (click)="onPrevious()" type="button">Back</button>
+                      <button nxButton="primary small-medium" (click)="onNext()" type="button">Next</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              }
+              @case (5) {
+
+                <div class="step-summary">
+
+                  <nx-tab-group [selectedIndex]="summaryTabIndex()" (selectedIndexChange)="summaryTabIndex.set($event)">
+                    <nx-tab label="Product information">
+
+                      <div class="content">
+
+                        <h2 nxHeadline="subsection-small" class="nx-margin-bottom-s overview-heading">Overview</h2>
+
+                        <div nxLayout="grid nopadding">
+                          <div nxRow>
+
+                            <div nxCol="12,12,12,12,12,12,12">
+                              <nx-data-display label="Type" size="large">{{ selectedTemplateTypeName }}</nx-data-display>
+                            </div>
+                            <div nxCol="12,12,8,8,6,6,6">
+                              <nx-data-display label="Base product">Property Global Master Product</nx-data-display>
+                            </div>
+
+                            <div nxCol="12,12,8,8,6,6,6">
+                              <nx-data-display label="Name of product template">{{ templateInfoForm.get('name')?.value }}</nx-data-display>
+                            </div>
+                            <div nxCol="6,6,4,4,3,3,2">
+                              <nx-data-display label="Line of business">{{ selectedLineOfBusinessName }}</nx-data-display>
+                            </div>
+                            <div nxCol="6,6,4,4,3,3,2">
+                              <nx-data-display label="Sub-line of business">{{ selectedSubLineOfBusinessName }}</nx-data-display>
+                            </div>
+
+                            <div nxCol="6,6,4,4,3,3,2">
+                              <nx-data-display label="All-risk product?">{{ templateInfoForm.get('isAllRiskProduct')?.value ? 'Yes' : 'No' }}</nx-data-display>
+                            </div>
+
+                            <div nxCol="12,12,8,8,6,6,6">
+                              <nx-data-display label="Operational entities">
+                                <div class="list-wrap">
+                                  @for (name of visibleOperationalEntityNames(); track name) {
+                                    <div>• {{ name }}</div>
+                                  }
+                                  @if (selectedOperationalEntityNames.length > 5) {
+                                    <button class="show-more-btn" type="button" (click)="toggleOperationalEntitiesExpanded()">
+                                      <svg viewBox="0 0 24 24" fill="none" [class.rotated]="operationalEntitiesExpanded()">
+                                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                      </svg>
+                                      <span>{{ operationalEntitiesExpanded() ? 'Show less' : 'Show more' }}</span>
+                                    </button>
+                                  }
+                                </div>
+                              </nx-data-display>
+                            </div>
+
+                            <div nxCol="12,12,12,12,12,12,12">
+                              <nx-data-display label="Product description">{{ templateInfoForm.get('templateDescription')?.value }}</nx-data-display>
+                            </div>
+
+                          </div>
+                        </div>
+
+                        <!-- Team -->
+                        <div class="nx-margin-top-xl team-member-table-main-contents">
+                          <h2 nxHeadline="subsection-small" class="nx-margin-bottom-s">Team</h2>
+                          <div nxLayout="grid nopadding">
+                            <div nxRow>
+                              <div nxCol="12,12,12,9,9,9,6">
+                                <div class="table-container">
+                                  <table nxTable>
+                                    <thead>
+                                      <tr nxTableRow>
+                                        <th nxHeaderCell>Name</th>
+                                        <th nxHeaderCell>Role</th>
+                                        <th nxHeaderCell>Email</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      @for (member of teamMembers(); track member.email) {
+                                        <tr nxTableRow>
+                                          <td nxTableCell>{{ member.name }}</td>
+                                          <td nxTableCell>{{ member.role }}</td>
+                                          <td nxTableCell>{{ member.email }}</td>
+                                        </tr>
+                                      }
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </nx-tab>
+                    <nx-tab label="Product components">
+                    </nx-tab>
+                  </nx-tab-group>
+
+                  <!-- Footer actions -->
+                  <div class="footer-actions">
+                    <div class="left-actions">
+                      <button nxPlainButton type="button" class="btn-cancel" routerLink="/">Cancel</button>
+                    </div>
+                    <div class="right-actions">
+                      <button nxButton="secondary small-medium" class="nx-margin-right-s" (click)="onPrevious()" type="button">Back</button>
+                      <button nxButton="primary small-medium" (click)="onSubmit()" type="button">Submit</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              }
+              @default {
+                <p>Coming soon.</p>
+                <div class="action nx-margin-top-4m">
+                  <button nxButton="tertiary small-medium" (click)="onPrevious()">Previous</button>
+                </div>
+              }
+            }
+
+          </div>
+        </div>
+      </main>
+
+    </div>
+  </div><!-- /page-body -->
+
+</div><!-- /app -->
+
+<!-- All-risk warning dialog -->
+<ng-template #allRiskDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      {{ allRiskDialogTitle }}
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">{{ allRiskDialogMessage }}</p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" class="nx-margin-right-s nx-margin-bottom-0" (click)="onCancelAllRiskPopup()">
+          Cancel
+        </button>
+        <button nxButton="primary small-medium" class="nx-margin-bottom-0" (click)="onConfirmAllRiskPopup()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Missing linked exclusions warning dialog -->
+<ng-template #missingExclusionsDialogTemplate>
+  <div class="centered-content">
+    <h1 nxModalTitle [status]="'warning'" class="nx-margin-bottom-0">
+      Missing linked exclusions
+    </h1>
+    <p class="modal-body nx-margin-bottom-0 nx-margin-top-s">
+      The selected writebacks contain exclusions that have not been selected for this product template. You can reconfigure linked exclusions later or add the missing linked exclusions.
+    </p>
+    <div nxModalActions class="modal-action-container">
+      <div>
+        <button nxButton="secondary small-medium" class="nx-margin-right-s nx-margin-bottom-0" (click)="onAddMissingLinkedExclusions()">
+          Add missing linked exclusions
+        </button>
+        <button nxButton="primary small-medium" class="nx-margin-bottom-0" (click)="onReconfigureLinkedExclusionsLater()">
+          Reconfigure later
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

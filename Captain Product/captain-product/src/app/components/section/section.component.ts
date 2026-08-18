@@ -1,5 +1,6 @@
 import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { Section } from '../../data/comparison.model';
 import { ComparisonRowComponent } from '../comparison-row/comparison-row.component';
 import { SubgroupComponent } from '../subgroup/subgroup.component';
@@ -7,7 +8,7 @@ import { SubgroupComponent } from '../subgroup/subgroup.component';
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [CommonModule, ComparisonRowComponent, SubgroupComponent],
+  imports: [CommonModule, NxExpertModule, ComparisonRowComponent, SubgroupComponent],
   template: `
     <div class="cu-section-header" (click)="toggle()">
       <span>{{ section.title }}</span>

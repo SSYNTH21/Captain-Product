@@ -1,0 +1,314 @@
+// ── APP SHELL (same pattern as all-risk-flow.component.scss) ──
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.sticky-header-group {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.back-to-directory-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: #CAD4DE;
+  flex-shrink: 0;
+
+  nx-link {
+    display: flex;
+    align-items: center;
+  }
+
+  nx-link ::ng-deep a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px;
+    font-weight: 600;
+  }
+}
+
+.flow-title {
+  margin: 0;
+  letter-spacing: 0.15px;
+  color: var(--text-01, #414141);
+}
+
+.page-body {
+  flex: 1;
+  min-height: 0;
+  background: var(--semantic-color-surface-default-resting, #fff);
+  padding: 32px 32px 64px;
+  overflow-y: auto;
+}
+
+// ── PRODUCT HEADER (ported from sync-flow.component.scss) ─────
+.product-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 16px;
+}
+.product-title {
+  font-size: 30px;
+  font-weight: 600 !important;
+  line-height: 36px;
+  letter-spacing: 0.3px;
+  color: var(--text-01);
+}
+.product-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #006192;
+  background: transparent;
+  border: 2px solid #007AB3;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0;
+
+  &:hover { background: #EBF5FB; color: #005580; border-color: #005580; }
+  &:disabled { opacity: 0.35; cursor: default; }
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #fff;
+  background: #007AB3;
+  border: 2px solid #007AB3;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0;
+
+  &:hover { background: #005580; border-color: #005580; }
+  &:disabled { opacity: 0.35; cursor: default; }
+}
+.header-actions-divider {
+  width: 1px;
+  height: 40px;
+  background: #D9D9D9;
+  flex-shrink: 0;
+}
+.btn-close {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: unset !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  color: #006192 !important;
+  border-radius: 4px !important;
+  flex-shrink: 0;
+  padding: 0 !important;
+
+  &:hover { background: transparent !important; color: #008ED6 !important; }
+  &:disabled { opacity: 0.35 !important; cursor: default; }
+  svg { display: block; }
+}
+
+.last-updated {
+  margin-bottom: 24px;
+}
+
+// ── METADATA GRID (ported from sync-flow.component.scss) ──────
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  column-gap: 32px;
+  row-gap: 32px;
+  margin-bottom: 48px;
+
+  @media (min-width: 320px) { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 704px) { grid-template-columns: repeat(3, 1fr); }
+  @media (min-width: 768px) { grid-template-columns: repeat(4, 1fr); }
+  @media (min-width: 1024px) { grid-template-columns: repeat(6, 1fr); }
+}
+.metadata-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.metadata-col-wide {
+  grid-column: span 2;
+}
+.metadata-label {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-01);
+}
+.metadata-value {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-01);
+}
+// ── General tab: Cancel/Save action row + Overview heading ────
+.edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.overview-heading {
+  margin-bottom: 16px;
+}
+
+.operational-entities-col {
+  margin-top: 16px;
+}
+
+.field-description {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+}
+
+// ── Team table (ported from all-risk-flow) ────────────────────
+.team-member-table-main-contents {
+  .table-container {
+    margin-bottom: 0;
+  }
+
+  .add-btn-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+
+  .td-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .empty-state-area {
+    border-top: 2px solid var(--text-01);
+    border-bottom: 2px solid var(--text-01);
+    padding-top: 64px;
+    padding-bottom: 64px;
+    text-align: center;
+  }
+
+  .heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  nx-card.add-member-card {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 32px;
+    border-color: #999999;
+
+    &.has-error {
+      border-color: var(--danger) !important;
+    }
+  }
+}
+
+// ── Components overview tables (ported from all-risk-flow) ────
+.coverages-table {
+  border-bottom: 1px solid var(--ui-04, #d9d9d9) !important;
+
+  th,
+  td {
+    vertical-align: top;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 240px;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 240px;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: auto;
+    min-width: 400px;
+  }
+}
+
+.exclusions-table {
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 120px;
+    min-width: 100px;
+    max-width: 140px;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: auto;
+    min-width: 400px;
+  }
+}
+
+.writebacks-table {
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 240px;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: auto;
+    min-width: 344px;
+  }
+}
+
+.linked-exclusions-list {
+  margin: 0;
+  padding-left: 16px;
+  list-style: disc;
+
+  li {
+    padding-left: 4px;
+  }
+}

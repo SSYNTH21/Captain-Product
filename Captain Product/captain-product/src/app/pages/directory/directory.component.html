@@ -1,15 +1,33 @@
-<div class="directory">
-  <h1 nxHeadline="subsection-large" class="directory-title">Feature Directory</h1>
+<div class="app">
 
-  <nav class="directory-list">
-    <nx-link size="small">
-      <a routerLink="/sync">Product synchronization flow demo</a>
-    </nx-link>
-    <nx-link size="small">
-      <a routerLink="/all-risk">All-risk creation flow demo</a>
-    </nx-link>
-    <nx-link size="small">
-      <a routerLink="/all-risk-config">All-risk configuration flow demo</a>
-    </nx-link>
-  </nav>
+  <!-- PAGE BODY -->
+  <div class="page-body">
+    <h2 class="directory-title">Feature directory</h2>
+
+    <div class="stats-row">
+      <nx-card class="stat-card stat-card--validated">
+        <nx-data-display label="Validated" size="large" class="stat-value">{{ validatedCount() }}</nx-data-display>
+      </nx-card>
+      <nx-card class="stat-card stat-card--pending">
+        <nx-data-display label="Pending approval" size="large" class="stat-value">{{ pendingApprovalCount() }}</nx-data-display>
+      </nx-card>
+      <nx-card class="stat-card stat-card--in-progress">
+        <nx-data-display label="In progress" size="large" class="stat-value">{{ inProgressCount() }}</nx-data-display>
+      </nx-card>
+      <nx-card class="stat-card stat-card--total">
+        <nx-data-display label="Demos created" size="large" class="stat-value">{{ totalCount() }}</nx-data-display>
+      </nx-card>
+    </div>
+
+    <div class="directory-table-container">
+      <ag-grid-angular
+        class="ag-theme-alpine ag-theme-aquila ag-theme-allianz-icons"
+        style="width: 100%; height: 320px;"
+        [rowData]="demos()"
+        [columnDefs]="columnDefs"
+        [domLayout]="'normal'"
+        [getRowId]="getRowId">
+      </ag-grid-angular>
+    </div>
+  </div>
 </div>

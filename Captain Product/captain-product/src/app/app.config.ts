@@ -1,6 +1,12 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NX_ICON_INITIALIZER } from '@allianz/ng-aquila/icon';
+import { provideAllianzIcons } from '@allianz/ngx-brand-kit/icon';
+import { provideGlobalGridOptions } from 'ag-grid-community';
+import { routes } from './app.routes';
+
+provideGlobalGridOptions({ theme: 'legacy' });
 
 // Multicolor SVG from @allianz/ngx-brand-kit — yellow circle (#efbe25) + dark exclamation (#414141)
 // Only this icon deviates from the NDBX monochrome default; all other icons use the standard SVG registry
@@ -9,6 +15,8 @@ const EXCLAMATION_CIRCLE_WARNING_SVG = `<svg height="22" viewBox="0 0 22 22" wid
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideAllianzIcons(),
     {
       provide: NX_ICON_INITIALIZER,
       useFactory: (sanitizer: DomSanitizer) => (registry: any) => {

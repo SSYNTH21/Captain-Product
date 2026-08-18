@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { VersionInfo } from '../../data/comparison.model';
 
 @Component({
   selector: 'app-version-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NxExpertModule],
   template: `
     <div class="vh-row">
       <div class="vh-spacer"></div>

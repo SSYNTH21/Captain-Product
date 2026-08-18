@@ -51,21 +51,23 @@
   </nx-header-actions>
 </nx-header>
 
-<!-- TOOLBAR — 2nd level page variant -->
-<nx-toolbar>
-  <ol nxBreadcrumb>
-    @for (crumb of breadcrumbs; track crumb.label) {
-      <li>
-        <a nxBreadcrumbItem>{{ crumb.label }}</a>
-      </li>
-    }
-  </ol>
-  <span class="toolbar-spacer"></span>
-  <button class="header-icon-btn header-icon-btn--tertiary" title="Side Panel">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <g transform="translate(2, 4)">
-        <path fill-rule="nonzero" d="M18 0L2 0C0.9 0 0 0.9 0 2L0 14C0 15.1 0.9 16 2 16L18 16C19.1 16 20 15.1 20 14L20 2C20 0.9 19.1 0 18 0ZM1.6 14L1.6 2C1.6 1.783 1.783 1.6 2 1.6L13.2 1.6L13.2 14.4L2 14.4C1.783 14.4 1.6 14.217 1.6 14L1.6 14ZM18.4 14C18.4 14.217 18.217 14.4 18 14.4L14.8 14.4L14.8 1.6L18 1.6C18.217 1.6 18.4 1.783 18.4 2L18.4 14Z" fill="currentColor"/>
-      </g>
-    </svg>
-  </button>
-</nx-toolbar>
+@if (showToolbar) {
+  <!-- TOOLBAR — 2nd level page variant -->
+  <nx-toolbar>
+    <ol nxBreadcrumb>
+      @for (crumb of breadcrumbs; track crumb.label) {
+        <li>
+          <a nxBreadcrumbItem>{{ crumb.label }}</a>
+        </li>
+      }
+    </ol>
+    <span class="toolbar-spacer"></span>
+    <button class="header-icon-btn header-icon-btn--tertiary" title="Side Panel">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <g transform="translate(2, 4)">
+          <path fill-rule="nonzero" d="M18 0L2 0C0.9 0 0 0.9 0 2L0 14C0 15.1 0.9 16 2 16L18 16C19.1 16 20 15.1 20 14L20 2C20 0.9 19.1 0 18 0ZM1.6 14L1.6 2C1.6 1.783 1.783 1.6 2 1.6L13.2 1.6L13.2 14.4L2 14.4C1.783 14.4 1.6 14.217 1.6 14L1.6 14ZM18.4 14C18.4 14.217 18.217 14.4 18 14.4L14.8 14.4L14.8 1.6L18 1.6C18.217 1.6 18.4 1.783 18.4 2L18.4 14Z" fill="currentColor"/>
+        </g>
+      </svg>
+    </button>
+  </nx-toolbar>
+}

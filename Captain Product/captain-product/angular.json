@@ -30,6 +30,9 @@
               }
             ],
             "styles": [
+              "node_modules/@angular/cdk/overlay-prebuilt.css",
+              "node_modules/@angular/cdk/a11y-prebuilt.css",
+              "node_modules/@allianz/ng-aquila/css/utilities.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {

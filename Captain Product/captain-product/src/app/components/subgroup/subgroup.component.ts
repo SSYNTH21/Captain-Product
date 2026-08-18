@@ -1,5 +1,6 @@
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NxExpertModule } from '@allianz/ng-aquila/config';
 import { SubGroup } from '../../data/comparison.model';
 import { NestedRowComponent } from '../nested-row/nested-row.component';
 import { FilterService } from '../../services/filter.service';
@@ -7,7 +8,7 @@ import { FilterService } from '../../services/filter.service';
 @Component({
   selector: 'app-subgroup',
   standalone: true,
-  imports: [CommonModule, NestedRowComponent],
+  imports: [CommonModule, NxExpertModule, NestedRowComponent],
   template: `
     @if (visible()) {
       <div class="cu-subgroup-header" (click)="toggle()">

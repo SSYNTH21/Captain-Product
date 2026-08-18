@@ -1,13 +1,29 @@
 <!-- ═══ LANDING PAGE ══════════════════════════════════════════ -->
 <div class="app">
 
-  <!-- HEADER COMPONENT -->
-  <app-header
-    [breadcrumbs]="[
-      { label: 'Administration' },
-      { label: 'Master products' },
-      { label: 'Property Global Master Product', active: true }
-    ]"></app-header>
+  <!-- STICKY HEADER GROUP -->
+  <div class="sticky-header-group">
+    <!-- BACK TO DIRECTORY BAR -->
+    <div class="back-to-directory-bar">
+      @if (!isDemoMode()) {
+        <nx-link size="small">
+          <a routerLink="/">
+            <nx-icon name="chevron-left" aria-hidden="true"></nx-icon>
+            Back to directory
+          </a>
+        </nx-link>
+      }
+      <h2 nxHeadline="subsection-medium" class="flow-title">Product synchronization flow demo</h2>
+    </div>
+
+    <!-- HEADER COMPONENT -->
+    <app-header
+      [breadcrumbs]="[
+        { label: 'Administration' },
+        { label: 'Master products' },
+        { label: 'Property Global Master Product', active: true }
+      ]"></app-header>
+  </div>
 
   <!-- PAGE BODY -->
   <div class="page-body">
@@ -169,7 +185,7 @@
               <td class="td-product-name">
                 <div class="cell-product-name">
                   <nx-link size="small"><a href="#" onclick="return false;">Product template of Property GMP</a></nx-link>
-                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available">
+                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available" (opened)="activeSignalButtonIndex.set(0)">
                     <div class="signal-popover-body">
                       <p class="signal-popover-text">Update available for the product.</p>
                       <nx-link size="small"><a href="#" (click)="openModal()" onclick="return false;">Update template</a></nx-link>
@@ -185,7 +201,7 @@
               <td class="td-product-name">
                 <div class="cell-product-name">
                   <nx-link size="small"><a href="#" onclick="return false;">Product template_Energy construction Global Master Product</a></nx-link>
-                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available">
+                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available" (opened)="activeSignalButtonIndex.set(1)">
                     <div class="signal-popover-body">
                       <p class="signal-popover-text">Update available for the product.</p>
                       <nx-link size="small"><a href="#" (click)="openModal()" onclick="return false;">Update template</a></nx-link>
@@ -201,7 +217,7 @@
               <td class="td-product-name">
                 <div class="cell-product-name">
                   <nx-link size="small"><a href="#" onclick="return false;">Product template_Property Global Master Product</a></nx-link>
-                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available">
+                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available" (opened)="activeSignalButtonIndex.set(2)">
                     <div class="signal-popover-body">
                       <p class="signal-popover-text">Update available for the product.</p>
                       <nx-link size="small"><a href="#" (click)="openModal()" onclick="return false;">Update template</a></nx-link>
@@ -217,7 +233,7 @@
               <td class="td-product-name">
                 <div class="cell-product-name">
                   <nx-link size="small"><a href="#" onclick="return false;">Product template_Property Global Master Product</a></nx-link>
-                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available">
+                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available" (opened)="activeSignalButtonIndex.set(3)">
                     <div class="signal-popover-body">
                       <p class="signal-popover-text">Update available for the product.</p>
                       <nx-link size="small"><a href="#" (click)="openModal()" onclick="return false;">Update template</a></nx-link>
@@ -233,7 +249,7 @@
               <td class="td-product-name">
                 <div class="cell-product-name">
                   <nx-link size="small"><a href="#" onclick="return false;">Marine_Product template</a></nx-link>
-                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available">
+                  <nx-signal-button context="warning" popoverDirection="bottom" aria-label="Update available" (opened)="activeSignalButtonIndex.set(4)">
                     <div class="signal-popover-body">
                       <p class="signal-popover-text">Update available for the product.</p>
                       <nx-link size="small"><a href="#" (click)="openModal()" onclick="return false;">Update template</a></nx-link>
