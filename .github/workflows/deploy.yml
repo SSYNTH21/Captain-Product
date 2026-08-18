@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths: ['Captain Product/captain-product/**']
   workflow_dispatch:
 
 permissions:
@@ -11,6 +12,9 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Captain Product/captain-product
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +22,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: 'Captain Product/captain-product/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -32,5 +37,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist/captain-product/browser
+          publish_dir: 'Captain Product/captain-product/dist/captain-product/browser'
           force_orphan: true
